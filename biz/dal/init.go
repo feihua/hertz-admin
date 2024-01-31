@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var dsn = "root:r-wz9wop62956dh5k9ed@tcp(rm-wz9a2yv489d123yqkdo.mysql.rds.aliyuncs.com:3306)/zero-react?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+var dsn = "root:oMbPi5munxCsBSsiLoPV@tcp(110.41.179.89:3306)/rustdb?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
 
 var DB *gorm.DB
 
@@ -31,7 +31,7 @@ func (w Writer) Printf(format string, args ...interface{}) {
 	hlog.Debugf(format, args)
 }
 
-//init log config
+// init log config
 func settingLogConfig() logger.Interface {
 	newLogger := logger.New(
 		Writer{},

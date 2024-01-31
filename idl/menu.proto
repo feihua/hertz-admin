@@ -1,0 +1,94 @@
+// idl/hello/hello.proto
+syntax = "proto3";
+
+package menu;
+
+option go_package = "menu";
+
+import "api.proto";
+
+//menu params start -----------
+message MenuListReq {
+  string MenuName = 1[(api.body) = "menu_name"];
+}
+
+message MenuListResp {
+  string Msg = 1;
+  int32 Code = 2;
+  int64 Total = 3;
+  repeated MenuListData data = 4;
+}
+
+message MenuListData {
+  int64 Id = 1;
+  string CreateTime = 2;
+  string UpdateTime = 3;
+  int32 StatusId = 4;
+  int32 Sort = 5;
+  int64 ParentId = 6;
+  string MenuName = 7;
+  string MenuUrl = 8;
+  string ApiUrl = 9;
+  string MenuIcon = 10;
+  string Remark = 11;
+  int32 MenuType = 12;
+}
+
+message MenuSaveReq {
+  int32 StatusId = 1[(api.body) = "status_id"];
+  int32 Sort = 2[(api.body) = "sort"];
+  int64 ParentId = 3[(api.body) = "parent_id"];
+  string MenuName = 4[(api.body) = "menu_name"];
+  string MenuUrl = 5[(api.body) = "menu_url"];
+  string ApiUrl = 6[(api.body) = "api_url"];
+  string MenuIcon = 7[(api.body) = "menu_icon"];
+  string Remark = 8[(api.body) = "remark"];
+  int32 MenuType = 9[(api.body) = "menu_type"];
+}
+message MenuSaveResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+
+message MenuUpdateReq {
+  int64 Id = 1[(api.body) = "id"];
+  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 Sort = 3[(api.body) = "sort"];
+  int64 ParentId = 4[(api.body) = "parent_id"];
+  string MenuName = 5[(api.body) = "menu_name"];
+  string MenuUrl = 6[(api.body) = "menu_url"];
+  string ApiUrl = 7[(api.body) = "api_url"];
+  string MenuIcon = 8[(api.body) = "menu_icon"];
+  string Remark = 9[(api.body) = "remark"];
+  int32 MenuType = 10[(api.body) = "menu_type"];
+}
+
+message MenuUpdateResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+message MenuDeleteReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message MenuDeleteResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+//menu params end -----------
+service MenuHandler {
+  //menu
+  rpc MenuList(MenuListReq) returns(MenuListResp) {
+    option (api.post) = "/api/menu_list";
+  }
+  rpc MenuSave(MenuSaveReq) returns(MenuSaveResp) {
+    option (api.post) = "/api/menu_save";
+  }
+  rpc MenuUpdate(MenuUpdateReq) returns(MenuUpdateResp) {
+    option (api.post) = "/api/menu_update";
+  }
+  rpc MenuDelete(MenuDeleteReq) returns(MenuDeleteResp) {
+    option (api.post) = "/api/menu_delete";
+  }
+
+}

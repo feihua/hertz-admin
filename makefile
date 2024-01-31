@@ -38,7 +38,9 @@ restart: stop start ## 重启项目
 HZ=$(GOBIN)/hz
 
 gen:	## 生成代码
-	$(HZ) update -I idl -idl idl/sys/sys.proto
+	$(HZ) update -idl idl/user.proto
+	$(HZ) update -idl idl/role.proto
+	$(HZ) update -idl idl/menu.proto
 
 
 

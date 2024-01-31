@@ -43,6 +43,7 @@ type User struct {
 
 func InitJwt() {
 	var err error
+
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Realm:         "test zone",
 		Key:           []byte("secret key"),
@@ -53,9 +54,11 @@ func InitJwt() {
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			c.JSON(http.StatusOK, utils.H{
 				"code":    code,
-				"token":   token,
-				"expire":  expire.Format(time.RFC3339),
 				"message": "success",
+				"data": utils.H{
+					"token":  token,
+					"expire": expire.Format(time.RFC3339),
+				},
 			})
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {

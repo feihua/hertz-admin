@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "user";
+
+import "api.proto";
+
+//user params start -----------
+
+message QueryUserMenuReq {
+  string token = 1[(api.query) = "token"];
+}
+
+message QueryUserMenuResp {
+  string Msg = 1;
+  int32 Code = 2;
+  QueryUserMenuData data = 3;
+}
+message QueryUserMenuData {
+  repeated UserMenuList SysMenu = 1;
+  repeated string BtnMenu = 2;
+  string avatar = 3;
+  string name = 4;
+}
+message UserMenuList {
+  int32 Id = 1;
+  int32 ParentId = 2;
+  string Name = 3;
+  string Path = 4;
+  string ApiUrl = 5;
+  int32 MenuType = 6;
+  string Icon = 7;
+}
+
+message UserListReq {
+  int64 PageNo = 1[(api.body) = "page_no"];
+  int64 PageSize = 2[(api.body) = "page_size"];
+  string Mobile = 3[(api.body) = "mobile"];
+  int32 StatusId = 4[(api.body) = "status_id"];
+}
+
+message UserListResp {
+  string Msg = 1;
+  int32 Code = 2;
+  int64 PageNo = 3;
+  int64 PageSize = 4;
+  int64 Total = 5;
+  repeated UserListData data = 6;
+}
+
+message UserListData {
+  int64 Id = 1;
+  string CreateTime = 2;
+  string UpdateTime = 3;
+  int32 StatusId = 4;
+  int32 Sort = 5;
+  int64 UserNo = 6;
+  string Mobile = 7;
+  string RealName = 8;
+  string Remark = 9;
+}
+
+message UserSaveReq {
+  string Mobile = 1[(api.body) = "mobile"];
+  string RealName = 2[(api.body) = "real_name"];
+  string Remark = 3[(api.body) = "remark"];
+}
+message UserSaveResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+
+message UserUpdateReq {
+  int64 Id = 1[(api.body) = "id"];
+  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 Sort = 3[(api.body) = "sort"];
+  string Mobile = 4[(api.body) = "mobile"];
+  string RealName = 5[(api.body) = "real_name"];
+  string Remark = 6[(api.body) = "remark"];
+}
+
+message UserUpdateResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+message UserDeleteReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message UserDeleteResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+
+//user params end -----------
+
+
+service UserHandler {
+  //user
+  rpc QueryUserMenu(QueryUserMenuReq) returns(QueryUserMenuResp) {
+    option (api.post) = "/api/query_user_menu";
+  }
+  rpc UserList(UserListReq) returns(UserListResp) {
+    option (api.post) = "/api/user_list";
+  }
+  rpc UserSave(UserSaveReq) returns(UserSaveResp) {
+    option (api.post) = "/api/user_save";
+  }
+  rpc UserUpdate(UserUpdateReq) returns(UserUpdateResp) {
+    option (api.post) = "/api/user_update";
+  }
+  rpc UserDelete(UserDeleteReq) returns(UserDeleteResp) {
+    option (api.post) = "/api/user_delete";
+  }
+}
+

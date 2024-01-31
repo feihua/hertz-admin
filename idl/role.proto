@@ -1,0 +1,123 @@
+// idl/hello/hello.proto
+syntax = "proto3";
+
+package role;
+
+option go_package = "role";
+
+import "api.proto";
+
+//role params start -----------
+message RoleListReq {
+  int64 PageNo = 1[(api.body) = "page_no"];
+  int64 PageSize = 2[(api.body) = "page_size"];
+  string RoleName = 3[(api.body) = "role_name"];
+  string StatusId = 4[(api.body) = "status_id"];
+}
+
+message RoleListResp {
+  string Msg = 1;
+  int32 Code = 2;
+  int64 PageNo = 3;
+  int64 PageSize = 4;
+  int64 Total = 5;
+  repeated RoleListData data = 6;
+}
+
+message RoleListData {
+  int64 Id = 1;
+  string CreateTime = 2;
+  string UpdateTime = 3;
+  int32 StatusId = 4;
+  int32 Sort = 5;
+  string RoleName = 6;
+  string Remark = 7;
+}
+
+message RoleSaveReq {
+  int32 StatusId = 1[(api.body) = "status_id"];
+  int32 Sort = 2[(api.body) = "sort"];
+  string RoleName = 3[(api.body) = "role_name"];
+  string Remark = 4[(api.body) = "remark"];
+}
+message RoleSaveResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+
+message RoleUpdateReq {
+  int64 Id = 1[(api.body) = "id"];
+  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 Sort = 3[(api.body) = "sort"];
+  string RoleName = 4[(api.body) = "role_name"];
+  string Remark = 5[(api.body) = "remark"];
+}
+
+message RoleUpdateResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+message RoleDeleteReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message RoleDeleteResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+message QueryRoleMenuReq {
+  string RoleId = 1[(api.body) = "role_id"];
+}
+
+message QueryRoleMenuResp {
+  string Msg = 1;
+  int32 Code = 2;
+  repeated QueryRoleMenuData data = 3;
+}
+
+message QueryRoleMenuData {
+  repeated int32 RoleMenu = 1;
+  repeated MenuDataList MenuList = 2;
+}
+
+message MenuDataList {
+  int32 Id = 1;
+  int32 ParentId = 2;
+  string Title = 3;
+  string Key = 4;
+}
+
+message UpdateRoleMenuReq {
+  repeated int32 MenuIds = 1;
+  int32 RoleId = 2;
+}
+message UpdateRoleMenuResp {
+  string Msg = 1;
+  int32 Code = 2;
+}
+
+//role params end -----------
+
+service roleHandler {
+  //role
+  rpc RoleList(RoleListReq) returns(RoleListResp) {
+    option (api.post) = "/api/role_list";
+  }
+  rpc RoleSave(RoleSaveReq) returns(RoleSaveResp) {
+    option (api.post) = "/api/role_save";
+  }
+  rpc RoleUpdate(RoleUpdateReq) returns(RoleUpdateResp) {
+    option (api.post) = "/api/role_update";
+  }
+  rpc RoleDelete(RoleDeleteReq) returns(RoleDeleteResp) {
+    option (api.post) = "/api/role_delete";
+  }
+  rpc QueryRoleMenu(QueryRoleMenuReq) returns(QueryRoleMenuResp) {
+    option (api.post) = "/api/query_role_menu";
+  }
+  rpc UpdateRoleMenu(UpdateRoleMenuReq) returns(UpdateRoleMenuResp) {
+    option (api.post) = "/api/update_role_menu";
+  }
+}
+
+
