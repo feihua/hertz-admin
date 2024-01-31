@@ -11,6 +11,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 	"hertz_admin/biz/dal"
 	"hertz_admin/biz/pkg/mw"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -20,11 +21,12 @@ import (
 func main() {
 	dal.Init()
 	mw.InitJwt()
-	h := server.Default()
+	//h := server.Default()
+	h := server.New(server.WithHostPorts("0.0.0.0:6666"))
 
-	//if initLog() {
-	//	return
-	//}
+	if initLog() {
+		return
+	}
 
 	register(h)
 	h.Spin()
@@ -62,7 +64,8 @@ func initLog() bool {
 		Compress:   true, // Compress with gzip.
 	}
 
-	logger.SetOutput(lumberjackLogger)
+	fileWriter := io.MultiWriter(lumberjackLogger, os.Stdout)
+	logger.SetOutput(fileWriter)
 	logger.SetLevel(hlog.LevelDebug)
 
 	hlog.SetLogger(logger)
