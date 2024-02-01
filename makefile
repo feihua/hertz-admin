@@ -1,3 +1,5 @@
+#全局设置环境变量
+export GOPROXY=https://goproxy.cn,direct
 # 定义变量
 ifndef GOPATH
 	GOPATH := $(shell go env GOPATH)
@@ -8,6 +10,13 @@ GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOGET=$(GOCMD) mod tidy
+HZ=$(GOBIN)/hz
+
+# 安装hz代码生成工具
+$(shell if [ ! -d $(HZ) ]; then \
+	$(GOCMD) install github.com/cloudwego/hertz/cmd/hz@latest; \
+fi; \
+)
 
 MYSQL_INFO=root:r-wz9wop62956dh5k9ed@tcp(110.41.179.89:30395)/gozero
 
@@ -18,7 +27,6 @@ clean: ## 清理目标
 	rm -rf target
 
 deps: ## 安装依赖目标
-	@export GOPROXY=https://goproxy.cn,direct
 	$(GOGET) -v
 
 build: ## 构建目标
@@ -30,12 +38,9 @@ start: build stop ## 运行目标
 stop: ## 停止目标
 	-pkill -f hertz-admin
 
-
 restart: stop start ## 重启项目
 
 .DEFAULT_GOAL := all ## 默认构建目标是
-
-HZ=$(GOBIN)/hz
 
 gen:	## 生成代码
 	$(HZ) update -idl idl/user.proto
@@ -47,11 +52,11 @@ gen:	## 生成代码
 image: ## 构建docker镜像
 	docker build -t hertz-admin:0.0.1 -f Dockerfile .
 
-run: image ## 启动docker容器
+docker: image ## 启动docker容器
 	docker run -itd --net=host --name=hertz-admin hertz-admin:0.0.1; \
 
 
-kubectl: image ## 部署k8s容器
+deployment: image ## 部署k8s容器
 	kubectl apply -f script/hertz-admin.yaml; \
 
 help: ## show help message
