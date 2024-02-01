@@ -1,5 +1,5 @@
 // idl/api.proto; 注解拓展
-syntax = "proto2";
+syntax = "proto3";
 
 package api;
 
@@ -41,4 +41,13 @@ extend google.protobuf.MethodOptions {
 
 extend google.protobuf.EnumValueOptions {
   optional int32 http_code = 50401;
+}
+
+
+enum Code {
+  Unknown = 0;
+  Success = 1;
+  ParamInvalid = 2;
+  DBErr = 3;
+  OtherErr = 4;
 }

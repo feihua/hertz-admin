@@ -14,7 +14,7 @@ message QueryUserMenuReq {
 
 message QueryUserMenuResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
   QueryUserMenuData data = 3;
 }
 message QueryUserMenuData {
@@ -24,13 +24,13 @@ message QueryUserMenuData {
   string name = 4;
 }
 message UserMenuList {
-  int32 Id = 1;
-  int32 ParentId = 2;
-  string Name = 3;
-  string Path = 4;
-  string ApiUrl = 5;
-  int32 MenuType = 6;
-  string Icon = 7;
+  int32 id = 1;
+  int32 parentId = 2;
+  string name = 3;
+  string path = 4;
+  string apiUrl = 5;
+  int32 menuType = 6;
+  string icon = 7;
 }
 
 message UserListReq {
@@ -42,33 +42,32 @@ message UserListReq {
 
 message UserListResp {
   string Msg = 1;
-  int32 Code = 2;
-  int64 PageNo = 3;
-  int64 PageSize = 4;
-  int64 Total = 5;
-  repeated UserListData data = 6;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated UserListData data = 4;
 }
 
 message UserListData {
-  int64 Id = 1;
-  string CreateTime = 2;
-  string UpdateTime = 3;
-  int32 StatusId = 4;
-  int32 Sort = 5;
-  int64 UserNo = 6;
-  string Mobile = 7;
-  string RealName = 8;
-  string Remark = 9;
+  int64 id = 1;
+  string createTime = 2;
+  string updateTime = 3;
+  int32 statusId = 4;
+  int32 sort = 5;
+  string mobile = 6;
+  string userName = 7;
+  string remark = 8;
 }
 
 message UserSaveReq {
   string Mobile = 1[(api.body) = "mobile"];
-  string RealName = 2[(api.body) = "real_name"];
+  string UserName = 2[(api.body) = "user_name"];
   string Remark = 3[(api.body) = "remark"];
+  int32 StatusID = 4[(api.body) = "status_id"];
+  int32 Sort = 5[(api.body) = "sort"];
 }
 message UserSaveResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
 }
 
 message UserUpdateReq {
@@ -76,13 +75,13 @@ message UserUpdateReq {
   int32 StatusId = 2[(api.body) = "status_id"];
   int32 Sort = 3[(api.body) = "sort"];
   string Mobile = 4[(api.body) = "mobile"];
-  string RealName = 5[(api.body) = "real_name"];
+  string UserName = 5[(api.body) = "user_name"];
   string Remark = 6[(api.body) = "remark"];
 }
 
 message UserUpdateResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
 }
 message UserDeleteReq {
   repeated int64 ids = 1[(api.body) = "ids"];
@@ -90,7 +89,7 @@ message UserDeleteReq {
 
 message UserDeleteResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
 }
 
 //user params end -----------

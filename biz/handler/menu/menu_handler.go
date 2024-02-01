@@ -4,138 +4,188 @@ package menu
 
 import (
 	"context"
-	"hertz_admin/biz/dal/entity"
-	"time"
-
 	"github.com/cloudwego/hertz/pkg/app"
-	menu "hertz_admin/biz/model/menu"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"hertz_admin/biz/model/api"
+	"hertz_admin/biz/model/menu"
+	"hertz_admin/gen/model"
+	"hertz_admin/gen/query"
+	"time"
 )
 
-// MenuList .
+// MenuList 查询菜单列表
 // @router /menu_list [POST]
 func MenuList(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuListResp)
 	var err error
 	var req menu.MenuListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	menus, total, err := entity.QuerySysMenu(&req.MenuName, 1, 1000)
+	sysMenus, err := query.SysMenu.WithContext(ctx).Find()
+
+	if err != nil {
+		hlog.CtxErrorf(ctx, "查询菜单列表异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
+	}
 
 	var list []*menu.MenuListData
 
-	for _, item := range menus {
+	for _, item := range sysMenus {
 		list = append(list, &menu.MenuListData{
-			Id:         item.Id,
-			CreateTime: item.GmtCreate.Format("2006-01-02 15:04:05"),
-			UpdateTime: item.GmtModified.Format("2006-01-02 15:04:05"),
-			StatusId:   item.StatusId,
+			Id:         item.ID,
+			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"),
+			StatusId:   item.StatusID,
 			Sort:       item.Sort,
-			ParentId:   item.ParentId,
+			ParentId:   item.ParentID,
 			MenuName:   item.MenuName,
-			MenuUrl:    item.MenuUrl,
-			ApiUrl:     item.ApiUrl,
-			MenuIcon:   item.MenuIcon,
-			Remark:     item.Remark,
+			MenuUrl:    *item.MenuURL,
+			ApiUrl:     *item.APIURL,
+			MenuIcon:   *item.MenuIcon,
+			Remark:     *item.Remark,
 			MenuType:   item.MenuType,
 		})
 	}
 
-	c.JSON(200, menu.MenuListResp{
-		Msg:   "successful",
-		Code:  0,
-		Total: total,
-		Data:  list,
-	})
+	resp.Code = api.Code_Success
+	resp.Msg = "查询菜单列表成功"
+	resp.Data = list
+
+	hlog.CtxDebugf(ctx, "查询菜单列表成功: %v", resp)
+	c.JSON(200, resp)
 }
 
-// MenuSave .
+// MenuSave 添加菜单
 // @router /menu_save [POST]
 func MenuSave(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuSaveResp)
 	var err error
 	var req menu.MenuSaveReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.CreateSysMenu([]entity.SysMenu{{
-		GmtCreate:   time.Now(),
-		GmtModified: time.Time{},
-		StatusId:    0,
-		Sort:        0,
-		ParentId:    0,
-		MenuName:    "",
-		MenuUrl:     "",
-		ApiUrl:      "",
-		MenuIcon:    "",
-		Remark:      req.Remark,
-		MenuType:    0,
-	}})
+	sysMenu := query.SysMenu
+	err = sysMenu.WithContext(ctx).Create(&model.SysMenu{
+		MenuName:   req.MenuName,
+		MenuType:   req.MenuType,
+		StatusID:   req.StatusId,
+		Sort:       req.Sort,
+		ParentID:   req.ParentId,
+		MenuURL:    &req.MenuUrl,
+		APIURL:     &req.ApiUrl,
+		MenuIcon:   &req.MenuIcon,
+		Remark:     &req.Remark,
+		CreateTime: time.Now(),
+	})
 
 	if err != nil {
-
+		hlog.CtxErrorf(ctx, "添加菜单异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
 	}
-	resp := new(menu.MenuSaveResp)
 
+	resp.Code = api.Code_Success
+	resp.Msg = "添加菜单成功"
+
+	hlog.CtxDebugf(ctx, "添加菜单成功: %v", resp)
 	c.JSON(200, resp)
 }
 
-// MenuUpdate .
+// MenuUpdate 修改菜单
 // @router /menu_update [POST]
 func MenuUpdate(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuUpdateResp)
 	var err error
 	var req menu.MenuUpdateReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.UpdateSysMenu(entity.SysMenu{
-		Id:          req.Id,
-		GmtCreate:   time.Now(),
-		GmtModified: time.Time{},
-		StatusId:    0,
-		Sort:        0,
-		ParentId:    0,
-		MenuName:    "",
-		MenuUrl:     "",
-		ApiUrl:      "",
-		MenuIcon:    "",
-		Remark:      req.Remark,
-		MenuType:    0,
+	sysMenu := query.SysMenu
+	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).First()
+	if err != nil {
+		hlog.CtxErrorf(ctx, "菜单不存在: %v", err)
+		resp.Msg = "菜单不存在"
+		resp.Code = api.Code_OtherErr
+
+		c.JSON(200, resp)
+		return
+	}
+	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).Updates(model.SysMenu{
+		MenuName:   req.MenuName,
+		MenuType:   req.MenuType,
+		StatusID:   req.StatusId,
+		Sort:       req.Sort,
+		ParentID:   req.ParentId,
+		MenuURL:    &req.MenuUrl,
+		APIURL:     &req.ApiUrl,
+		MenuIcon:   &req.MenuIcon,
+		Remark:     &req.Remark,
+		UpdateTime: time.Now(),
 	})
 
 	if err != nil {
-
+		hlog.CtxErrorf(ctx, "修改菜单异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
 	}
 
-	resp := new(menu.MenuUpdateResp)
+	resp.Msg = "修改菜单成功"
+	resp.Code = api.Code_Success
 
+	hlog.CtxDebugf(ctx, "修改菜单成功: %v", resp)
 	c.JSON(200, resp)
 }
 
-// MenuDelete .
+// MenuDelete 删除菜单
 // @router /menu_delete [POST]
 func MenuDelete(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuDeleteResp)
 	var err error
 	var req menu.MenuDeleteReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Msg = err.Error()
+		resp.Code = api.Code_ParamInvalid
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.DeleteSysMenu(req.Ids)
+	sysMenu := query.SysMenu
+	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.In(req.Ids...)).Delete()
 	if err != nil {
+		hlog.CtxErrorf(ctx, "删除菜单异常: %v", err)
+		resp.Msg = err.Error()
+		resp.Code = api.Code_DBErr
+		c.JSON(200, resp)
 		return
 	}
 
-	resp := new(menu.MenuDeleteResp)
+	resp.Msg = "删除菜单成功"
+	resp.Code = api.Code_Success
 
+	hlog.CtxDebugf(ctx, "删除菜单成功: %v", resp)
 	c.JSON(200, resp)
 }

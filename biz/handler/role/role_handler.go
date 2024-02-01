@@ -4,157 +4,219 @@ package role
 
 import (
 	"context"
-	"hertz_admin/biz/dal/entity"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"hertz_admin/biz/model/api"
+	"hertz_admin/biz/model/menu"
+	"hertz_admin/gen/model"
+	"hertz_admin/gen/query"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	role "hertz_admin/biz/model/role"
 )
 
-// RoleList .
+// RoleList 查询角色列表
 // @router /role_list [POST]
 func RoleList(ctx context.Context, c *app.RequestContext) {
+	resp := new(role.RoleListResp)
 	var err error
 	var req role.RoleListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	roles, total, err := entity.QuerySysRole(&req.RoleName, req.PageNo, req.PageSize)
+	result, count, err := query.SysRole.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
+	//roles, total, err := entity.QuerySysRole(&req.RoleName, req.PageNo, req.PageSize)
+
+	if err != nil {
+		hlog.CtxErrorf(ctx, "查询角色列表异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
+	}
 
 	var list []*role.RoleListData
 
-	for _, item := range roles {
+	for _, item := range result {
 		list = append(list, &role.RoleListData{
-			Id:         item.Id,
-			CreateTime: item.GmtCreate.Format("2006-01-02 15:04:05"),
-			UpdateTime: item.GmtModified.Format("2006-01-02 15:04:05"),
-			StatusId:   item.StatusId,
+			Id:         item.ID,
+			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"),
+			StatusId:   item.StatusID,
 			Sort:       item.Sort,
 			RoleName:   item.RoleName,
 			Remark:     item.Remark,
 		})
 	}
 
-	c.JSON(200, role.RoleListResp{
-		Msg:      "successful",
-		Code:     0,
-		PageNo:   req.PageNo,
-		PageSize: req.PageSize,
-		Total:    total,
-		Data:     list,
-	})
+	resp.Code = api.Code_Success
+	resp.Msg = "查询角色列表成功"
+	resp.Data = list
+	resp.Total = count
+
+	hlog.CtxDebugf(ctx, "查询角色列表成功: %v", resp)
+	c.JSON(200, resp)
 }
 
-// RoleSave .
+// RoleSave 添加角色
 // @router /role_save [POST]
 func RoleSave(ctx context.Context, c *app.RequestContext) {
+	resp := new(role.RoleSaveResp)
 	var err error
 	var req role.RoleSaveReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.CreateSysRole([]entity.SysRole{{
-		GmtCreate:   time.Now(),
-		GmtModified: time.Time{},
-		StatusId:    0,
-		Sort:        0,
-		RoleName:    "",
-		Remark:      "",
-	},
+	err = query.SysRole.WithContext(ctx).Create(&model.SysRole{
+		RoleName:   req.RoleName,
+		StatusID:   req.StatusId,
+		Sort:       req.Sort,
+		Remark:     req.Remark,
+		CreateTime: time.Now(),
 	})
 
 	if err != nil {
-
+		hlog.CtxErrorf(ctx, "添加角色异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
 	}
 
-	resp := new(role.RoleSaveResp)
+	resp.Code = api.Code_Success
+	resp.Msg = "添加角色成功"
 
+	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
 	c.JSON(200, resp)
 }
 
 // RoleUpdate .
 // @router /role_update [POST]
 func RoleUpdate(ctx context.Context, c *app.RequestContext) {
+	resp := new(role.RoleUpdateResp)
 	var err error
 	var req role.RoleUpdateReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.UpdateSysRole(entity.SysRole{
-		Id:          req.Id,
-		GmtCreate:   time.Now(),
-		GmtModified: time.Time{},
-		StatusId:    0,
-		Sort:        0,
-		RoleName:    "",
-		Remark:      "",
+	sysRole := query.SysRole
+	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.Eq(req.Id)).First()
+	if err != nil {
+		hlog.CtxErrorf(ctx, "角色不存在: %v", err)
+		resp.Msg = "角色不存在"
+		resp.Code = api.Code_OtherErr
+
+		c.JSON(200, resp)
+		return
+	}
+
+	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.Eq(req.Id)).Updates(model.SysRole{
+		RoleName:   req.RoleName,
+		StatusID:   req.StatusId,
+		Sort:       req.Sort,
+		Remark:     req.Remark,
+		UpdateTime: time.Now(),
 	})
 
 	if err != nil {
-
+		hlog.CtxErrorf(ctx, "修改角色异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
+		return
 	}
-	resp := new(role.RoleUpdateResp)
 
+	resp.Msg = "修改角色成功"
+	resp.Code = api.Code_Success
+
+	hlog.CtxDebugf(ctx, "修改角色成功: %v", resp)
 	c.JSON(200, resp)
 }
 
-// RoleDelete .
+// RoleDelete 删除角色
 // @router /role_delete [POST]
 func RoleDelete(ctx context.Context, c *app.RequestContext) {
+	resp := new(role.RoleDeleteResp)
 	var err error
 	var req role.RoleDeleteReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	err = entity.DeleteSysUser(req.Ids)
+	sysRole := query.SysRole
+	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.In(req.Ids...)).Delete()
 	if err != nil {
+		hlog.CtxErrorf(ctx, "删除角色异常: %v", err)
+		resp.Msg = err.Error()
+		resp.Code = api.Code_DBErr
+		c.JSON(200, resp)
 		return
 	}
-	resp := new(role.RoleDeleteResp)
 
+	resp.Code = api.Code_Success
+	resp.Msg = "删除角色成功"
+
+	hlog.CtxDebugf(ctx, "删除角色成功: %v", resp)
 	c.JSON(200, resp)
 }
 
 // QueryRoleMenu .
 // @router /query_role_menu [POST]
 func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuSaveResp)
 	var err error
 	var req role.QueryRoleMenuReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	resp := new(role.QueryRoleMenuResp)
+	resp.Code = api.Code_Success
+	resp.Msg = "添加角色成功"
 
+	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
 	c.JSON(200, resp)
 }
 
 // UpdateRoleMenu .
 // @router /update_role_menu [POST]
 func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
+	resp := new(menu.MenuSaveResp)
 	var err error
 	var req role.UpdateRoleMenuReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(400, err.Error())
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(200, resp)
 		return
 	}
 
-	resp := new(role.UpdateRoleMenuResp)
+	resp.Code = api.Code_Success
+	resp.Msg = "添加角色成功"
 
+	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
 	c.JSON(200, resp)
 }

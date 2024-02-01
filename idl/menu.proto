@@ -7,31 +7,32 @@ option go_package = "menu";
 
 import "api.proto";
 
+
+
+
 //menu params start -----------
 message MenuListReq {
-  string MenuName = 1[(api.body) = "menu_name"];
 }
 
 message MenuListResp {
-  string Msg = 1;
-  int32 Code = 2;
-  int64 Total = 3;
-  repeated MenuListData data = 4;
+  string msg = 1;
+  api.Code code = 2;
+  repeated MenuListData data = 3;
 }
 
 message MenuListData {
-  int64 Id = 1;
-  string CreateTime = 2;
-  string UpdateTime = 3;
-  int32 StatusId = 4;
-  int32 Sort = 5;
-  int64 ParentId = 6;
-  string MenuName = 7;
-  string MenuUrl = 8;
-  string ApiUrl = 9;
-  string MenuIcon = 10;
-  string Remark = 11;
-  int32 MenuType = 12;
+  int64 id = 1;
+  string createTime = 2;
+  string updateTime = 3;
+  int32 statusId = 4;
+  int32 sort = 5;
+  int64 parentId = 6;
+  string menuName = 7;
+  string menuUrl = 8;
+  string apiUrl = 9;
+  string menuIcon = 10;
+  string remark = 11;
+  int32 menuType = 12;
 }
 
 message MenuSaveReq {
@@ -46,8 +47,8 @@ message MenuSaveReq {
   int32 MenuType = 9[(api.body) = "menu_type"];
 }
 message MenuSaveResp {
-  string Msg = 1;
-  int32 Code = 2;
+  string msg = 1;
+  api.Code code = 2;
 }
 
 message MenuUpdateReq {
@@ -65,7 +66,7 @@ message MenuUpdateReq {
 
 message MenuUpdateResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
 }
 message MenuDeleteReq {
   repeated int64 ids = 1[(api.body) = "ids"];
@@ -73,13 +74,13 @@ message MenuDeleteReq {
 
 message MenuDeleteResp {
   string Msg = 1;
-  int32 Code = 2;
+  api.Code code = 2;
 }
 //menu params end -----------
 service MenuHandler {
   //menu
   rpc MenuList(MenuListReq) returns(MenuListResp) {
-    option (api.post) = "/api/menu_list";
+    option (api.get) = "/api/menu_list";
   }
   rpc MenuSave(MenuSaveReq) returns(MenuSaveResp) {
     option (api.post) = "/api/menu_save";

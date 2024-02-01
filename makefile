@@ -42,7 +42,7 @@ restart: stop start ## 重启项目
 
 .DEFAULT_GOAL := all ## 默认构建目标是
 
-gen:	## 生成代码
+proto:	## 生成代码
 	$(HZ) update -idl idl/user.proto
 	$(HZ) update -idl idl/role.proto
 	$(HZ) update -idl idl/menu.proto

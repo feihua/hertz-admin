@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"hertz_admin/gen/query"
 	"time"
 )
 
@@ -22,6 +23,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	query.SetDefault(DB)
 }
 
 type Writer struct {
