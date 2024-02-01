@@ -9,6 +9,7 @@ require (
 	google.golang.org/protobuf v1.32.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.5.2
+	gorm.io/gen v0.3.25
 	gorm.io/gorm v1.25.6
 )
 
@@ -16,7 +17,12 @@ require (
 	github.com/andeya/ameda v1.5.3 // indirect
 	github.com/andeya/goutil v1.0.1 // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
+	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/tools v0.15.0 // indirect
+	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c // indirect
+	gorm.io/hints v1.1.0 // indirect
+	gorm.io/plugin/dbresolver v1.5.0 // indirect
 )
 
 require (

@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-var dsn = "root:oMbPi5munxCsBSsiLoPV@tcp(110.41.179.89:3306)/rustdb?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+var Dsn = "root:oMbPi5munxCsBSsiLoPV@tcp(110.41.179.89:3306)/rustdb?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
 
 var DB *gorm.DB
 
 func Init() {
 	var err error
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	DB, err = gorm.Open(mysql.Open(Dsn), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
 		Logger:                 settingLogConfig(),

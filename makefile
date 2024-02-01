@@ -47,7 +47,8 @@ gen:	## 生成代码
 	$(HZ) update -idl idl/role.proto
 	$(HZ) update -idl idl/menu.proto
 
-
+gorm: ## 生成dao
+	$(GOCMD) run ./cmd/generator.go
 
 image: ## 构建docker镜像
 	docker build -t hertz-admin:0.0.1 -f Dockerfile .
