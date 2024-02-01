@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"hertz_admin/cmd/model"
+	"hertz_admin/gen/model"
 )
 
 func newSysRole(db *gorm.DB, opts ...gen.DOOption) sysRole {
