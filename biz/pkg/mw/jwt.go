@@ -20,7 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hertz_admin/biz/dal/entity"
+	"hertz_admin/gen/query"
 	"net/http"
 	"time"
 
@@ -69,24 +69,27 @@ func InitJwt() {
 			if err := c.BindAndValidate(&loginStruct); err != nil {
 				return nil, err
 			}
-			sysUser, err := entity.QuerySysUserByMobile(loginStruct.Account)
+
+			userQuery := query.SysUser
+			sysUser, err := userQuery.WithContext(ctx).Where(userQuery.Mobile.Eq(loginStruct.Account)).First()
 			if err != nil {
 				return nil, err
 			}
-			if sysUser.Password != loginStruct.Password {
+			if *sysUser.Password != loginStruct.Password {
 				return nil, errors.New("密码不正确")
 			}
 
-			menus, _, err := entity.QuerySysMenu(nil, 1, 1000)
+			menus, err := query.SysMenu.WithContext(ctx).Find()
+			//menus, _, err := entity.QuerySysMenu(nil, 1, 1000)
 
 			var list []interface{}
 			for _, menu := range menus {
-				list = append(list, menu.ApiUrl)
+				list = append(list, menu.APIURL)
 			}
 
 			return &User{
-				Id:          float64(sysUser.Id),
-				Name:        sysUser.RealName,
+				Id:          float64(sysUser.ID),
+				Name:        sysUser.UserName,
 				Permissions: list,
 			}, nil
 		},
