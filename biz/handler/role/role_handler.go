@@ -5,6 +5,7 @@ package role
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"hertz_admin/biz/dal"
 	"hertz_admin/biz/model/api"
 	"hertz_admin/biz/model/menu"
 	"hertz_admin/gen/model"
@@ -30,8 +31,8 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	result, count, err := query.SysRole.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
-	//roles, total, err := entity.QuerySysRole(&req.RoleName, req.PageNo, req.PageSize)
+	//result, count, err := query.SysRole.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
+	result, count, err := dal.QueryRoleList(req.RoleName, req.PageNo, req.PageSize)
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "查询角色列表异常: %v", err)

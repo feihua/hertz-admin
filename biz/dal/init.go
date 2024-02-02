@@ -23,6 +23,8 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+
+	hlog.Debugf("mysql已连接")
 	query.SetDefault(DB)
 }
 
