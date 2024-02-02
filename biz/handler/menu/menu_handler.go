@@ -10,6 +10,7 @@ import (
 	"hertz_admin/biz/model/menu"
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
+	"net/http"
 	"time"
 )
 
@@ -23,7 +24,7 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -33,7 +34,7 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "查询菜单列表异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -42,8 +43,8 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	for _, item := range sysMenus {
 		list = append(list, &menu.MenuListData{
 			Id:         item.ID,
-			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
 			StatusId:   item.StatusID,
 			Sort:       item.Sort,
 			ParentId:   item.ParentID,
@@ -61,7 +62,7 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	resp.Data = list
 
 	hlog.CtxDebugf(ctx, "查询菜单列表成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // MenuSave 添加菜单
@@ -74,7 +75,7 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -96,7 +97,7 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "添加菜单异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -104,7 +105,7 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "添加菜单成功"
 
 	hlog.CtxDebugf(ctx, "添加菜单成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // MenuUpdate 修改菜单
@@ -117,7 +118,7 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -128,7 +129,7 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 		resp.Msg = "菜单不存在"
 		resp.Code = api.Code_OtherErr
 
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).Updates(model.SysMenu{
@@ -148,7 +149,7 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "修改菜单异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -156,7 +157,7 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 
 	hlog.CtxDebugf(ctx, "修改菜单成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // MenuDelete 删除菜单
@@ -169,7 +170,7 @@ func MenuDelete(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Msg = err.Error()
 		resp.Code = api.Code_ParamInvalid
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -179,7 +180,7 @@ func MenuDelete(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "删除菜单异常: %v", err)
 		resp.Msg = err.Error()
 		resp.Code = api.Code_DBErr
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -187,5 +188,5 @@ func MenuDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 
 	hlog.CtxDebugf(ctx, "删除菜单成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }

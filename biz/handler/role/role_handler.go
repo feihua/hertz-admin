@@ -9,10 +9,11 @@ import (
 	"hertz_admin/biz/model/menu"
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
+	"net/http"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	role "hertz_admin/biz/model/role"
+	"hertz_admin/biz/model/role"
 )
 
 // RoleList 查询角色列表
@@ -25,7 +26,7 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -36,7 +37,7 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "查询角色列表异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -45,8 +46,8 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 	for _, item := range result {
 		list = append(list, &role.RoleListData{
 			Id:         item.ID,
-			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
 			StatusId:   item.StatusID,
 			Sort:       item.Sort,
 			RoleName:   item.RoleName,
@@ -60,7 +61,7 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 	resp.Total = count
 
 	hlog.CtxDebugf(ctx, "查询角色列表成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // RoleSave 添加角色
@@ -73,7 +74,7 @@ func RoleSave(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -89,7 +90,7 @@ func RoleSave(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "添加角色异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -97,7 +98,7 @@ func RoleSave(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "添加角色成功"
 
 	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // RoleUpdate .
@@ -110,7 +111,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -121,7 +122,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 		resp.Msg = "角色不存在"
 		resp.Code = api.Code_OtherErr
 
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -137,7 +138,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "修改角色异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -145,7 +146,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 
 	hlog.CtxDebugf(ctx, "修改角色成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // RoleDelete 删除角色
@@ -158,7 +159,7 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -168,7 +169,7 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "删除角色异常: %v", err)
 		resp.Msg = err.Error()
 		resp.Code = api.Code_DBErr
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -176,7 +177,7 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "删除角色成功"
 
 	hlog.CtxDebugf(ctx, "删除角色成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // QueryRoleMenu .
@@ -189,7 +190,7 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -197,7 +198,7 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "添加角色成功"
 
 	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateRoleMenu .
@@ -210,7 +211,7 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -218,5 +219,5 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "添加角色成功"
 
 	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }

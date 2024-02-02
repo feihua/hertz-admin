@@ -8,10 +8,11 @@ import (
 	"hertz_admin/biz/model/api"
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
+	"net/http"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	user "hertz_admin/biz/model/user"
+	"hertz_admin/biz/model/user"
 )
 
 // QueryUserMenu .
@@ -24,11 +25,11 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // UserList .
@@ -41,7 +42,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -52,7 +53,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "查询用户列表异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -66,8 +67,8 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 			Mobile:     item.Mobile,
 			UserName:   item.UserName,
 			Remark:     *item.Remark,
-			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
 		})
 	}
 
@@ -77,7 +78,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	resp.Total = count
 
 	hlog.CtxDebugf(ctx, "查询用户列表成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // UserSave .
@@ -90,7 +91,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -108,7 +109,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "添加用户异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -116,7 +117,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "添加用户成功"
 
 	hlog.CtxDebugf(ctx, "添加用户成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // UserUpdate .
@@ -129,7 +130,7 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -140,7 +141,7 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 		resp.Msg = "用户不存在"
 		resp.Code = api.Code_OtherErr
 
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -157,7 +158,7 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "修改用户异常: %v", err)
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -165,7 +166,7 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 
 	hlog.CtxDebugf(ctx, "修改用户成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // UserDelete 删除用户
@@ -178,7 +179,7 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -188,7 +189,7 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxErrorf(ctx, "删除用户异常: %v", err)
 		resp.Msg = err.Error()
 		resp.Code = api.Code_DBErr
-		c.JSON(200, resp)
+		c.JSON(http.StatusOK, resp)
 		return
 	}
 
@@ -196,5 +197,5 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "删除用户成功"
 
 	hlog.CtxDebugf(ctx, "删除用户成功: %v", resp)
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
