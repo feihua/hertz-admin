@@ -16,20 +16,20 @@ message RoleListReq {
 }
 
 message RoleListResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
   int64 Total = 3;
   repeated RoleListData data = 4;
 }
 
 message RoleListData {
-  int64 Id = 1;
-  string CreateTime = 2;
-  string UpdateTime = 3;
-  int32 StatusId = 4;
-  int32 Sort = 5;
-  string RoleName = 6;
-  string Remark = 7;
+  int64 id = 1;
+  string createTime = 2;
+  string updateTime = 3;
+  int32 statusId = 4;
+  int32 sort = 5;
+  string roleName = 6;
+  string remark = 7;
 }
 
 message RoleSaveReq {
@@ -39,7 +39,7 @@ message RoleSaveReq {
   string Remark = 4[(api.body) = "remark"];
 }
 message RoleSaveResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 
@@ -52,7 +52,7 @@ message RoleUpdateReq {
 }
 
 message RoleUpdateResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 message RoleDeleteReq {
@@ -60,7 +60,7 @@ message RoleDeleteReq {
 }
 
 message RoleDeleteResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 message QueryRoleMenuReq {
@@ -68,7 +68,7 @@ message QueryRoleMenuReq {
 }
 
 message QueryRoleMenuResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
   QueryRoleMenuData data = 3;
 }
@@ -91,7 +91,7 @@ message UpdateRoleMenuReq {
   int64 RoleId = 2;
 }
 message UpdateRoleMenuResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 

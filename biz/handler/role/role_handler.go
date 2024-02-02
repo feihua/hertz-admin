@@ -190,7 +190,7 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 
 	ids := req.Ids
 	//角色id为1的是超级管理员,不能删除
-	if contains(ids, 1) {
+	if Contains(ids, 1) {
 		hlog.CtxErrorf(ctx, "超级管理员,不能删除: %v", ids)
 		resp.Msg = "超级管理员,不能删除"
 		resp.Code = api.Code_OtherErr
@@ -215,8 +215,8 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// 判断是否包含某值
-func contains(s []int64, target int64) bool {
+// Contains 判断是否包含某值
+func Contains(s []int64, target int64) bool {
 	for _, v := range s {
 		if v == target {
 			return true
@@ -252,14 +252,14 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 	var roleMenu []int64
 	menuList := make([]*role.MenuDataList, 0)
 
-	for _, sysMenu := range sysMenus {
-		roleMenu = append(roleMenu, sysMenu.ID)
+	for _, item := range sysMenus {
+		roleMenu = append(roleMenu, item.ID)
 		menuList = append(menuList, &role.MenuDataList{
-			Id:       sysMenu.ID,
-			ParentId: sysMenu.ParentID,
-			Title:    sysMenu.MenuName,
-			Key:      strconv.FormatInt(sysMenu.ID, 10),
-			Label:    sysMenu.MenuName,
+			Id:       item.ID,
+			ParentId: item.ParentID,
+			Title:    item.MenuName,
+			Key:      strconv.FormatInt(item.ID, 10),
+			Label:    item.MenuName,
 		})
 	}
 
@@ -268,13 +268,13 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 
 		menus, _ := rm.WithContext(ctx).Select(rm.MenuID).Where(rm.RoleID.Eq(req.RoleId)).Find()
 
-		var roleMenuIds []int64
+		var menuIds []int64
 		for _, m := range menus {
-			roleMenuIds = append(roleMenuIds, m.MenuID)
+			menuIds = append(menuIds, m.MenuID)
 		}
 
 		//重新赋值
-		roleMenu = roleMenuIds
+		roleMenu = menuIds
 	}
 
 	data := &role.QueryRoleMenuData{
@@ -311,8 +311,9 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	roleMenu := query.SysRoleMenu
 	//根据角色id删除关联
-	_, err = query.SysRoleMenu.WithContext(ctx).Where(query.SysRoleMenu.RoleID.Eq(req.RoleId)).Delete()
+	_, err = roleMenu.WithContext(ctx).Where(roleMenu.RoleID.Eq(req.RoleId)).Delete()
 	if err != nil {
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()
@@ -333,7 +334,7 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	}
 
 	//批量添加
-	err = query.SysRoleMenu.WithContext(ctx).CreateInBatches(sysRoleMenus, len(req.MenuIds))
+	err = roleMenu.WithContext(ctx).CreateInBatches(sysRoleMenus, len(req.MenuIds))
 	if err != nil {
 		resp.Code = api.Code_DBErr
 		resp.Msg = err.Error()

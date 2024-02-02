@@ -5,6 +5,8 @@ package user
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"hertz_admin/biz/dal"
+	"hertz_admin/biz/handler/role"
 	"hertz_admin/biz/model/api"
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
@@ -14,23 +16,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"hertz_admin/biz/model/user"
 )
-
-// QueryUserMenu .
-// @router /query_user_menu [POST]
-func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
-	resp := new(user.QueryUserMenuResp)
-	var err error
-	var req user.QueryUserMenuReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		resp.Code = api.Code_ParamInvalid
-		resp.Msg = err.Error()
-		c.JSON(http.StatusOK, resp)
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}
 
 // UserList .
 // @router /user_list [POST]
@@ -46,8 +31,8 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	result, count, err := query.SysUser.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
-	//users, total, err := entity.QuerySysUser(nil, req.PageNo, req.PageSize)
+	//result, count, err := query.SysUser.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
+	result, count, err := dal.QueryUserList(req.UserName, req.Mobile, req.PageNo, req.PageSize)
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "查询用户列表异常: %v", err)
@@ -81,7 +66,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UserSave .
+// UserSave 添加用户
 // @router /user_save [POST]
 func UserSave(ctx context.Context, c *app.RequestContext) {
 	resp := new(user.UserSaveResp)
@@ -95,10 +80,33 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	err = query.SysUser.WithContext(ctx).Create(&model.SysUser{
+	//判断用户名称或者手机号是否已存在
+	u := query.SysUser
+	count, err := u.WithContext(ctx).Where(u.Mobile.Eq(req.Mobile)).Or(u.UserName.Eq(req.UserName)).Count()
+	if err != nil {
+		hlog.CtxErrorf(ctx, "根据用户名称或者手机号查询异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	if count > 0 {
+		hlog.CtxErrorf(ctx, "用户名称或者手机号已存在: %v", req.Mobile)
+		resp.Code = api.Code_OtherErr
+		resp.Msg = "用户名称或者手机号已存在"
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//默认的密码为123456
+	var defaultPassword = "123456"
+
+	//添加用户
+	err = u.WithContext(ctx).Create(&model.SysUser{
 		Mobile:     req.Mobile,
 		UserName:   req.UserName,
-		Password:   nil,
+		Password:   &defaultPassword,
 		StatusID:   req.StatusID,
 		Sort:       req.Sort,
 		Remark:     &req.Remark,
@@ -120,7 +128,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UserUpdate .
+// UserUpdate 更新用户信息
 // @router /user_update [POST]
 func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	resp := new(user.UserUpdateResp)
@@ -130,6 +138,15 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		resp.Code = api.Code_ParamInvalid
 		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//判断是否为管理员
+	if req.Id == 1 {
+		hlog.CtxErrorf(ctx, "超级管理员,不能修改: %v", req.Id)
+		resp.Msg = "超级管理员,不能修改"
+		resp.Code = api.Code_OtherErr
 		c.JSON(http.StatusOK, resp)
 		return
 	}
@@ -183,6 +200,14 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	if role.Contains(req.Ids, 1) {
+		hlog.CtxErrorf(ctx, "超级管理员,不能删除: %v", req.Ids)
+		resp.Msg = "超级管理员,不能删除"
+		resp.Code = api.Code_OtherErr
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
 	sysUser := query.SysUser
 	_, err = sysUser.WithContext(ctx).Where(sysUser.ID.In(req.Ids...)).Delete()
 	if err != nil {
@@ -197,5 +222,148 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "删除用户成功"
 
 	hlog.CtxDebugf(ctx, "删除用户成功: %v", resp)
+	c.JSON(http.StatusOK, resp)
+}
+
+// QueryUserMenu .
+// @router /query_user_menu [POST]
+func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
+	resp := new(user.QueryUserMenuResp)
+	var err error
+	var req user.QueryUserMenuReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// QueryUserRole .
+// @router /api/query_user_role [POST]
+func QueryUserRole(ctx context.Context, c *app.RequestContext) {
+	resp := new(user.QueryUserRoleResp)
+	var err error
+	var req user.QueryUserRoleReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//查询所有角色
+	roles, err := query.SysRole.WithContext(ctx).Find()
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//默认查询的是所有的
+	var userRoleIds []int64
+	roleList := make([]*user.UserRoleList, 0)
+
+	for _, item := range roles {
+		userRoleIds = append(userRoleIds, item.ID)
+		roleList = append(roleList, &user.UserRoleList{
+			Id:         item.ID,
+			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			StatusId:   item.StatusID,
+			Sort:       item.Sort,
+			RoleName:   item.RoleName,
+			Remark:     item.Remark,
+		})
+	}
+
+	if req.UserId != 1 {
+		rm := query.SysUserRole
+
+		sysRoles, _ := rm.WithContext(ctx).Select(rm.RoleID).Where(rm.UserID.Eq(req.UserId)).Find()
+
+		var roleIds []int64
+		for _, m := range sysRoles {
+			roleIds = append(roleIds, m.RoleID)
+		}
+
+		//重新赋值
+		userRoleIds = roleIds
+	}
+
+	data := &user.QueryUserRoleData{
+		SysRoleList: roleList,
+		UserRoleIds: userRoleIds,
+	}
+
+	resp.Code = api.Code_Success
+	resp.Msg = "查询用户角色成功"
+	resp.Data = data
+
+	hlog.CtxDebugf(ctx, "查询用户角色成功: %v", resp)
+	c.JSON(http.StatusOK, resp)
+}
+
+// UpdateUserRole .
+// @router /api/update_user_role [POST]
+func UpdateUserRole(ctx context.Context, c *app.RequestContext) {
+	resp := new(user.UpdateUserRoleResp)
+	var err error
+	var req user.UpdateUserRoleReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = api.Code_ParamInvalid
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	if req.UserId == 1 {
+		resp.Code = api.Code_OtherErr
+		resp.Msg = "不能修改超级管理员的角色"
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	userRole := query.SysUserRole
+	//根据用户id删除关联
+	_, err = userRole.WithContext(ctx).Where(userRole.UserID.Eq(req.UserId)).Delete()
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//组装批量数据
+	userRoles := make([]*model.SysUserRole, 0)
+	for _, roleId := range req.RoleIds {
+		userRoles = append(userRoles, &model.SysUserRole{
+			UserID:     req.UserId,
+			RoleID:     roleId,
+			StatusID:   0,
+			Sort:       0,
+			CreateTime: time.Now(),
+		})
+	}
+
+	//批量添加
+	err = userRole.WithContext(ctx).CreateInBatches(userRoles, len(req.RoleIds))
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	resp.Code = api.Code_Success
+	resp.Msg = "分配角色成功"
+
+	hlog.CtxDebugf(ctx, "分配角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }

@@ -65,7 +65,7 @@ message MenuUpdateReq {
 }
 
 message MenuUpdateResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 message MenuDeleteReq {
@@ -73,7 +73,7 @@ message MenuDeleteReq {
 }
 
 message MenuDeleteResp {
-  string Msg = 1;
+  string msg = 1;
   api.Code code = 2;
 }
 //menu params end -----------

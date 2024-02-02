@@ -1,9 +1,14 @@
 package dal
 
+/*
+Author: LiuFeiHua
+Date: 2024/2/2 下午5:07
+*/
 import (
 	"hertz_admin/gen/model"
 )
 
+// QueryRoleList 查询角色列表
 func QueryRoleList(roleName string, page, pageSize int64) ([]model.SysRole, int64, error) {
 	db := DB.Model(&model.SysRole{})
 	if len(roleName) != 0 {
