@@ -19,14 +19,14 @@ import (
 )
 
 func main() {
+	if initLog() {
+		return
+	}
+
 	dal.Init()
 	mw.InitJwt()
 	//h := server.Default()
 	h := server.New(server.WithHostPorts("0.0.0.0:6666"))
-
-	if initLog() {
-		return
-	}
 
 	register(h)
 	h.Spin()
