@@ -11,6 +11,7 @@ import (
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -31,6 +32,7 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//查询角色
 	//result, count, err := query.SysRole.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
 	result, count, err := dal.QueryRoleList(req.RoleName, req.PageNo, req.PageSize)
 
@@ -42,6 +44,7 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//返回数据
 	var list []*role.RoleListData
 
 	for _, item := range result {
@@ -79,6 +82,25 @@ func RoleSave(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//判断角色名称是否已存在
+	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.RoleName.Eq(req.RoleName)).Count()
+	if err != nil {
+		hlog.CtxErrorf(ctx, "根据角色名称查询异常: %v", err)
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	if count > 0 {
+		hlog.CtxErrorf(ctx, "角色名称已存在: %v", req.RoleName)
+		resp.Code = api.Code_OtherErr
+		resp.Msg = "角色名称已存在"
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//添加角色
 	err = query.SysRole.WithContext(ctx).Create(&model.SysRole{
 		RoleName:   req.RoleName,
 		StatusID:   req.StatusId,
@@ -116,6 +138,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//查询角色是否存在
 	sysRole := query.SysRole
 	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.Eq(req.Id)).First()
 	if err != nil {
@@ -127,6 +150,7 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//更新角色
 	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.Eq(req.Id)).Updates(model.SysRole{
 		RoleName:   req.RoleName,
 		StatusID:   req.StatusId,
@@ -164,8 +188,18 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	ids := req.Ids
+	//角色id为1的是超级管理员,不能删除
+	if contains(ids, 1) {
+		hlog.CtxErrorf(ctx, "超级管理员,不能删除: %v", ids)
+		resp.Msg = "超级管理员,不能删除"
+		resp.Code = api.Code_OtherErr
+		c.JSON(http.StatusOK, resp)
+		return
+	}
 	sysRole := query.SysRole
-	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.In(req.Ids...)).Delete()
+	//删除角色
+	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.In(ids...)).Delete()
 	if err != nil {
 		hlog.CtxErrorf(ctx, "删除角色异常: %v", err)
 		resp.Msg = err.Error()
@@ -181,10 +215,20 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// 判断是否包含某值
+func contains(s []int64, target int64) bool {
+	for _, v := range s {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
+
 // QueryRoleMenu .
 // @router /query_role_menu [POST]
 func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
-	resp := new(menu.MenuSaveResp)
+	resp := new(role.QueryRoleMenuResp)
 	var err error
 	var req role.QueryRoleMenuReq
 	err = c.BindAndValidate(&req)
@@ -195,14 +239,58 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Code = api.Code_Success
-	resp.Msg = "添加角色成功"
+	//查询所有菜单
+	sysMenus, err := query.SysMenu.WithContext(ctx).Find()
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
 
-	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
+	//默认查询的是所有的
+	var roleMenu []int64
+	menuList := make([]*role.MenuDataList, 0)
+
+	for _, sysMenu := range sysMenus {
+		roleMenu = append(roleMenu, sysMenu.ID)
+		menuList = append(menuList, &role.MenuDataList{
+			Id:       sysMenu.ID,
+			ParentId: sysMenu.ParentID,
+			Title:    sysMenu.MenuName,
+			Key:      strconv.FormatInt(sysMenu.ID, 10),
+			Label:    sysMenu.MenuName,
+		})
+	}
+
+	if req.RoleId != 1 {
+		rm := query.SysRoleMenu
+
+		menus, _ := rm.WithContext(ctx).Select(rm.MenuID).Where(rm.RoleID.Eq(req.RoleId)).Find()
+
+		var roleMenuIds []int64
+		for _, m := range menus {
+			roleMenuIds = append(roleMenuIds, m.MenuID)
+		}
+
+		//重新赋值
+		roleMenu = roleMenuIds
+	}
+
+	data := &role.QueryRoleMenuData{
+		RoleMenu: roleMenu,
+		MenuList: menuList,
+	}
+
+	resp.Code = api.Code_Success
+	resp.Msg = "查询角色菜单成功"
+	resp.Data = data
+
+	hlog.CtxDebugf(ctx, "查询角色菜单成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
-// UpdateRoleMenu .
+// UpdateRoleMenu 更新角色与菜单的关联
 // @router /update_role_menu [POST]
 func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	resp := new(menu.MenuSaveResp)
@@ -216,9 +304,46 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Code = api.Code_Success
-	resp.Msg = "添加角色成功"
+	if req.RoleId == 1 {
+		resp.Code = api.Code_OtherErr
+		resp.Msg = "不能修改超级管理员的权限"
+		c.JSON(http.StatusOK, resp)
+		return
+	}
 
-	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
+	//根据角色id删除关联
+	_, err = query.SysRoleMenu.WithContext(ctx).Where(query.SysRoleMenu.RoleID.Eq(req.RoleId)).Delete()
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//组装批量数据
+	sysRoleMenus := make([]*model.SysRoleMenu, 0)
+	for _, menuId := range req.MenuIds {
+		sysRoleMenus = append(sysRoleMenus, &model.SysRoleMenu{
+			RoleID:     req.RoleId,
+			MenuID:     menuId,
+			StatusID:   0,
+			Sort:       0,
+			CreateTime: time.Now(),
+		})
+	}
+
+	//批量添加
+	err = query.SysRoleMenu.WithContext(ctx).CreateInBatches(sysRoleMenus, len(req.MenuIds))
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	resp.Code = api.Code_Success
+	resp.Msg = "分配权限成功"
+
+	hlog.CtxDebugf(ctx, "分配权限成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }

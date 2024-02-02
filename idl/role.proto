@@ -64,30 +64,31 @@ message RoleDeleteResp {
   api.Code code = 2;
 }
 message QueryRoleMenuReq {
-  string RoleId = 1[(api.body) = "role_id"];
+  int64 RoleId = 1[(api.body) = "role_id"];
 }
 
 message QueryRoleMenuResp {
   string Msg = 1;
   api.Code code = 2;
-  repeated QueryRoleMenuData data = 3;
+  QueryRoleMenuData data = 3;
 }
 
 message QueryRoleMenuData {
-  repeated int32 RoleMenu = 1;
+  repeated int64 RoleMenu = 1;
   repeated MenuDataList MenuList = 2;
 }
 
 message MenuDataList {
-  int32 Id = 1;
-  int32 ParentId = 2;
+  int64 Id = 1;
+  int64 ParentId = 2;
   string Title = 3;
   string Key = 4;
+  string Label = 5;
 }
 
 message UpdateRoleMenuReq {
-  repeated int32 MenuIds = 1;
-  int32 RoleId = 2;
+  repeated int64 MenuIds = 1;
+  int64 RoleId = 2;
 }
 message UpdateRoleMenuResp {
   string Msg = 1;
