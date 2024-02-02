@@ -69,7 +69,7 @@ message MenuUpdateResp {
   api.Code code = 2;
 }
 message MenuDeleteReq {
-  repeated int64 ids = 1[(api.body) = "ids"];
+  int64 id = 1[(api.body) = "id"];
 }
 
 message MenuDeleteResp {

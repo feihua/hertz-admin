@@ -28,6 +28,7 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//查询所有菜单
 	sysMenus, err := query.SysMenu.WithContext(ctx).Find()
 
 	if err != nil {
@@ -38,6 +39,7 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//返回列表
 	var list []*menu.MenuListData
 
 	for _, item := range sysMenus {
@@ -79,8 +81,8 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	sysMenu := query.SysMenu
-	err = sysMenu.WithContext(ctx).Create(&model.SysMenu{
+	//添加菜单
+	err = query.SysMenu.WithContext(ctx).Create(&model.SysMenu{
 		MenuName:   req.MenuName,
 		MenuType:   req.MenuType,
 		StatusID:   req.StatusId,
@@ -122,6 +124,7 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	//判断菜单是否存在
 	sysMenu := query.SysMenu
 	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).First()
 	if err != nil {
@@ -132,6 +135,8 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 		c.JSON(http.StatusOK, resp)
 		return
 	}
+
+	//更新菜单
 	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).Updates(model.SysMenu{
 		MenuName:   req.MenuName,
 		MenuType:   req.MenuType,
@@ -175,7 +180,18 @@ func MenuDelete(ctx context.Context, c *app.RequestContext) {
 	}
 
 	sysMenu := query.SysMenu
-	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.In(req.Ids...)).Delete()
+	//判断是否有子菜单,有则不能删除
+	count, err := sysMenu.WithContext(ctx).Where(sysMenu.ParentID.In(req.Id)).Count()
+	if count > 0 {
+		hlog.CtxErrorf(ctx, "有子菜单,不能删除: %d", req.Id)
+		resp.Msg = "有子菜单,不能删除"
+		resp.Code = api.Code_OtherErr
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	//删除菜单
+	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).Delete()
 	if err != nil {
 		hlog.CtxErrorf(ctx, "删除菜单异常: %v", err)
 		resp.Msg = err.Error()
