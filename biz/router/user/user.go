@@ -21,7 +21,7 @@ func Register(r *server.Hertz) {
 		_api := root.Group("/api", _apiMw()...)
 		{
 			_user := _api.Group("/user", _userMw()...)
-			_user.POST("/query_user_menu", append(_queryusermenuMw(), user.QueryUserMenu)...)
+			_user.GET("/query_user_menu", append(_queryusermenuMw(), user.QueryUserMenu)...)
 			_user.POST("/query_user_role", append(_queryuserroleMw(), user.QueryUserRole)...)
 			_user.POST("/update_user_role", append(_updateuserroleMw(), user.UpdateUserRole)...)
 			_user.POST("/user_delete", append(_userdeleteMw(), user.UserDelete)...)

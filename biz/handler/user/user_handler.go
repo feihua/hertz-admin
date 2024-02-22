@@ -43,6 +43,10 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	var list []*user.UserListData
 
 	for _, item := range result {
+		var updateTime string
+		if item.UpdateTime != nil {
+			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+		}
 		list = append(list, &user.UserListData{
 			Id:         item.ID,
 			StatusId:   item.StatusID,
@@ -51,7 +55,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 			UserName:   item.UserName,
 			Remark:     *item.Remark,
 			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: updateTime,
 		})
 	}
 
@@ -252,6 +256,7 @@ func QueryUserRole(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	hlog.CtxDebugf(ctx, "userid: %d", req.UserId)
 	//查询所有角色
 	roles, err := query.SysRole.WithContext(ctx).Find()
 	if err != nil {
@@ -267,10 +272,14 @@ func QueryUserRole(ctx context.Context, c *app.RequestContext) {
 
 	for _, item := range roles {
 		userRoleIds = append(userRoleIds, item.ID)
+		var updateTime string
+		if item.UpdateTime != nil {
+			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+		}
 		roleList = append(roleList, &user.UserRoleList{
 			Id:         item.ID,
 			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: updateTime,
 			StatusId:   item.StatusID,
 			Sort:       item.Sort,
 			RoleName:   item.RoleName,

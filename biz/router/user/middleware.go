@@ -57,3 +57,8 @@ func _userupdateMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _query_user_roleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

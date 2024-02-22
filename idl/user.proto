@@ -8,7 +8,7 @@ import "api.proto";
 
 //user params start -----------
 message QueryUserRoleReq {
-  int64 userId = 1[(api.query) = "user_id"];
+  int64 UserId = 1[(api.body) = "user_id"];
 }
 
 message QueryUserRoleResp {
@@ -142,7 +142,7 @@ service UserHandler {
   }
   //user
   rpc QueryUserMenu(QueryUserMenuReq) returns(QueryUserMenuResp) {
-    option (api.post) = "/api/user/query_user_menu";
+    option (api.get) = "/api/user/query_user_menu";
   }
   //查询用户的角色
   rpc QueryUserRole(QueryUserRoleReq) returns(QueryUserRoleResp) {

@@ -42,10 +42,14 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	var list []*menu.MenuListData
 
 	for _, item := range sysMenus {
+		var updateTime string
+		if item.UpdateTime != nil {
+			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+		}
 		list = append(list, &menu.MenuListData{
 			Id:         item.ID,
 			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
-			UpdateTime: item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			UpdateTime: updateTime,
 			StatusId:   item.StatusID,
 			Sort:       item.Sort,
 			ParentId:   item.ParentID,
