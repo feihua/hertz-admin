@@ -36,7 +36,7 @@ var (
 )
 
 type User struct {
-	Id          float64
+	Id          int64
 	Name        string
 	Permissions []interface{}
 }
@@ -88,7 +88,7 @@ func InitJwt() {
 			}
 
 			return &User{
-				Id:          float64(sysUser.ID),
+				Id:          sysUser.ID,
 				Name:        sysUser.UserName,
 				Permissions: list,
 			}, nil
@@ -105,14 +105,15 @@ func InitJwt() {
 				}
 			}
 
-			//ctx.Request.Header.Add("hertz1", "value1")
+			c.Request.Header.Add("userId", fmt.Sprintf("%d", user.Id))
+			c.Request.Header.Add("userName", user.Name)
 			return flag
 		},
 		IdentityKey: IdentityKey,
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
 			return &User{
-				Id:          claims[IdentityKey].(float64),
+				Id:          int64(claims[IdentityKey].(float64)),
 				Name:        claims["name"].(string),
 				Permissions: claims["permissions"].([]interface{}),
 			}

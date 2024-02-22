@@ -222,7 +222,7 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 }
 
 // QueryUserMenu .
-// @router /query_user_menu [POST]
+// @router /query_user_menu [GET]
 func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 	resp := new(user.QueryUserMenuResp)
 	var err error
@@ -234,6 +234,52 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 		c.JSON(http.StatusOK, resp)
 		return
 	}
+
+	sysMenuList := make([]*model.SysMenu, 0)
+	if req.UserId == 1 {
+		//查询所有菜单
+		sysMenuList, err = query.SysMenu.WithContext(ctx).Find()
+	} else {
+		sysMenuList, err = dal.QueryUserMenuList(req.UserId)
+	}
+
+	if err != nil {
+		resp.Code = api.Code_DBErr
+		resp.Msg = err.Error()
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	menuList := make([]*user.UserMenuList, 0)
+	var path []string
+
+	for _, item := range sysMenuList {
+		menuList = append(menuList, &user.UserMenuList{
+			Id:       int32(item.ID),
+			ParentId: int32(item.ParentID),
+			Name:     item.MenuName,
+			Path:     *item.MenuURL,
+			ApiUrl:   *item.APIURL,
+			MenuType: item.MenuType,
+			Icon:     *item.MenuIcon,
+		})
+
+		if *item.APIURL != "" {
+			path = append(path, *item.APIURL)
+		}
+
+	}
+
+	data := &user.QueryUserMenuData{
+		SysMenu: menuList,
+		BtnMenu: path,
+		Avatar:  "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+		Name:    req.UserName,
+	}
+
+	resp.Code = api.Code_Success
+	resp.Msg = "查询用户菜单成功"
+	resp.Data = data
 
 	c.JSON(http.StatusOK, resp)
 }

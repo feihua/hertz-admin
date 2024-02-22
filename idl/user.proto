@@ -40,7 +40,8 @@ message UpdateUserRoleResp {
 }
 
 message QueryUserMenuReq {
-  string token = 1[(api.query) = "token"];
+  int64 userId = 1[(api.header) = "userId"];
+  string userName= 2[(api.header) = "userName"];
 }
 
 message QueryUserMenuResp {

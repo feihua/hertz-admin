@@ -5,6 +5,7 @@ Author: LiuFeiHua
 Date: 2024/2/2 下午5:08
 */
 import (
+	"errors"
 	"hertz_admin/gen/model"
 )
 
@@ -27,4 +28,23 @@ func QueryUserList(userName, mobile string, page, pageSize int64) ([]model.SysUs
 		return nil, 0, err
 	}
 	return res, total, nil
+}
+
+// QueryUserMenuList 查询用户菜单列表
+func QueryUserMenuList(userId int64) ([]*model.SysMenu, error) {
+
+	sql := `select u.*
+from sys_user_role t
+         left join sys_role usr on t.role_id = usr.id
+         left join sys_role_menu srm on usr.id = srm.role_id
+         left join sys_menu u on srm.menu_id = u.id
+where t.user_id = ?`
+	var res []*model.SysMenu
+	DB.Raw(sql, userId).Scan(&res)
+
+	if res == nil {
+		return res, errors.New("用户还没有分配权限")
+	}
+
+	return res, nil
 }
