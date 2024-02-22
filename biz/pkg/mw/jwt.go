@@ -104,6 +104,8 @@ func InitJwt() {
 					break
 				}
 			}
+
+			//ctx.Request.Header.Add("hertz1", "value1")
 			return flag
 		},
 		IdentityKey: IdentityKey,

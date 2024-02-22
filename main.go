@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"hertz_admin/biz/dal"
+	"hertz_admin/biz/handler"
 	"hertz_admin/biz/pkg/mw"
 	"io"
 	"log"
@@ -28,6 +29,8 @@ func main() {
 	//h := server.Default()
 	h := server.New(server.WithHostPorts("0.0.0.0:6666"))
 
+	auth := h.Group("/auth", mw.JwtMiddleware.MiddlewareFunc())
+	auth.GET("/ping", handler.Ping)
 	register(h)
 	h.Spin()
 }

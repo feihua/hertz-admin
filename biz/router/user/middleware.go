@@ -4,6 +4,7 @@ package user
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"hertz_admin/biz/pkg/mw"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -13,7 +14,9 @@ func rootMw() []app.HandlerFunc {
 
 func _apiMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	var hf []app.HandlerFunc
+	hf = append(hf, mw.JwtMiddleware.MiddlewareFunc())
+	return hf
 }
 
 func _queryusermenuMw() []app.HandlerFunc {
