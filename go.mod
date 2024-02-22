@@ -18,6 +18,7 @@ require (
 	github.com/andeya/ameda v1.5.3 // indirect
 	github.com/andeya/goutil v1.0.1 // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
+	github.com/hertz-contrib/logger/accesslog v0.0.0-20240128134225-6b18af47a115 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

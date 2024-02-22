@@ -66,7 +66,6 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "查询菜单列表成功"
 	resp.Data = list
 
-	hlog.CtxDebugf(ctx, "查询菜单列表成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -108,7 +107,6 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "添加菜单成功"
 
-	hlog.CtxDebugf(ctx, "添加菜单成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -162,7 +160,6 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "修改菜单成功"
 	resp.Code = api.Code_Success
 
-	hlog.CtxDebugf(ctx, "修改菜单成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -204,6 +201,5 @@ func MenuDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "删除菜单成功"
 	resp.Code = api.Code_Success
 
-	hlog.CtxDebugf(ctx, "删除菜单成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }

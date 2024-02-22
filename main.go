@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/logger/accesslog"
 	hertzzap "github.com/hertz-contrib/logger/zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -26,7 +27,11 @@ func main() {
 	dal.Init()
 	mw.InitJwt()
 	//h := server.Default()
-	h := server.New(server.WithHostPorts("0.0.0.0:6666"))
+	h := server.New(server.WithHostPorts(":6666"))
+
+	h.Use(accesslog.New(
+		accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${url} ${queryParams} ${body} ${resBody}")),
+	)
 
 	register(h)
 	h.Spin()

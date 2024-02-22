@@ -68,7 +68,6 @@ func RoleList(ctx context.Context, c *app.RequestContext) {
 	resp.Data = list
 	resp.Total = count
 
-	hlog.CtxDebugf(ctx, "查询角色列表成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -124,7 +123,6 @@ func RoleSave(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "添加角色成功"
 
-	hlog.CtxDebugf(ctx, "添加角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -173,7 +171,6 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "修改角色成功"
 	resp.Code = api.Code_Success
 
-	hlog.CtxDebugf(ctx, "修改角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -214,7 +211,6 @@ func RoleDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "删除角色成功"
 
-	hlog.CtxDebugf(ctx, "删除角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -289,7 +285,6 @@ func QueryRoleMenu(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "查询角色菜单成功"
 	resp.Data = data
 
-	hlog.CtxDebugf(ctx, "查询角色菜单成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -345,6 +340,5 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "分配权限成功"
 
-	hlog.CtxDebugf(ctx, "分配权限成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }

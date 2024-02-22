@@ -64,7 +64,6 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	resp.Data = list
 	resp.Total = count
 
-	hlog.CtxDebugf(ctx, "查询用户列表成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -125,7 +124,6 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "添加用户成功"
 
-	hlog.CtxDebugf(ctx, "添加用户成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -182,7 +180,6 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "修改用户成功"
 	resp.Code = api.Code_Success
 
-	hlog.CtxDebugf(ctx, "修改用户成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -221,7 +218,6 @@ func UserDelete(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "删除用户成功"
 
-	hlog.CtxDebugf(ctx, "删除用户成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -256,7 +252,6 @@ func QueryUserRole(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	hlog.CtxDebugf(ctx, "userid: %d", req.UserId)
 	//查询所有角色
 	roles, err := query.SysRole.WithContext(ctx).Find()
 	if err != nil {
@@ -310,7 +305,6 @@ func QueryUserRole(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = "查询用户角色成功"
 	resp.Data = data
 
-	hlog.CtxDebugf(ctx, "查询用户角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -366,6 +360,5 @@ func UpdateUserRole(ctx context.Context, c *app.RequestContext) {
 	resp.Code = api.Code_Success
 	resp.Msg = "分配角色成功"
 
-	hlog.CtxDebugf(ctx, "分配角色成功: %v", resp)
 	c.JSON(http.StatusOK, resp)
 }
