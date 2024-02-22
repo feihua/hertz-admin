@@ -21,10 +21,10 @@ func Register(r *server.Hertz) {
 		_api := root.Group("/api", _apiMw()...)
 		{
 			_menu := _api.Group("/menu", _menuMw()...)
-			_menu.POST("/menu_delete", append(_menudeleteMw(), menu.MenuDelete)...)
-			_menu.GET("/menu_list", append(_menulistMw(), menu.MenuList)...)
-			_menu.POST("/menu_save", append(_menusaveMw(), menu.MenuSave)...)
-			_menu.POST("/menu_update", append(_menuupdateMw(), menu.MenuUpdate)...)
+			_menu.POST("/menuDelete", append(_menudeleteMw(), menu.MenuDelete)...)
+			_menu.GET("/menuList", append(_menulistMw(), menu.MenuList)...)
+			_menu.POST("/menuSave", append(_menusaveMw(), menu.MenuSave)...)
+			_menu.POST("/menuUpdate", append(_menuupdateMw(), menu.MenuUpdate)...)
 		}
 	}
 }

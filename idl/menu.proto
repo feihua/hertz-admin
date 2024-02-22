@@ -36,15 +36,15 @@ message MenuListData {
 }
 
 message MenuSaveReq {
-  int32 StatusId = 1[(api.body) = "status_id"];
+  int32 StatusId = 1[(api.body) = "statusId"];
   int32 Sort = 2[(api.body) = "sort"];
-  int64 ParentId = 3[(api.body) = "parent_id"];
-  string MenuName = 4[(api.body) = "menu_name"];
-  string MenuUrl = 5[(api.body) = "menu_url"];
-  string ApiUrl = 6[(api.body) = "api_url"];
-  string MenuIcon = 7[(api.body) = "menu_icon"];
+  int64 ParentId = 3[(api.body) = "parentId"];
+  string MenuName = 4[(api.body) = "menuName"];
+  string MenuUrl = 5[(api.body) = "menuUrl"];
+  string ApiUrl = 6[(api.body) = "apiUrl"];
+  string MenuIcon = 7[(api.body) = "menuIcon"];
   string Remark = 8[(api.body) = "remark"];
-  int32 MenuType = 9[(api.body) = "menu_type"];
+  int32 MenuType = 9[(api.body) = "menuType"];
 }
 message MenuSaveResp {
   string msg = 1;
@@ -53,15 +53,15 @@ message MenuSaveResp {
 
 message MenuUpdateReq {
   int64 Id = 1[(api.body) = "id"];
-  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 StatusId = 2[(api.body) = "statusId"];
   int32 Sort = 3[(api.body) = "sort"];
-  int64 ParentId = 4[(api.body) = "parent_id"];
-  string MenuName = 5[(api.body) = "menu_name"];
-  string MenuUrl = 6[(api.body) = "menu_url"];
-  string ApiUrl = 7[(api.body) = "api_url"];
-  string MenuIcon = 8[(api.body) = "menu_icon"];
+  int64 ParentId = 4[(api.body) = "parentId"];
+  string MenuName = 5[(api.body) = "menuName"];
+  string MenuUrl = 6[(api.body) = "menuUrl"];
+  string ApiUrl = 7[(api.body) = "apiUrl"];
+  string MenuIcon = 8[(api.body) = "menuIcon"];
   string Remark = 9[(api.body) = "remark"];
-  int32 MenuType = 10[(api.body) = "menu_type"];
+  int32 MenuType = 10[(api.body) = "menuType"];
 }
 
 message MenuUpdateResp {
@@ -80,16 +80,16 @@ message MenuDeleteResp {
 service MenuHandler {
   //menu
   rpc MenuList(MenuListReq) returns(MenuListResp) {
-    option (api.get) = "/api/menu/menu_list";
+    option (api.get) = "/api/menu/menuList";
   }
   rpc MenuSave(MenuSaveReq) returns(MenuSaveResp) {
-    option (api.post) = "/api/menu/menu_save";
+    option (api.post) = "/api/menu/menuSave";
   }
   rpc MenuUpdate(MenuUpdateReq) returns(MenuUpdateResp) {
-    option (api.post) = "/api/menu/menu_update";
+    option (api.post) = "/api/menu/menuUpdate";
   }
   rpc MenuDelete(MenuDeleteReq) returns(MenuDeleteResp) {
-    option (api.post) = "/api/menu/menu_delete";
+    option (api.post) = "/api/menu/menuDelete";
   }
 
 }

@@ -9,53 +9,53 @@ Content-Type: application/json
 > {% client.global.set("token", response.body.data.token); %}
 
 
-###菜单列表 menu_list
-GET {{host}}/api/menu/menu_list
+###菜单列表 menuList
+GET {{host}}/api/menu/menuList
 Authorization: Bearer {{token}}
 
-###新增菜单 menu_save
-POST {{host}}/api/menu/menu_save
+###新增菜单 menuSave
+POST {{host}}/api/menu/menuSave
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "api_url": "/auth/ping",
+  "apiUrl": "/auth/ping",
   "icon": "FrownOutlined",
   "label": "test4",
-  "menu_name": "test4",
-  "menu_type": 1,
-  "menu_url": "test4",
-  "parent_id": 0,
+  "menuName": "test4",
+  "menuType": 1,
+  "menuUrl": "test4",
+  "parentId": 0,
   "remark": "test",
   "sort": 1,
-  "status_id": 1
+  "statusId": 1
 }
 
-###删除菜单 menu_delete
-POST {{host}}/api/menu/menu_delete
+###删除菜单 menuDelete
+POST {{host}}/api/menu/menuDelete
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "ids": [101,102]
 }
-###更新菜单 menu_update
-POST {{host}}/api/menu/menu_update
+###更新菜单 menuUpdate
+POST {{host}}/api/menu/menuUpdate
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "api_url": "/auth/ping123",
+  "apiUrl": "/auth/ping123",
   "icon": "FrownOutlined",
   "id": 111,
   "label": "test4",
-  "menu_name": "test45",
-  "menu_type": 1,
-  "menu_url": "test4",
-  "parent_id": 0,
+  "menuName": "test45",
+  "menuType": 1,
+  "menuUrl": "test4",
+  "parentId": 0,
   "remark": "test",
   "sort": 1,
-  "status_id": 1
+  "statusId": 1
 }
 
 

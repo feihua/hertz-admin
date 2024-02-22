@@ -9,10 +9,10 @@ import "api.proto";
 
 //role params start -----------
 message RoleListReq {
-  int64 PageNo = 1[(api.body) = "page_no"];
-  int64 PageSize = 2[(api.body) = "page_size"];
-  string RoleName = 3[(api.body) = "role_name"];
-  string StatusId = 4[(api.body) = "status_id"];
+  int64 PageNo = 1[(api.body) = "pageNo"];
+  int64 PageSize = 2[(api.body) = "pageSize"];
+  string RoleName = 3[(api.body) = "roleName"];
+  string StatusId = 4[(api.body) = "statusId"];
 }
 
 message RoleListResp {
@@ -33,9 +33,9 @@ message RoleListData {
 }
 
 message RoleSaveReq {
-  int32 StatusId = 1[(api.body) = "status_id"];
+  int32 StatusId = 1[(api.body) = "statusId"];
   int32 Sort = 2[(api.body) = "sort"];
-  string RoleName = 3[(api.body) = "role_name"];
+  string RoleName = 3[(api.body) = "roleName"];
   string Remark = 4[(api.body) = "remark"];
 }
 message RoleSaveResp {
@@ -45,9 +45,9 @@ message RoleSaveResp {
 
 message RoleUpdateReq {
   int64 Id = 1[(api.body) = "id"];
-  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 StatusId = 2[(api.body) = "statusId"];
   int32 Sort = 3[(api.body) = "sort"];
-  string RoleName = 4[(api.body) = "role_name"];
+  string RoleName = 4[(api.body) = "roleName"];
   string Remark = 5[(api.body) = "remark"];
 }
 
@@ -64,7 +64,7 @@ message RoleDeleteResp {
   api.Code code = 2;
 }
 message QueryRoleMenuReq {
-  int64 RoleId = 1[(api.body) = "role_id"];
+  int64 RoleId = 1[(api.body) = "roleId"];
 }
 
 message QueryRoleMenuResp {
@@ -87,8 +87,8 @@ message MenuDataList {
 }
 
 message UpdateRoleMenuReq {
-  repeated int64 MenuIds = 1;
-  int64 RoleId = 2;
+  repeated int64 MenuIds = 1[(api.body) = "menuIds"];
+  int64 RoleId = 2[(api.body) = "roleId"];
 }
 message UpdateRoleMenuResp {
   string msg = 1;
@@ -100,22 +100,22 @@ message UpdateRoleMenuResp {
 service roleHandler {
   //role
   rpc RoleList(RoleListReq) returns(RoleListResp) {
-    option (api.post) = "/api/role/role_list";
+    option (api.post) = "/api/role/roleList";
   }
   rpc RoleSave(RoleSaveReq) returns(RoleSaveResp) {
-    option (api.post) = "/api/role/role_save";
+    option (api.post) = "/api/role/roleSave";
   }
   rpc RoleUpdate(RoleUpdateReq) returns(RoleUpdateResp) {
-    option (api.post) = "/api/role/role_update";
+    option (api.post) = "/api/role/roleUpdate";
   }
   rpc RoleDelete(RoleDeleteReq) returns(RoleDeleteResp) {
-    option (api.post) = "/api/role/role_delete";
+    option (api.post) = "/api/role/roleDelete";
   }
   rpc QueryRoleMenu(QueryRoleMenuReq) returns(QueryRoleMenuResp) {
-    option (api.post) = "/api/role/query_role_menu";
+    option (api.post) = "/api/role/queryRoleMenu";
   }
   rpc UpdateRoleMenu(UpdateRoleMenuReq) returns(UpdateRoleMenuResp) {
-    option (api.post) = "/api/role/update_role_menu";
+    option (api.post) = "/api/role/updateRoleMenu";
   }
 }
 

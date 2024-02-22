@@ -9,49 +9,49 @@ Content-Type: application/json
 }
 > {% client.global.set("token", response.body.data.token); %}
 
-###查询用户菜单 query_user_menu
-GET {{host}}/api/user/query_user_menu
+###查询用户菜单 queryUserMenu
+GET {{host}}/api/user/queryUserMenu
 Authorization: Bearer {{token}}
 
-###查询用户角色 query_user_role
-POST {{host}}/api/user/query_user_role
+###查询用户角色 queryUserRole
+POST {{host}}/api/user/queryUserRole
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "user_id": 1
+  "userId": 1
 }
 
-###更新用户角色 update_user_role
-POST {{host}}/api/user/update_user_role
+###更新用户角色 updateUserRole
+POST {{host}}/api/user/updateUserRole
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "user_id": 1,
-  "role_ids": [1,2,3]
+  "userId": 1,
+  "roleIds": [1,2,3]
 
 }
 
-###用户列表 user_list
-POST {{host}}/api/user/user_list
+###用户列表 userList
+POST {{host}}/api/user/userList
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "page_no": 1,
-  "page_size": 10,
+  "pageNo": 1,
+  "pageSize": 10,
   "mobile": "18613030352",
-  "status_id": 1
+  "statusId": 1
 }
-###新增用户 user_save
-POST {{host}}/api/user/user_save
+###新增用户 userSave
+POST {{host}}/api/user/userSave
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "mobile": "18613030351",
-  "user_name": "test",
+  "userName": "test",
   "remark": "test"
 }
 ###删除用户 user_delete
@@ -62,18 +62,18 @@ Authorization: Bearer {{token}}
 {
   "ids": [13]
 }
-###更新用户 user_update
-POST {{host}}/api/user/user_update
+###更新用户 userUpdate
+POST {{host}}/api/user/userUpdate
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "id": 17,
   "mobile": "18613030351",
-  "user_name": "test123",
+  "userName": "test123",
   "remark": "test123",
   "sort": 1,
-  "status_id": 1
+  "statusId": 1
 }
 
 

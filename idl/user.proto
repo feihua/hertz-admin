@@ -8,7 +8,7 @@ import "api.proto";
 
 //user params start -----------
 message QueryUserRoleReq {
-  int64 UserId = 1[(api.body) = "user_id"];
+  int64 UserId = 1[(api.body) = "userId"];
 }
 
 message QueryUserRoleResp {
@@ -41,7 +41,7 @@ message UpdateUserRoleResp {
 
 message QueryUserMenuReq {
   int64 userId = 1[(api.header) = "userId"];
-  string userName= 2[(api.header) = "userName"];
+  string userName = 2[(api.header) = "userName"];
 }
 
 message QueryUserMenuResp {
@@ -66,11 +66,11 @@ message UserMenuList {
 }
 
 message UserListReq {
-  int64 PageNo = 1[(api.body) = "page_no"];
-  int64 PageSize = 2[(api.body) = "page_size"];
+  int64 PageNo = 1[(api.body) = "pageNo"];
+  int64 PageSize = 2[(api.body) = "pageSize"];
   string Mobile = 3[(api.body) = "mobile"];
-  int32 StatusId = 4[(api.body) = "status_id"];
-  string UserName = 5[(api.body) = "user_name"];
+  int32 StatusId = 4[(api.body) = "statusId"];
+  string UserName = 5[(api.body) = "userName"];
 }
 
 message UserListResp {
@@ -93,9 +93,9 @@ message UserListData {
 
 message UserSaveReq {
   string Mobile = 1[(api.body) = "mobile"];
-  string UserName = 2[(api.body) = "user_name"];
+  string UserName = 2[(api.body) = "userName"];
   string Remark = 3[(api.body) = "remark"];
-  int32 StatusID = 4[(api.body) = "status_id"];
+  int32 StatusID = 4[(api.body) = "statusId"];
   int32 Sort = 5[(api.body) = "sort"];
 }
 message UserSaveResp {
@@ -105,10 +105,10 @@ message UserSaveResp {
 
 message UserUpdateReq {
   int64 Id = 1[(api.body) = "id"];
-  int32 StatusId = 2[(api.body) = "status_id"];
+  int32 StatusId = 2[(api.body) = "statusId"];
   int32 Sort = 3[(api.body) = "sort"];
   string Mobile = 4[(api.body) = "mobile"];
-  string UserName = 5[(api.body) = "user_name"];
+  string UserName = 5[(api.body) = "userName"];
   string Remark = 6[(api.body) = "remark"];
 }
 
@@ -130,28 +130,28 @@ message UserDeleteResp {
 
 service UserHandler {
   rpc UserList(UserListReq) returns(UserListResp) {
-    option (api.post) = "/api/user/user_list";
+    option (api.post) = "/api/user/userList";
   }
   rpc UserSave(UserSaveReq) returns(UserSaveResp) {
-    option (api.post) = "/api/user/user_save";
+    option (api.post) = "/api/user/userSave";
   }
   rpc UserUpdate(UserUpdateReq) returns(UserUpdateResp) {
-    option (api.post) = "/api/user/user_update";
+    option (api.post) = "/api/user/userUpdate";
   }
   rpc UserDelete(UserDeleteReq) returns(UserDeleteResp) {
-    option (api.post) = "/api/user/user_delete";
+    option (api.post) = "/api/user/userDelete";
   }
   //user
   rpc QueryUserMenu(QueryUserMenuReq) returns(QueryUserMenuResp) {
-    option (api.get) = "/api/user/query_user_menu";
+    option (api.get) = "/api/user/queryUserMenu";
   }
   //查询用户的角色
   rpc QueryUserRole(QueryUserRoleReq) returns(QueryUserRoleResp) {
-    option (api.post) = "/api/user/query_user_role";
+    option (api.post) = "/api/user/queryUserRole";
   }
   //更新用户的角色
   rpc UpdateUserRole(UpdateUserRoleReq) returns(UpdateUserRoleResp) {
-    option (api.post) = "/api/user/update_user_role";
+    option (api.post) = "/api/user/updateUserRole";
   }
 }
 
