@@ -1,5 +1,5 @@
 ###登录 login
-POST {{host}}/api/login
+POST {{host}}/api/role/login
 Content-Type: application/json
 
 {
@@ -10,11 +10,11 @@ Content-Type: application/json
 
 
 ###菜单列表 menu_list
-GET {{host}}/api/menu_list
+GET {{host}}/api/menu/menu_list
 Authorization: Bearer {{token}}
 
 ###新增菜单 menu_save
-POST {{host}}/api/menu_save
+POST {{host}}/api/menu/menu_save
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -32,7 +32,7 @@ Authorization: Bearer {{token}}
 }
 
 ###删除菜单 menu_delete
-POST {{host}}/api/menu_delete
+POST {{host}}/api/menu/menu_delete
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -40,7 +40,7 @@ Authorization: Bearer {{token}}
   "ids": [101,102]
 }
 ###更新菜单 menu_update
-POST {{host}}/api/menu_update
+POST {{host}}/api/menu/menu_update
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

@@ -80,16 +80,16 @@ message MenuDeleteResp {
 service MenuHandler {
   //menu
   rpc MenuList(MenuListReq) returns(MenuListResp) {
-    option (api.get) = "/api/menu_list";
+    option (api.get) = "/api/menu/menu_list";
   }
   rpc MenuSave(MenuSaveReq) returns(MenuSaveResp) {
-    option (api.post) = "/api/menu_save";
+    option (api.post) = "/api/menu/menu_save";
   }
   rpc MenuUpdate(MenuUpdateReq) returns(MenuUpdateResp) {
-    option (api.post) = "/api/menu_update";
+    option (api.post) = "/api/menu/menu_update";
   }
   rpc MenuDelete(MenuDeleteReq) returns(MenuDeleteResp) {
-    option (api.post) = "/api/menu_delete";
+    option (api.post) = "/api/menu/menu_delete";
   }
 
 }

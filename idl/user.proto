@@ -129,28 +129,28 @@ message UserDeleteResp {
 
 service UserHandler {
   rpc UserList(UserListReq) returns(UserListResp) {
-    option (api.post) = "/api/user_list";
+    option (api.post) = "/api/user/user_list";
   }
   rpc UserSave(UserSaveReq) returns(UserSaveResp) {
-    option (api.post) = "/api/user_save";
+    option (api.post) = "/api/user/user_save";
   }
   rpc UserUpdate(UserUpdateReq) returns(UserUpdateResp) {
-    option (api.post) = "/api/user_update";
+    option (api.post) = "/api/user/user_update";
   }
   rpc UserDelete(UserDeleteReq) returns(UserDeleteResp) {
-    option (api.post) = "/api/user_delete";
+    option (api.post) = "/api/user/user_delete";
   }
   //user
   rpc QueryUserMenu(QueryUserMenuReq) returns(QueryUserMenuResp) {
-    option (api.post) = "/api/query_user_menu";
+    option (api.post) = "/api/user/query_user_menu";
   }
   //查询用户的角色
   rpc QueryUserRole(QueryUserRoleReq) returns(QueryUserRoleResp) {
-    option (api.post) = "/api/query_user_role";
+    option (api.post) = "/api/user/query_user_role";
   }
   //更新用户的角色
   rpc UpdateUserRole(UpdateUserRoleReq) returns(UpdateUserRoleResp) {
-    option (api.post) = "/api/update_user_role";
+    option (api.post) = "/api/user/update_user_role";
   }
 }
 

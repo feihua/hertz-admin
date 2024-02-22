@@ -19,9 +19,12 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/menu_delete", append(_menudeleteMw(), menu.MenuDelete)...)
-		_api.GET("/menu_list", append(_menulistMw(), menu.MenuList)...)
-		_api.POST("/menu_save", append(_menusaveMw(), menu.MenuSave)...)
-		_api.POST("/menu_update", append(_menuupdateMw(), menu.MenuUpdate)...)
+		{
+			_menu := _api.Group("/menu", _menuMw()...)
+			_menu.POST("/menu_delete", append(_menudeleteMw(), menu.MenuDelete)...)
+			_menu.GET("/menu_list", append(_menulistMw(), menu.MenuList)...)
+			_menu.POST("/menu_save", append(_menusaveMw(), menu.MenuSave)...)
+			_menu.POST("/menu_update", append(_menuupdateMw(), menu.MenuUpdate)...)
+		}
 	}
 }

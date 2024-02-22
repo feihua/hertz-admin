@@ -19,11 +19,14 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/query_role_menu", append(_queryrolemenuMw(), role.QueryRoleMenu)...)
-		_api.POST("/role_delete", append(_roledeleteMw(), role.RoleDelete)...)
-		_api.POST("/role_list", append(_rolelistMw(), role.RoleList)...)
-		_api.POST("/role_save", append(_rolesaveMw(), role.RoleSave)...)
-		_api.POST("/role_update", append(_roleupdateMw(), role.RoleUpdate)...)
-		_api.POST("/update_role_menu", append(_updaterolemenuMw(), role.UpdateRoleMenu)...)
+		{
+			_role := _api.Group("/role", _roleMw()...)
+			_role.POST("/query_role_menu", append(_queryrolemenuMw(), role.QueryRoleMenu)...)
+			_role.POST("/role_delete", append(_roledeleteMw(), role.RoleDelete)...)
+			_role.POST("/role_list", append(_rolelistMw(), role.RoleList)...)
+			_role.POST("/role_save", append(_rolesaveMw(), role.RoleSave)...)
+			_role.POST("/role_update", append(_roleupdateMw(), role.RoleUpdate)...)
+			_role.POST("/update_role_menu", append(_updaterolemenuMw(), role.UpdateRoleMenu)...)
+		}
 	}
 }

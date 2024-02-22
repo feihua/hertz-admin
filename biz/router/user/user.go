@@ -19,12 +19,15 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/query_user_menu", append(_queryusermenuMw(), user.QueryUserMenu)...)
-		_api.POST("/query_user_role", append(_queryuserroleMw(), user.QueryUserRole)...)
-		_api.POST("/update_user_role", append(_updateuserroleMw(), user.UpdateUserRole)...)
-		_api.POST("/user_delete", append(_userdeleteMw(), user.UserDelete)...)
-		_api.POST("/user_list", append(_userlistMw(), user.UserList)...)
-		_api.POST("/user_save", append(_usersaveMw(), user.UserSave)...)
-		_api.POST("/user_update", append(_userupdateMw(), user.UserUpdate)...)
+		{
+			_user := _api.Group("/user", _userMw()...)
+			_user.POST("/query_user_menu", append(_queryusermenuMw(), user.QueryUserMenu)...)
+			_user.POST("/query_user_role", append(_queryuserroleMw(), user.QueryUserRole)...)
+			_user.POST("/update_user_role", append(_updateuserroleMw(), user.UpdateUserRole)...)
+			_user.POST("/user_delete", append(_userdeleteMw(), user.UserDelete)...)
+			_user.POST("/user_list", append(_userlistMw(), user.UserList)...)
+			_user.POST("/user_save", append(_usersaveMw(), user.UserSave)...)
+			_user.POST("/user_update", append(_userupdateMw(), user.UserUpdate)...)
+		}
 	}
 }

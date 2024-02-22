@@ -1,6 +1,6 @@
 
 ###登录 login
-POST {{host}}/api/login
+POST {{host}}/api/user/login
 Content-Type: application/json
 
 {
@@ -10,12 +10,12 @@ Content-Type: application/json
 > {% client.global.set("token", response.body.data.token); %}
 
 ###查询用户菜单 query_user_menu
-GET {{host}}/api/query_user_menu
+GET {{host}}/api/user/query_user_menu
 Authorization: Bearer {{token}}
 
 
 ###用户列表 user_list
-POST {{host}}/api/user_list
+POST {{host}}/api/user/user_list
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -26,7 +26,7 @@ Authorization: Bearer {{token}}
   "status_id": 1
 }
 ###新增用户 user_save
-POST {{host}}/api/user_save
+POST {{host}}/api/user/user_save
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -36,7 +36,7 @@ Authorization: Bearer {{token}}
   "remark": "test"
 }
 ###删除用户 user_delete
-POST {{host}}/api/user_delete
+POST {{host}}/api/user/user_delete
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -44,7 +44,7 @@ Authorization: Bearer {{token}}
   "ids": [13]
 }
 ###更新用户 user_update
-POST {{host}}/api/user_update
+POST {{host}}/api/user/user_update
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

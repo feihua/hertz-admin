@@ -14,12 +14,26 @@ func rootMw() []app.HandlerFunc {
 
 func _apiMw() []app.HandlerFunc {
 	// your code...
+	return nil
+}
+
+func _userMw() []app.HandlerFunc {
 	var hf []app.HandlerFunc
 	hf = append(hf, mw.JwtMiddleware.MiddlewareFunc())
 	return hf
 }
 
 func _queryusermenuMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _queryuserroleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updateuserroleMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
@@ -40,16 +54,6 @@ func _usersaveMw() []app.HandlerFunc {
 }
 
 func _userupdateMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _queryuserroleMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _updateuserroleMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

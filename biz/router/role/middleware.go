@@ -14,6 +14,10 @@ func rootMw() []app.HandlerFunc {
 
 func _apiMw() []app.HandlerFunc {
 	// your code...
+	return nil
+}
+
+func _roleMw() []app.HandlerFunc {
 	var hf []app.HandlerFunc
 	hf = append(hf, mw.JwtMiddleware.MiddlewareFunc())
 	return hf
