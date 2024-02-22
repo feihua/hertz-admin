@@ -11,7 +11,6 @@ import (
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
 	"net/http"
-	"time"
 )
 
 // MenuList 查询菜单列表
@@ -83,16 +82,15 @@ func MenuSave(ctx context.Context, c *app.RequestContext) {
 
 	//添加菜单
 	err = query.SysMenu.WithContext(ctx).Create(&model.SysMenu{
-		MenuName:   req.MenuName,
-		MenuType:   req.MenuType,
-		StatusID:   req.StatusId,
-		Sort:       req.Sort,
-		ParentID:   req.ParentId,
-		MenuURL:    &req.MenuUrl,
-		APIURL:     &req.ApiUrl,
-		MenuIcon:   &req.MenuIcon,
-		Remark:     &req.Remark,
-		CreateTime: time.Now(),
+		MenuName: req.MenuName,
+		MenuType: req.MenuType,
+		StatusID: req.StatusId,
+		Sort:     req.Sort,
+		ParentID: req.ParentId,
+		MenuURL:  &req.MenuUrl,
+		APIURL:   &req.ApiUrl,
+		MenuIcon: &req.MenuIcon,
+		Remark:   &req.Remark,
 	})
 
 	if err != nil {
@@ -138,16 +136,15 @@ func MenuUpdate(ctx context.Context, c *app.RequestContext) {
 
 	//更新菜单
 	_, err = sysMenu.WithContext(ctx).Where(sysMenu.ID.Eq(req.Id)).Updates(model.SysMenu{
-		MenuName:   req.MenuName,
-		MenuType:   req.MenuType,
-		StatusID:   req.StatusId,
-		Sort:       req.Sort,
-		ParentID:   req.ParentId,
-		MenuURL:    &req.MenuUrl,
-		APIURL:     &req.ApiUrl,
-		MenuIcon:   &req.MenuIcon,
-		Remark:     &req.Remark,
-		UpdateTime: time.Now(),
+		MenuName: req.MenuName,
+		MenuType: req.MenuType,
+		StatusID: req.StatusId,
+		Sort:     req.Sort,
+		ParentID: req.ParentId,
+		MenuURL:  &req.MenuUrl,
+		APIURL:   &req.ApiUrl,
+		MenuIcon: &req.MenuIcon,
+		Remark:   &req.Remark,
 	})
 
 	if err != nil {

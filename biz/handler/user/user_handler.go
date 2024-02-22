@@ -4,17 +4,15 @@ package user
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"hertz_admin/biz/dal"
 	"hertz_admin/biz/handler/role"
 	"hertz_admin/biz/model/api"
+	"hertz_admin/biz/model/user"
 	"hertz_admin/gen/model"
 	"hertz_admin/gen/query"
 	"net/http"
-	"time"
-
-	"github.com/cloudwego/hertz/pkg/app"
-	"hertz_admin/biz/model/user"
 )
 
 // UserList .
@@ -104,13 +102,12 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 
 	//添加用户
 	err = u.WithContext(ctx).Create(&model.SysUser{
-		Mobile:     req.Mobile,
-		UserName:   req.UserName,
-		Password:   &defaultPassword,
-		StatusID:   req.StatusID,
-		Sort:       req.Sort,
-		Remark:     &req.Remark,
-		CreateTime: time.Now(),
+		Mobile:   req.Mobile,
+		UserName: req.UserName,
+		Password: &defaultPassword,
+		StatusID: req.StatusID,
+		Sort:     req.Sort,
+		Remark:   &req.Remark,
 	})
 
 	if err != nil {
@@ -163,12 +160,11 @@ func UserUpdate(ctx context.Context, c *app.RequestContext) {
 	}
 
 	_, err = sysUser.WithContext(ctx).Where(sysUser.ID.Eq(req.Id)).Updates(model.SysUser{
-		Mobile:     req.Mobile,
-		UserName:   req.UserName,
-		StatusID:   req.StatusId,
-		Sort:       req.Sort,
-		Remark:     &req.Remark,
-		UpdateTime: time.Now(),
+		Mobile:   req.Mobile,
+		UserName: req.UserName,
+		StatusID: req.StatusId,
+		Sort:     req.Sort,
+		Remark:   &req.Remark,
 	})
 
 	if err != nil {
@@ -344,11 +340,8 @@ func UpdateUserRole(ctx context.Context, c *app.RequestContext) {
 	userRoles := make([]*model.SysUserRole, 0)
 	for _, roleId := range req.RoleIds {
 		userRoles = append(userRoles, &model.SysUserRole{
-			UserID:     req.UserId,
-			RoleID:     roleId,
-			StatusID:   0,
-			Sort:       0,
-			CreateTime: time.Now(),
+			UserID: req.UserId,
+			RoleID: roleId,
 		})
 	}
 

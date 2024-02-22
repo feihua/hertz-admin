@@ -30,8 +30,6 @@ func newSysRoleMenu(db *gorm.DB, opts ...gen.DOOption) sysRoleMenu {
 	_sysRoleMenu.ID = field.NewInt64(tableName, "id")
 	_sysRoleMenu.RoleID = field.NewInt64(tableName, "role_id")
 	_sysRoleMenu.MenuID = field.NewInt64(tableName, "menu_id")
-	_sysRoleMenu.StatusID = field.NewInt32(tableName, "status_id")
-	_sysRoleMenu.Sort = field.NewInt32(tableName, "sort")
 	_sysRoleMenu.CreateTime = field.NewTime(tableName, "create_time")
 	_sysRoleMenu.UpdateTime = field.NewTime(tableName, "update_time")
 
@@ -48,8 +46,6 @@ type sysRoleMenu struct {
 	ID         field.Int64 // 主键
 	RoleID     field.Int64 // 角色ID
 	MenuID     field.Int64 // 菜单ID
-	StatusID   field.Int32 // 状态(1:正常，0:禁用)
-	Sort       field.Int32 // 排序
 	CreateTime field.Time  // 创建时间
 	UpdateTime field.Time  // 修改时间
 
@@ -71,8 +67,6 @@ func (s *sysRoleMenu) updateTableName(table string) *sysRoleMenu {
 	s.ID = field.NewInt64(table, "id")
 	s.RoleID = field.NewInt64(table, "role_id")
 	s.MenuID = field.NewInt64(table, "menu_id")
-	s.StatusID = field.NewInt32(table, "status_id")
-	s.Sort = field.NewInt32(table, "sort")
 	s.CreateTime = field.NewTime(table, "create_time")
 	s.UpdateTime = field.NewTime(table, "update_time")
 
@@ -101,12 +95,10 @@ func (s *sysRoleMenu) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysRoleMenu) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 5)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["role_id"] = s.RoleID
 	s.fieldMap["menu_id"] = s.MenuID
-	s.fieldMap["status_id"] = s.StatusID
-	s.fieldMap["sort"] = s.Sort
 	s.fieldMap["create_time"] = s.CreateTime
 	s.fieldMap["update_time"] = s.UpdateTime
 }

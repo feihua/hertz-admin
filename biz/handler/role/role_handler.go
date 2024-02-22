@@ -152,11 +152,10 @@ func RoleUpdate(ctx context.Context, c *app.RequestContext) {
 
 	//更新角色
 	_, err = sysRole.WithContext(ctx).Where(sysRole.ID.Eq(req.Id)).Updates(model.SysRole{
-		RoleName:   req.RoleName,
-		StatusID:   req.StatusId,
-		Sort:       req.Sort,
-		Remark:     req.Remark,
-		UpdateTime: time.Now(),
+		RoleName: req.RoleName,
+		StatusID: req.StatusId,
+		Sort:     req.Sort,
+		Remark:   req.Remark,
 	})
 
 	if err != nil {
@@ -325,11 +324,8 @@ func UpdateRoleMenu(ctx context.Context, c *app.RequestContext) {
 	sysRoleMenus := make([]*model.SysRoleMenu, 0)
 	for _, menuId := range req.MenuIds {
 		sysRoleMenus = append(sysRoleMenus, &model.SysRoleMenu{
-			RoleID:     req.RoleId,
-			MenuID:     menuId,
-			StatusID:   0,
-			Sort:       0,
-			CreateTime: time.Now(),
+			RoleID: req.RoleId,
+			MenuID: menuId,
 		})
 	}
 

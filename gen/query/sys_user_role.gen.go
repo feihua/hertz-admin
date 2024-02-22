@@ -30,8 +30,6 @@ func newSysUserRole(db *gorm.DB, opts ...gen.DOOption) sysUserRole {
 	_sysUserRole.ID = field.NewInt64(tableName, "id")
 	_sysUserRole.UserID = field.NewInt64(tableName, "user_id")
 	_sysUserRole.RoleID = field.NewInt64(tableName, "role_id")
-	_sysUserRole.StatusID = field.NewInt32(tableName, "status_id")
-	_sysUserRole.Sort = field.NewInt32(tableName, "sort")
 	_sysUserRole.CreateTime = field.NewTime(tableName, "create_time")
 	_sysUserRole.UpdateTime = field.NewTime(tableName, "update_time")
 
@@ -48,8 +46,6 @@ type sysUserRole struct {
 	ID         field.Int64 // 主键
 	UserID     field.Int64 // 用户ID
 	RoleID     field.Int64 // 角色ID
-	StatusID   field.Int32 // 状态(1:正常，0:禁用)
-	Sort       field.Int32 // 排序
 	CreateTime field.Time  // 创建时间
 	UpdateTime field.Time  // 修改时间
 
@@ -71,8 +67,6 @@ func (s *sysUserRole) updateTableName(table string) *sysUserRole {
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewInt64(table, "user_id")
 	s.RoleID = field.NewInt64(table, "role_id")
-	s.StatusID = field.NewInt32(table, "status_id")
-	s.Sort = field.NewInt32(table, "sort")
 	s.CreateTime = field.NewTime(table, "create_time")
 	s.UpdateTime = field.NewTime(table, "update_time")
 
@@ -101,12 +95,10 @@ func (s *sysUserRole) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysUserRole) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 5)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["role_id"] = s.RoleID
-	s.fieldMap["status_id"] = s.StatusID
-	s.fieldMap["sort"] = s.Sort
 	s.fieldMap["create_time"] = s.CreateTime
 	s.fieldMap["update_time"] = s.UpdateTime
 }
