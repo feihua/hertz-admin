@@ -13,7 +13,7 @@ import (
 func QueryUserList(userName, mobile string, page, pageSize int64) ([]model.SysUser, int64, error) {
 	db := DB.Model(&model.SysUser{})
 	if len(userName) != 0 {
-		db = db.Where("role_name like ?", "%"+userName+"%")
+		db = db.Where("user_name like ?", "%"+userName+"%")
 	}
 	if len(mobile) != 0 {
 		db = db.Where("mobile like ?", "%"+mobile+"%")
