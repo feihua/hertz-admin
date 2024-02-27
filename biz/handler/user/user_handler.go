@@ -254,15 +254,17 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 	var path []string
 
 	for _, item := range sysMenuList {
-		menuList = append(menuList, &user.UserMenuList{
-			Id:       int32(item.ID),
-			ParentId: int32(item.ParentID),
-			Name:     item.MenuName,
-			Path:     *item.MenuURL,
-			ApiUrl:   *item.APIURL,
-			MenuType: item.MenuType,
-			Icon:     *item.MenuIcon,
-		})
+		if item.MenuType != 3 {
+			menuList = append(menuList, &user.UserMenuList{
+				Id:       int32(item.ID),
+				ParentId: int32(item.ParentID),
+				Name:     item.MenuName,
+				Path:     *item.MenuURL,
+				ApiUrl:   *item.APIURL,
+				MenuType: item.MenuType,
+				Icon:     *item.MenuIcon,
+			})
+		}
 
 		if *item.APIURL != "" {
 			path = append(path, *item.APIURL)

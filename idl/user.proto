@@ -50,8 +50,8 @@ message QueryUserMenuResp {
   QueryUserMenuData data = 3;
 }
 message QueryUserMenuData {
-  repeated UserMenuList SysMenu = 1;
-  repeated string BtnMenu = 2;
+  repeated UserMenuList sysMenu = 1;
+  repeated string btnMenu = 2;
   string avatar = 3;
   string name = 4;
 }
