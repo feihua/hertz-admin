@@ -100,22 +100,22 @@ message UpdateRoleMenuResp {
 service roleHandler {
   //role
   rpc RoleList(RoleListReq) returns(RoleListResp) {
-    option (api.post) = "/api/role/roleList";
+    option (api.post) = "/api/system/role/queryRoleList";
   }
   rpc RoleSave(RoleSaveReq) returns(RoleSaveResp) {
-    option (api.post) = "/api/role/roleSave";
+    option (api.post) = "/api/system/role/addRole";
   }
   rpc RoleUpdate(RoleUpdateReq) returns(RoleUpdateResp) {
-    option (api.post) = "/api/role/roleUpdate";
+    option (api.post) = "/api/system/role/updateRole";
   }
   rpc RoleDelete(RoleDeleteReq) returns(RoleDeleteResp) {
-    option (api.post) = "/api/role/roleDelete";
+    option (api.post) = "/api/system/role/deleteRole";
   }
   rpc QueryRoleMenu(QueryRoleMenuReq) returns(QueryRoleMenuResp) {
-    option (api.post) = "/api/role/queryRoleMenu";
+    option (api.post) = "/api/system/role/queryRoleMenuList";
   }
   rpc UpdateRoleMenu(UpdateRoleMenuReq) returns(UpdateRoleMenuResp) {
-    option (api.post) = "/api/role/updateRoleMenu";
+    option (api.post) = "/api/system/role/updateRoleMenuList";
   }
 }
 

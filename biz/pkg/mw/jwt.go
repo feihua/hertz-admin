@@ -63,7 +63,7 @@ func InitJwt() {
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var loginStruct struct {
-				Account  string `form:"mobile" json:"mobile" query:"mobile" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
+				Account  string `form:"account" json:"account" query:"account" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
 			if err := c.BindAndValidate(&loginStruct); err != nil {
@@ -75,7 +75,7 @@ func InitJwt() {
 			if err != nil {
 				return nil, err
 			}
-			if *sysUser.Password != loginStruct.Password {
+			if sysUser.Password != loginStruct.Password {
 				return nil, errors.New("密码不正确")
 			}
 

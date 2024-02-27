@@ -107,7 +107,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	err = u.WithContext(ctx).Create(&model.SysUser{
 		Mobile:   req.Mobile,
 		UserName: req.UserName,
-		Password: &defaultPassword,
+		Password: defaultPassword,
 		StatusID: req.StatusID,
 		Sort:     req.Sort,
 		Remark:   &req.Remark,
