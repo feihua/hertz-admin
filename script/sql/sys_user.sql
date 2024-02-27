@@ -4,7 +4,7 @@ create table sys_user
         primary key,
     mobile      char(11) default ''                not null comment '手机',
     user_name   varchar(50)                        not null comment '姓名',
-    password    varchar(64) charset utf8mb3        null comment '密码',
+    password    varchar(64) charset utf8mb3        not null comment '密码',
     status_id   tinyint  default 1                 not null comment '状态(1:正常，0:禁用)',
     sort        int      default 1                 not null comment '排序',
     remark      varchar(255)                       null comment '备注',
