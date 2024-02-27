@@ -9,9 +9,9 @@
 package menu
 
 import (
+	api "github.com/feihua/hertz_admin/biz/model/api"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	api "hertz_admin/biz/model/api"
 	reflect "reflect"
 	sync "sync"
 )

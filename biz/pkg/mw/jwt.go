@@ -20,7 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hertz_admin/gen/query"
+	"github.com/feihua/hertz_admin/gen/query"
 	"net/http"
 	"time"
 

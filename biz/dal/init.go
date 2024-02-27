@@ -2,10 +2,10 @@ package dal
 
 import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/feihua/hertz_admin/gen/query"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"hertz_admin/gen/query"
 	"time"
 )
 

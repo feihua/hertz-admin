@@ -6,7 +6,7 @@ Date: 2024/2/2 下午5:08
 */
 import (
 	"errors"
-	"hertz_admin/gen/model"
+	"github.com/feihua/hertz_admin/gen/model"
 )
 
 // QueryUserList 查询用户列表

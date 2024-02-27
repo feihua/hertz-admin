@@ -4,7 +4,7 @@ package menu
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
-	"hertz_admin/biz/pkg/mw"
+	"github.com/feihua/hertz_admin/biz/pkg/mw"
 )
 
 func rootMw() []app.HandlerFunc {

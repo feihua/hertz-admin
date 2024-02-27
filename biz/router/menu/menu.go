@@ -4,7 +4,7 @@ package menu
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	menu "hertz_admin/biz/handler/menu"
+	menu "github.com/feihua/hertz_admin/biz/handler/menu"
 )
 
 /*

@@ -2,10 +2,10 @@
 package main
 
 import (
+	"github.com/feihua/hertz_admin/biz/dal"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gorm"
-	"hertz_admin/biz/dal"
 )
 
 func main() {
