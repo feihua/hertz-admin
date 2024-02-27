@@ -4,7 +4,7 @@ package User
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/feihua/hertz_admin/biz/pkg/mw"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 )
 
 func rootMw() []app.HandlerFunc {

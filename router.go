@@ -4,8 +4,8 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/feihua/hertz_admin/biz/handler"
-	"github.com/feihua/hertz_admin/biz/pkg/mw"
+	"github.com/feihua/hertz-admin/biz/handler"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 )
 
 // customizeRegister registers customize routers.

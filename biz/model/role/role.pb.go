@@ -9,7 +9,7 @@
 package role
 
 import (
-	api "github.com/feihua/hertz_admin/biz/model/api"
+	api "github.com/feihua/hertz-admin/biz/model/api"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

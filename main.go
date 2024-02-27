@@ -5,8 +5,8 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/feihua/hertz_admin/biz/dal"
-	"github.com/feihua/hertz_admin/biz/pkg/mw"
+	"github.com/feihua/hertz-admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzzap "github.com/hertz-contrib/logger/zap"
 	"go.uber.org/zap"

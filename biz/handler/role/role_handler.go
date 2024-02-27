@@ -5,17 +5,17 @@ package role
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/feihua/hertz_admin/biz/dal"
-	"github.com/feihua/hertz_admin/biz/model/api"
-	"github.com/feihua/hertz_admin/biz/model/menu"
-	"github.com/feihua/hertz_admin/gen/model"
-	"github.com/feihua/hertz_admin/gen/query"
+	"github.com/feihua/hertz-admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/model/api"
+	"github.com/feihua/hertz-admin/biz/model/menu"
+	"github.com/feihua/hertz-admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/feihua/hertz_admin/biz/model/role"
+	"github.com/feihua/hertz-admin/biz/model/role"
 )
 
 // RoleList 查询角色列表

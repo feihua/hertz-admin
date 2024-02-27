@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/feihua/hertz_admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/dal"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gorm"

@@ -6,12 +6,12 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/feihua/hertz_admin/biz/dal"
-	"github.com/feihua/hertz_admin/biz/handler/role"
-	"github.com/feihua/hertz_admin/biz/model/api"
-	"github.com/feihua/hertz_admin/biz/model/user"
-	"github.com/feihua/hertz_admin/gen/model"
-	"github.com/feihua/hertz_admin/gen/query"
+	"github.com/feihua/hertz-admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/handler/role"
+	"github.com/feihua/hertz-admin/biz/model/api"
+	"github.com/feihua/hertz-admin/biz/model/user"
+	"github.com/feihua/hertz-admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 )
 

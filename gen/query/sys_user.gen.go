@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/feihua/hertz_admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/model"
 )
 
 func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {

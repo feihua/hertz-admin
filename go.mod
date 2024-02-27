@@ -1,4 +1,4 @@
-module github.com/feihua/hertz_admin
+module github.com/feihua/hertz-admin
 
 go 1.20
 

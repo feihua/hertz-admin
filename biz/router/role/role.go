@@ -4,7 +4,7 @@ package Role
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	role "github.com/feihua/hertz_admin/biz/handler/role"
+	role "github.com/feihua/hertz-admin/biz/handler/role"
 )
 
 /*
