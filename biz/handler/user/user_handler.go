@@ -45,7 +45,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	for _, item := range result {
 		var updateTime string
 		if item.UpdateTime != nil {
-			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+			updateTime = item.UpdateTime.Format("2006-01-02 15:04:05")
 		}
 		list = append(list, &user.UserListData{
 			Id:         item.ID,
@@ -54,7 +54,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 			Mobile:     item.Mobile,
 			UserName:   item.UserName,
 			Remark:     *item.Remark,
-			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
 			UpdateTime: updateTime,
 		})
 	}
