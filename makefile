@@ -46,6 +46,7 @@ proto:	## 生成代码
 	$(HZ) update -idl idl/user.proto
 	$(HZ) update -idl idl/role.proto
 	$(HZ) update -idl idl/menu.proto
+	$(HZ) update -idl idl/log.proto
 
 gorm: ## 生成dao
 	$(GOCMD) run ./gen/generator.go
