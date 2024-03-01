@@ -2,10 +2,10 @@
 package main
 
 import (
+	"github.com/feihua/hertz-admin/biz/dal"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gorm"
-	"hertz_admin/biz/dal"
 )
 
 func main() {
@@ -30,6 +30,8 @@ func main() {
 		g.GenerateModel("sys_role"),
 		g.GenerateModel("sys_role_menu"),
 		g.GenerateModel("sys_menu"),
+		g.GenerateModel("sys_login_log"),
+		g.GenerateModel("sys_operate_log"),
 	)
 
 	// Execute the generator

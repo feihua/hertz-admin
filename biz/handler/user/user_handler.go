@@ -6,12 +6,12 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"hertz_admin/biz/dal"
-	"hertz_admin/biz/handler/role"
-	"hertz_admin/biz/model/api"
-	"hertz_admin/biz/model/user"
-	"hertz_admin/gen/model"
-	"hertz_admin/gen/query"
+	"github.com/feihua/hertz-admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/handler/role"
+	"github.com/feihua/hertz-admin/biz/model/api"
+	"github.com/feihua/hertz-admin/biz/model/user"
+	"github.com/feihua/hertz-admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 )
 
@@ -45,7 +45,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 	for _, item := range result {
 		var updateTime string
 		if item.UpdateTime != nil {
-			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+			updateTime = item.UpdateTime.Format("2006-01-02 15:04:05")
 		}
 		list = append(list, &user.UserListData{
 			Id:         item.ID,
@@ -54,7 +54,7 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 			Mobile:     item.Mobile,
 			UserName:   item.UserName,
 			Remark:     *item.Remark,
-			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
 			UpdateTime: updateTime,
 		})
 	}
@@ -107,7 +107,7 @@ func UserSave(ctx context.Context, c *app.RequestContext) {
 	err = u.WithContext(ctx).Create(&model.SysUser{
 		Mobile:   req.Mobile,
 		UserName: req.UserName,
-		Password: &defaultPassword,
+		Password: defaultPassword,
 		StatusID: req.StatusID,
 		Sort:     req.Sort,
 		Remark:   &req.Remark,
@@ -254,15 +254,17 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 	var path []string
 
 	for _, item := range sysMenuList {
-		menuList = append(menuList, &user.UserMenuList{
-			Id:       int32(item.ID),
-			ParentId: int32(item.ParentID),
-			Name:     item.MenuName,
-			Path:     *item.MenuURL,
-			ApiUrl:   *item.APIURL,
-			MenuType: item.MenuType,
-			Icon:     *item.MenuIcon,
-		})
+		if item.MenuType != 3 {
+			menuList = append(menuList, &user.UserMenuList{
+				Id:       int32(item.ID),
+				ParentId: int32(item.ParentID),
+				Name:     item.MenuName,
+				Path:     *item.MenuURL,
+				ApiUrl:   *item.APIURL,
+				MenuType: item.MenuType,
+				Icon:     *item.MenuIcon,
+			})
+		}
 
 		if *item.APIURL != "" {
 			path = append(path, *item.APIURL)

@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"hertz_admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/model"
 )
 
 func newSysMenu(db *gorm.DB, opts ...gen.DOOption) sysMenu {

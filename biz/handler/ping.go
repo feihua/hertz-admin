@@ -6,7 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
-	"hertz_admin/biz/pkg/http"
+	"github.com/feihua/hertz-admin/biz/pkg/http"
 )
 
 type LoginReq struct {

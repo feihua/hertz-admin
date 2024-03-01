@@ -20,7 +20,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hertz_admin/gen/query"
+	"github.com/feihua/hertz-admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 	"time"
 
@@ -53,7 +54,7 @@ func InitJwt() {
 		TokenHeadName: "Bearer",
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			c.JSON(http.StatusOK, utils.H{
-				"code":    code,
+				"code":    1,
 				"message": "success",
 				"data": utils.H{
 					"token":  token,
@@ -63,7 +64,7 @@ func InitJwt() {
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var loginStruct struct {
-				Account  string `form:"mobile" json:"mobile" query:"mobile" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
+				Account  string `form:"account" json:"account" query:"account" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
 			if err := c.BindAndValidate(&loginStruct); err != nil {
@@ -75,7 +76,7 @@ func InitJwt() {
 			if err != nil {
 				return nil, err
 			}
-			if *sysUser.Password != loginStruct.Password {
+			if sysUser.Password != loginStruct.Password {
 				return nil, errors.New("密码不正确")
 			}
 
@@ -86,6 +87,14 @@ func InitJwt() {
 			for _, menu := range menus {
 				list = append(list, menu.APIURL)
 			}
+
+			//保存登录日志
+			query.SysLoginLog.WithContext(ctx).Create(&model.SysLoginLog{
+				UserName:  sysUser.UserName,
+				Status:    "1",
+				IP:        string(c.Request.Host()),
+				LoginTime: time.Now(),
+			})
 
 			return &User{
 				Id:          sysUser.ID,

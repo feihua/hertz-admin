@@ -16,17 +16,21 @@ import (
 )
 
 var (
-	Q           = new(Query)
-	SysMenu     *sysMenu
-	SysRole     *sysRole
-	SysRoleMenu *sysRoleMenu
-	SysUser     *sysUser
-	SysUserRole *sysUserRole
+	Q             = new(Query)
+	SysLoginLog   *sysLoginLog
+	SysMenu       *sysMenu
+	SysOperateLog *sysOperateLog
+	SysRole       *sysRole
+	SysRoleMenu   *sysRoleMenu
+	SysUser       *sysUser
+	SysUserRole   *sysUserRole
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	SysLoginLog = &Q.SysLoginLog
 	SysMenu = &Q.SysMenu
+	SysOperateLog = &Q.SysOperateLog
 	SysRole = &Q.SysRole
 	SysRoleMenu = &Q.SysRoleMenu
 	SysUser = &Q.SysUser
@@ -35,35 +39,41 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:          db,
-		SysMenu:     newSysMenu(db, opts...),
-		SysRole:     newSysRole(db, opts...),
-		SysRoleMenu: newSysRoleMenu(db, opts...),
-		SysUser:     newSysUser(db, opts...),
-		SysUserRole: newSysUserRole(db, opts...),
+		db:            db,
+		SysLoginLog:   newSysLoginLog(db, opts...),
+		SysMenu:       newSysMenu(db, opts...),
+		SysOperateLog: newSysOperateLog(db, opts...),
+		SysRole:       newSysRole(db, opts...),
+		SysRoleMenu:   newSysRoleMenu(db, opts...),
+		SysUser:       newSysUser(db, opts...),
+		SysUserRole:   newSysUserRole(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	SysMenu     sysMenu
-	SysRole     sysRole
-	SysRoleMenu sysRoleMenu
-	SysUser     sysUser
-	SysUserRole sysUserRole
+	SysLoginLog   sysLoginLog
+	SysMenu       sysMenu
+	SysOperateLog sysOperateLog
+	SysRole       sysRole
+	SysRoleMenu   sysRoleMenu
+	SysUser       sysUser
+	SysUserRole   sysUserRole
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:          db,
-		SysMenu:     q.SysMenu.clone(db),
-		SysRole:     q.SysRole.clone(db),
-		SysRoleMenu: q.SysRoleMenu.clone(db),
-		SysUser:     q.SysUser.clone(db),
-		SysUserRole: q.SysUserRole.clone(db),
+		db:            db,
+		SysLoginLog:   q.SysLoginLog.clone(db),
+		SysMenu:       q.SysMenu.clone(db),
+		SysOperateLog: q.SysOperateLog.clone(db),
+		SysRole:       q.SysRole.clone(db),
+		SysRoleMenu:   q.SysRoleMenu.clone(db),
+		SysUser:       q.SysUser.clone(db),
+		SysUserRole:   q.SysUserRole.clone(db),
 	}
 }
 
@@ -77,30 +87,36 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:          db,
-		SysMenu:     q.SysMenu.replaceDB(db),
-		SysRole:     q.SysRole.replaceDB(db),
-		SysRoleMenu: q.SysRoleMenu.replaceDB(db),
-		SysUser:     q.SysUser.replaceDB(db),
-		SysUserRole: q.SysUserRole.replaceDB(db),
+		db:            db,
+		SysLoginLog:   q.SysLoginLog.replaceDB(db),
+		SysMenu:       q.SysMenu.replaceDB(db),
+		SysOperateLog: q.SysOperateLog.replaceDB(db),
+		SysRole:       q.SysRole.replaceDB(db),
+		SysRoleMenu:   q.SysRoleMenu.replaceDB(db),
+		SysUser:       q.SysUser.replaceDB(db),
+		SysUserRole:   q.SysUserRole.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	SysMenu     ISysMenuDo
-	SysRole     ISysRoleDo
-	SysRoleMenu ISysRoleMenuDo
-	SysUser     ISysUserDo
-	SysUserRole ISysUserRoleDo
+	SysLoginLog   ISysLoginLogDo
+	SysMenu       ISysMenuDo
+	SysOperateLog ISysOperateLogDo
+	SysRole       ISysRoleDo
+	SysRoleMenu   ISysRoleMenuDo
+	SysUser       ISysUserDo
+	SysUserRole   ISysUserRoleDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		SysMenu:     q.SysMenu.WithContext(ctx),
-		SysRole:     q.SysRole.WithContext(ctx),
-		SysRoleMenu: q.SysRoleMenu.WithContext(ctx),
-		SysUser:     q.SysUser.WithContext(ctx),
-		SysUserRole: q.SysUserRole.WithContext(ctx),
+		SysLoginLog:   q.SysLoginLog.WithContext(ctx),
+		SysMenu:       q.SysMenu.WithContext(ctx),
+		SysOperateLog: q.SysOperateLog.WithContext(ctx),
+		SysRole:       q.SysRole.WithContext(ctx),
+		SysRoleMenu:   q.SysRoleMenu.WithContext(ctx),
+		SysUser:       q.SysUser.WithContext(ctx),
+		SysUserRole:   q.SysUserRole.WithContext(ctx),
 	}
 }
 

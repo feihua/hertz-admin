@@ -5,7 +5,7 @@ Author: LiuFeiHua
 Date: 2024/2/2 下午5:07
 */
 import (
-	"hertz_admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/model"
 )
 
 // QueryRoleList 查询角色列表

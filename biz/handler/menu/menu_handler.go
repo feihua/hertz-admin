@@ -6,10 +6,10 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"hertz_admin/biz/model/api"
-	"hertz_admin/biz/model/menu"
-	"hertz_admin/gen/model"
-	"hertz_admin/gen/query"
+	"github.com/feihua/hertz-admin/biz/model/api"
+	"github.com/feihua/hertz-admin/biz/model/menu"
+	"github.com/feihua/hertz-admin/gen/model"
+	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 )
 
@@ -44,11 +44,11 @@ func MenuList(ctx context.Context, c *app.RequestContext) {
 	for _, item := range sysMenus {
 		var updateTime string
 		if item.UpdateTime != nil {
-			updateTime = item.UpdateTime.Format("http.StatusOK6-01-02 15:04:05")
+			updateTime = item.UpdateTime.Format("2006-01-02 15:04:05")
 		}
 		list = append(list, &menu.MenuListData{
 			Id:         item.ID,
-			CreateTime: item.CreateTime.Format("http.StatusOK6-01-02 15:04:05"),
+			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"),
 			UpdateTime: updateTime,
 			StatusId:   item.StatusID,
 			Sort:       item.Sort,

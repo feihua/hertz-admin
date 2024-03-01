@@ -1,6 +1,6 @@
-module hertz_admin
+module github.com/feihua/hertz-admin
 
-go 1.21
+go 1.20
 
 require (
 	github.com/cloudwego/hertz v0.8.0

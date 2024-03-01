@@ -1,0 +1,117 @@
+// idl/hello/hello.proto
+syntax = "proto3";
+
+package log;
+
+option go_package = "log";
+
+import "api.proto";
+
+message LoginLogDeleteReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message LoginLogDeleteResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+message QueryLoginLogListReq {
+  int64 PageNo = 1[(api.body) = "pageNo"];
+  int64 PageSize = 2[(api.body) = "pageSize"];
+  string UserName = 3[(api.body) = "userName"];
+  string IP = 4[(api.body) = "ip"];
+}
+
+message QueryLoginLogListResp {
+  string msg = 1;
+  api.Code code = 2;
+  repeated LoginLogListData data = 3;
+  int64 Total = 4;
+}
+
+message LoginLogListData {
+  int32 id = 1;
+  string userName = 2;
+  string status = 3;
+  string ip = 4;
+  string loginTime = 5;
+}
+
+message OperateLogDeleteReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message OperateLogDeleteResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+
+message StatisticsLoginLogReq {
+}
+
+message StatisticsLoginLogResp {
+  string msg = 1;
+  api.Code code = 2;
+  StatisticsLoginLogData data = 3;
+  int64 Total = 4;
+}
+
+message StatisticsLoginLogData {
+  int32 dayLoginCount = 1;
+  int32 weekLoginCount = 2;
+  int32 monthLoginCount = 3;
+}
+
+message QueryOperateLogListReq {
+  int64 PageNo = 1[(api.body) = "pageNo"];
+  int64 PageSize = 2[(api.body) = "pageSize"];
+  string UserName = 3[(api.body) = "userName"];
+  string IP = 4[(api.body) = "ip"];
+  string Method = 5[(api.body) = "method"];
+}
+
+message QueryOperateLogListResp {
+  string msg = 1;
+  api.Code code = 2;
+  repeated OperateLogListData data = 3;
+  int64 Total = 4;
+}
+
+message OperateLogListData {
+  int32 id = 1;
+  string userName = 2;
+  string operation = 3;
+  string method = 4;
+  string requestParams = 5;
+  string responseParams = 6;
+  int32 time = 7;
+  string ip = 8;
+  string operationTime = 9;
+}
+
+service LogHandler {
+
+  rpc LoginLogDelete(LoginLogDeleteReq) returns(LoginLogDeleteResp) {
+    option (api.post) = "/api/log/login/deleteLoginLog";
+  }
+
+  rpc QueryLoginLogList(QueryLoginLogListReq) returns(QueryLoginLogListResp) {
+    option (api.post) = "/api/log/login/queryLoginLogList";
+  }
+
+  rpc StatisticsLoginLog(StatisticsLoginLogReq) returns(StatisticsLoginLogResp) {
+    option (api.get) = "/api/log/login/statisticsLoginLog";
+  }
+
+  rpc OperateLogDelete(OperateLogDeleteReq) returns(OperateLogDeleteResp) {
+    option (api.post) = "/api/log/operate/deleteOperateLog";
+  }
+
+  rpc QueryOperateLogList(QueryOperateLogListReq) returns(QueryOperateLogListResp) {
+    option (api.post) = "/api/log/operate/queryOperateLogList";
+  }
+
+
+}

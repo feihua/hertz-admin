@@ -50,8 +50,8 @@ message QueryUserMenuResp {
   QueryUserMenuData data = 3;
 }
 message QueryUserMenuData {
-  repeated UserMenuList SysMenu = 1;
-  repeated string BtnMenu = 2;
+  repeated UserMenuList sysMenu = 1;
+  repeated string btnMenu = 2;
   string avatar = 3;
   string name = 4;
 }
@@ -130,28 +130,28 @@ message UserDeleteResp {
 
 service UserHandler {
   rpc UserList(UserListReq) returns(UserListResp) {
-    option (api.post) = "/api/user/userList";
+    option (api.post) = "/api/system/user/queryUserList";
   }
   rpc UserSave(UserSaveReq) returns(UserSaveResp) {
-    option (api.post) = "/api/user/userSave";
+    option (api.post) = "/api/system/user/addUser";
   }
   rpc UserUpdate(UserUpdateReq) returns(UserUpdateResp) {
-    option (api.post) = "/api/user/userUpdate";
+    option (api.post) = "/api/system/user/updateUser";
   }
   rpc UserDelete(UserDeleteReq) returns(UserDeleteResp) {
-    option (api.post) = "/api/user/userDelete";
+    option (api.post) = "/api/system/user/deleteUser";
   }
   //user
   rpc QueryUserMenu(QueryUserMenuReq) returns(QueryUserMenuResp) {
-    option (api.get) = "/api/user/queryUserMenu";
+    option (api.get) = "/api/system/user/queryUserMenuList";
   }
   //查询用户的角色
   rpc QueryUserRole(QueryUserRoleReq) returns(QueryUserRoleResp) {
-    option (api.post) = "/api/user/queryUserRole";
+    option (api.post) = "/api/system/user/queryUserRoleList";
   }
   //更新用户的角色
   rpc UpdateUserRole(UpdateUserRoleReq) returns(UpdateUserRoleResp) {
-    option (api.post) = "/api/user/updateUserRole";
+    option (api.post) = "/api/system/user/updateUserRoleList";
   }
 }
 
