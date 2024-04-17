@@ -32,7 +32,7 @@ deps: ## 安装依赖目标
 build: ## 构建目标
 	$(GOBUILD) -o target/hertz-admin
 
-start: build stop ## 运行目标
+start: ## 运行目标
 	nohup ./target/hertz-admin > /dev/null 2>&1 &
 
 stop: ## 停止目标
