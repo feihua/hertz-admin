@@ -24,7 +24,7 @@ INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu
 
 INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (3, '用户管理', 2, 1, 1, 2, '/system/user/list', '', 'setting', '用户管理', current_timestamp, null);
 INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (4, '角色管理', 2, 1, 2, 2, '/system/role/list', '', '', '角色管理', current_timestamp, null);
-INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (5, '菜单管理', 2, 1, 3, 2, '/system/menu/list', '/api/system/menu/queryMenuList', 'setting', '菜单管理', current_timestamp, null);
+INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (5, '菜单管理', 2, 1, 3, 2, '/system/menu/list', '', 'setting', '菜单管理', current_timestamp, null);
 
 INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (6, '保存用户接口', 3, 1, 1, 3, '', '/api/system/user/addUser', '', '保存用户接口', current_timestamp, null);
 INSERT INTO sys_menu (id, menu_name, menu_type, status_id, sort, parent_id, menu_url, api_url, menu_icon, remark, create_time, update_time) VALUES (7, '删除用户接口', 3, 1, 2, 3, '', '/api/system/user/deleteUser', '', '删除用户接口', current_timestamp, null);
