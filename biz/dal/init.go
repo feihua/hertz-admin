@@ -32,7 +32,7 @@ type Writer struct {
 }
 
 func (w Writer) Printf(format string, args ...interface{}) {
-	hlog.Debugf(format, args)
+	hlog.Debugf(format, args...)
 }
 
 // init log config

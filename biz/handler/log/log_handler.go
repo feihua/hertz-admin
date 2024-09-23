@@ -5,7 +5,6 @@ package log
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/api"
 	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
@@ -44,7 +43,7 @@ func LoginLogDelete(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// QueryLoginLogList .
+// QueryLoginLogList 查询登录日志列表
 // @router /api/log/login/queryLoginLogList [POST]
 func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 	resp := new(log.QueryLoginLogListResp)
@@ -58,7 +57,16 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	result, count, err := dal.QueryLoginLogList(req.UserName, req.IP, req.PageNo, req.PageSize)
+	q := query.SysLoginLog.WithContext(ctx)
+	if len(req.UserName) != 0 {
+		q = q.Where(query.SysLoginLog.UserName.Like("%" + req.UserName + "%"))
+	}
+
+	if len(req.IP) != 0 {
+		q = q.Where(query.SysLoginLog.IP.Like("%" + req.IP + "%"))
+	}
+
+	result, count, err := q.FindByPage(int((req.PageNo-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "查询登录日志列表异常: %v", err)
@@ -105,7 +113,11 @@ func StatisticsLoginLog(ctx context.Context, c *app.RequestContext) {
 
 	resp.Code = api.Code_Success
 	resp.Msg = "查询登录日志统计成功"
-	resp.Data = dal.QueryStatisticsLoginLog()
+	resp.Data = &log.StatisticsLoginLogData{
+		DayLoginCount:   0,
+		WeekLoginCount:  0,
+		MonthLoginCount: 0,
+	}
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -154,7 +166,18 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	result, count, err := dal.QueryOperateLogList(req.UserName, req.IP, req.Method, req.PageNo, req.PageSize)
+	q := query.SysOperateLog.WithContext(ctx)
+	if len(req.UserName) != 0 {
+		q = q.Where(query.SysOperateLog.UserName.Like("%" + req.UserName + "%"))
+	}
+	if len(req.IP) != 0 {
+		q = q.Where(query.SysOperateLog.IP.Like("%" + req.IP + "%"))
+	}
+	if len(req.Method) != 0 {
+		q = q.Where(query.SysOperateLog.Method.Like("%" + req.Method + "%"))
+	}
+
+	result, count, err := q.FindByPage(int((req.PageNo-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "查询操作日志列表异常: %v", err)
