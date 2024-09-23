@@ -15,7 +15,7 @@ import (
 	"net/http"
 )
 
-// UserList .
+// UserList 查询用户列表
 // @router /user_list [POST]
 func UserList(ctx context.Context, c *app.RequestContext) {
 	resp := new(user.UserListResp)
@@ -29,8 +29,16 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//result, count, err := query.SysUser.WithContext(ctx).FindByPage(int(req.PageNo), int(req.PageSize))
-	result, count, err := dal.QueryUserList(req.UserName, req.Mobile, req.PageNo, req.PageSize)
+	q := query.SysUser.WithContext(ctx)
+	if len(req.UserName) != 0 {
+		q = q.Where(query.SysUser.UserName.Like("%" + req.UserName + "%"))
+	}
+
+	if len(req.Mobile) != 0 {
+		q = q.Where(query.SysUser.Mobile.Like("%" + req.Mobile + "%"))
+	}
+
+	result, count, err := q.FindByPage(int((req.PageNo-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
 		hlog.CtxErrorf(ctx, "查询用户列表异常: %v", err)
@@ -240,7 +248,13 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 		//查询所有菜单
 		sysMenuList, err = query.SysMenu.WithContext(ctx).Find()
 	} else {
-		sysMenuList, err = dal.QueryUserMenuList(req.UserId)
+		sql := `select u.*
+		from sys_user_role t
+				 left join sys_role usr on t.role_id = usr.id
+				 left join sys_role_menu srm on usr.id = srm.role_id
+				 left join sys_menu u on srm.menu_id = u.id
+		where t.user_id = ?`
+		dal.DB.WithContext(ctx).Raw(sql, req.UserId).Scan(&sysMenuList)
 	}
 
 	if err != nil {
