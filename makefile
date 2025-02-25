@@ -6,10 +6,9 @@ ifndef GOPATH
 endif
 
 GOBIN=$(GOPATH)/bin
-GOCMD=go
-GOBUILD=$(GOCMD) build
-GOCLEAN=$(GOCMD) clean
-GOGET=$(GOCMD) mod tidy
+GOBUILD=go build
+GOCLEAN=go clean
+GOGET=go mod tidy
 HZ=$(GOBIN)/hz
 
 # 安装hz代码生成工具
