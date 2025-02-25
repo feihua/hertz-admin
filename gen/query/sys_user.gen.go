@@ -30,11 +30,23 @@ func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {
 	_sysUser.ID = field.NewInt64(tableName, "id")
 	_sysUser.Mobile = field.NewString(tableName, "mobile")
 	_sysUser.UserName = field.NewString(tableName, "user_name")
+	_sysUser.NickName = field.NewString(tableName, "nick_name")
+	_sysUser.UserType = field.NewString(tableName, "user_type")
+	_sysUser.Avatar = field.NewString(tableName, "avatar")
+	_sysUser.Email = field.NewString(tableName, "email")
 	_sysUser.Password = field.NewString(tableName, "password")
-	_sysUser.StatusID = field.NewInt32(tableName, "status_id")
-	_sysUser.Sort = field.NewInt32(tableName, "sort")
+	_sysUser.Status = field.NewInt32(tableName, "status")
+	_sysUser.DeptID = field.NewInt64(tableName, "dept_id")
+	_sysUser.LoginIP = field.NewString(tableName, "login_ip")
+	_sysUser.LoginDate = field.NewTime(tableName, "login_date")
+	_sysUser.LoginBrowser = field.NewString(tableName, "login_browser")
+	_sysUser.LoginOs = field.NewString(tableName, "login_os")
+	_sysUser.PwdUpdateDate = field.NewTime(tableName, "pwd_update_date")
 	_sysUser.Remark = field.NewString(tableName, "remark")
+	_sysUser.DelFlag = field.NewInt32(tableName, "del_flag")
+	_sysUser.CreateBy = field.NewString(tableName, "create_by")
 	_sysUser.CreateTime = field.NewTime(tableName, "create_time")
+	_sysUser.UpdateBy = field.NewString(tableName, "update_by")
 	_sysUser.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_sysUser.fillFieldMap()
@@ -46,16 +58,28 @@ func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {
 type sysUser struct {
 	sysUserDo sysUserDo
 
-	ALL        field.Asterisk
-	ID         field.Int64  // 主键
-	Mobile     field.String // 手机
-	UserName   field.String // 姓名
-	Password   field.String // 密码
-	StatusID   field.Int32  // 状态(1:正常，0:禁用)
-	Sort       field.Int32  // 排序
-	Remark     field.String // 备注
-	CreateTime field.Time   // 创建时间
-	UpdateTime field.Time   // 修改时间
+	ALL           field.Asterisk
+	ID            field.Int64  // 主键
+	Mobile        field.String // 手机号码
+	UserName      field.String // 用户账号
+	NickName      field.String // 用户昵称
+	UserType      field.String // 用户类型（00系统用户）
+	Avatar        field.String // 头像路径
+	Email         field.String // 用户邮箱
+	Password      field.String // 密码
+	Status        field.Int32  // 状态(1:正常，0:禁用)
+	DeptID        field.Int64  // 部门ID
+	LoginIP       field.String // 最后登录IP
+	LoginDate     field.Time   // 最后登录时间
+	LoginBrowser  field.String // 浏览器类型
+	LoginOs       field.String // 操作系统
+	PwdUpdateDate field.Time   // 密码最后更新时间
+	Remark        field.String // 备注
+	DelFlag       field.Int32  // 删除标志（0代表删除 1代表存在）
+	CreateBy      field.String // 创建者
+	CreateTime    field.Time   // 创建时间
+	UpdateBy      field.String // 更新者
+	UpdateTime    field.Time   // 更新时间
 
 	fieldMap map[string]field.Expr
 }
@@ -75,11 +99,23 @@ func (s *sysUser) updateTableName(table string) *sysUser {
 	s.ID = field.NewInt64(table, "id")
 	s.Mobile = field.NewString(table, "mobile")
 	s.UserName = field.NewString(table, "user_name")
+	s.NickName = field.NewString(table, "nick_name")
+	s.UserType = field.NewString(table, "user_type")
+	s.Avatar = field.NewString(table, "avatar")
+	s.Email = field.NewString(table, "email")
 	s.Password = field.NewString(table, "password")
-	s.StatusID = field.NewInt32(table, "status_id")
-	s.Sort = field.NewInt32(table, "sort")
+	s.Status = field.NewInt32(table, "status")
+	s.DeptID = field.NewInt64(table, "dept_id")
+	s.LoginIP = field.NewString(table, "login_ip")
+	s.LoginDate = field.NewTime(table, "login_date")
+	s.LoginBrowser = field.NewString(table, "login_browser")
+	s.LoginOs = field.NewString(table, "login_os")
+	s.PwdUpdateDate = field.NewTime(table, "pwd_update_date")
 	s.Remark = field.NewString(table, "remark")
+	s.DelFlag = field.NewInt32(table, "del_flag")
+	s.CreateBy = field.NewString(table, "create_by")
 	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateBy = field.NewString(table, "update_by")
 	s.UpdateTime = field.NewTime(table, "update_time")
 
 	s.fillFieldMap()
@@ -105,15 +141,27 @@ func (s *sysUser) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysUser) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 21)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["mobile"] = s.Mobile
 	s.fieldMap["user_name"] = s.UserName
+	s.fieldMap["nick_name"] = s.NickName
+	s.fieldMap["user_type"] = s.UserType
+	s.fieldMap["avatar"] = s.Avatar
+	s.fieldMap["email"] = s.Email
 	s.fieldMap["password"] = s.Password
-	s.fieldMap["status_id"] = s.StatusID
-	s.fieldMap["sort"] = s.Sort
+	s.fieldMap["status"] = s.Status
+	s.fieldMap["dept_id"] = s.DeptID
+	s.fieldMap["login_ip"] = s.LoginIP
+	s.fieldMap["login_date"] = s.LoginDate
+	s.fieldMap["login_browser"] = s.LoginBrowser
+	s.fieldMap["login_os"] = s.LoginOs
+	s.fieldMap["pwd_update_date"] = s.PwdUpdateDate
 	s.fieldMap["remark"] = s.Remark
+	s.fieldMap["del_flag"] = s.DelFlag
+	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime
+	s.fieldMap["update_by"] = s.UpdateBy
 	s.fieldMap["update_time"] = s.UpdateTime
 }
 

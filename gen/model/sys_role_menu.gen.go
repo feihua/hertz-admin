@@ -4,19 +4,13 @@
 
 package model
 
-import (
-	"time"
-)
-
 const TableNameSysRoleMenu = "sys_role_menu"
 
 // SysRoleMenu 菜单角色关联表
 type SysRoleMenu struct {
-	ID         int64      `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id"`                          // 主键
-	RoleID     int64      `gorm:"column:role_id;not null;comment:角色ID" json:"role_id"`                                   // 角色ID
-	MenuID     int64      `gorm:"column:menu_id;not null;comment:菜单ID" json:"menu_id"`                                   // 菜单ID
-	CreateTime time.Time  `gorm:"column:create_time;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"` // 创建时间
-	UpdateTime *time.Time `gorm:"column:update_time;comment:修改时间" json:"update_time"`                                    // 修改时间
+	ID     int64 `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id"` // 主键
+	RoleID int64 `gorm:"column:role_id;not null;comment:角色ID" json:"role_id"`          // 角色ID
+	MenuID int64 `gorm:"column:menu_id;not null;comment:菜单ID" json:"menu_id"`          // 菜单ID
 }
 
 // TableName SysRoleMenu's table name

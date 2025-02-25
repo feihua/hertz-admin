@@ -4,19 +4,13 @@
 
 package model
 
-import (
-	"time"
-)
-
 const TableNameSysUserRole = "sys_user_role"
 
 // SysUserRole 角色用户关联表
 type SysUserRole struct {
-	ID         int64      `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id"`                          // 主键
-	UserID     int64      `gorm:"column:user_id;not null;comment:用户ID" json:"user_id"`                                   // 用户ID
-	RoleID     int64      `gorm:"column:role_id;not null;comment:角色ID" json:"role_id"`                                   // 角色ID
-	CreateTime time.Time  `gorm:"column:create_time;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time"` // 创建时间
-	UpdateTime *time.Time `gorm:"column:update_time;comment:修改时间" json:"update_time"`                                    // 修改时间
+	ID     int64 `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id"` // 主键
+	UserID int64 `gorm:"column:user_id;not null;comment:用户ID" json:"user_id"`          // 用户ID
+	RoleID int64 `gorm:"column:role_id;not null;comment:角色ID" json:"role_id"`          // 角色ID
 }
 
 // TableName SysUserRole's table name

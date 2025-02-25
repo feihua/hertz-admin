@@ -17,35 +17,56 @@ import (
 
 var (
 	Q             = new(Query)
+	SysDept       *sysDept
+	SysDictData   *sysDictData
+	SysDictType   *sysDictType
 	SysLoginLog   *sysLoginLog
 	SysMenu       *sysMenu
+	SysNotice     *sysNotice
 	SysOperateLog *sysOperateLog
+	SysPost       *sysPost
 	SysRole       *sysRole
+	SysRoleDept   *sysRoleDept
 	SysRoleMenu   *sysRoleMenu
 	SysUser       *sysUser
+	SysUserPost   *sysUserPost
 	SysUserRole   *sysUserRole
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	SysDept = &Q.SysDept
+	SysDictData = &Q.SysDictData
+	SysDictType = &Q.SysDictType
 	SysLoginLog = &Q.SysLoginLog
 	SysMenu = &Q.SysMenu
+	SysNotice = &Q.SysNotice
 	SysOperateLog = &Q.SysOperateLog
+	SysPost = &Q.SysPost
 	SysRole = &Q.SysRole
+	SysRoleDept = &Q.SysRoleDept
 	SysRoleMenu = &Q.SysRoleMenu
 	SysUser = &Q.SysUser
+	SysUserPost = &Q.SysUserPost
 	SysUserRole = &Q.SysUserRole
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:            db,
+		SysDept:       newSysDept(db, opts...),
+		SysDictData:   newSysDictData(db, opts...),
+		SysDictType:   newSysDictType(db, opts...),
 		SysLoginLog:   newSysLoginLog(db, opts...),
 		SysMenu:       newSysMenu(db, opts...),
+		SysNotice:     newSysNotice(db, opts...),
 		SysOperateLog: newSysOperateLog(db, opts...),
+		SysPost:       newSysPost(db, opts...),
 		SysRole:       newSysRole(db, opts...),
+		SysRoleDept:   newSysRoleDept(db, opts...),
 		SysRoleMenu:   newSysRoleMenu(db, opts...),
 		SysUser:       newSysUser(db, opts...),
+		SysUserPost:   newSysUserPost(db, opts...),
 		SysUserRole:   newSysUserRole(db, opts...),
 	}
 }
@@ -53,12 +74,19 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	SysDept       sysDept
+	SysDictData   sysDictData
+	SysDictType   sysDictType
 	SysLoginLog   sysLoginLog
 	SysMenu       sysMenu
+	SysNotice     sysNotice
 	SysOperateLog sysOperateLog
+	SysPost       sysPost
 	SysRole       sysRole
+	SysRoleDept   sysRoleDept
 	SysRoleMenu   sysRoleMenu
 	SysUser       sysUser
+	SysUserPost   sysUserPost
 	SysUserRole   sysUserRole
 }
 
@@ -67,12 +95,19 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:            db,
+		SysDept:       q.SysDept.clone(db),
+		SysDictData:   q.SysDictData.clone(db),
+		SysDictType:   q.SysDictType.clone(db),
 		SysLoginLog:   q.SysLoginLog.clone(db),
 		SysMenu:       q.SysMenu.clone(db),
+		SysNotice:     q.SysNotice.clone(db),
 		SysOperateLog: q.SysOperateLog.clone(db),
+		SysPost:       q.SysPost.clone(db),
 		SysRole:       q.SysRole.clone(db),
+		SysRoleDept:   q.SysRoleDept.clone(db),
 		SysRoleMenu:   q.SysRoleMenu.clone(db),
 		SysUser:       q.SysUser.clone(db),
+		SysUserPost:   q.SysUserPost.clone(db),
 		SysUserRole:   q.SysUserRole.clone(db),
 	}
 }
@@ -88,34 +123,55 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:            db,
+		SysDept:       q.SysDept.replaceDB(db),
+		SysDictData:   q.SysDictData.replaceDB(db),
+		SysDictType:   q.SysDictType.replaceDB(db),
 		SysLoginLog:   q.SysLoginLog.replaceDB(db),
 		SysMenu:       q.SysMenu.replaceDB(db),
+		SysNotice:     q.SysNotice.replaceDB(db),
 		SysOperateLog: q.SysOperateLog.replaceDB(db),
+		SysPost:       q.SysPost.replaceDB(db),
 		SysRole:       q.SysRole.replaceDB(db),
+		SysRoleDept:   q.SysRoleDept.replaceDB(db),
 		SysRoleMenu:   q.SysRoleMenu.replaceDB(db),
 		SysUser:       q.SysUser.replaceDB(db),
+		SysUserPost:   q.SysUserPost.replaceDB(db),
 		SysUserRole:   q.SysUserRole.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
+	SysDept       ISysDeptDo
+	SysDictData   ISysDictDataDo
+	SysDictType   ISysDictTypeDo
 	SysLoginLog   ISysLoginLogDo
 	SysMenu       ISysMenuDo
+	SysNotice     ISysNoticeDo
 	SysOperateLog ISysOperateLogDo
+	SysPost       ISysPostDo
 	SysRole       ISysRoleDo
+	SysRoleDept   ISysRoleDeptDo
 	SysRoleMenu   ISysRoleMenuDo
 	SysUser       ISysUserDo
+	SysUserPost   ISysUserPostDo
 	SysUserRole   ISysUserRoleDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		SysDept:       q.SysDept.WithContext(ctx),
+		SysDictData:   q.SysDictData.WithContext(ctx),
+		SysDictType:   q.SysDictType.WithContext(ctx),
 		SysLoginLog:   q.SysLoginLog.WithContext(ctx),
 		SysMenu:       q.SysMenu.WithContext(ctx),
+		SysNotice:     q.SysNotice.WithContext(ctx),
 		SysOperateLog: q.SysOperateLog.WithContext(ctx),
+		SysPost:       q.SysPost.WithContext(ctx),
 		SysRole:       q.SysRole.WithContext(ctx),
+		SysRoleDept:   q.SysRoleDept.WithContext(ctx),
 		SysRoleMenu:   q.SysRoleMenu.WithContext(ctx),
 		SysUser:       q.SysUser.WithContext(ctx),
+		SysUserPost:   q.SysUserPost.WithContext(ctx),
 		SysUserRole:   q.SysUserRole.WithContext(ctx),
 	}
 }

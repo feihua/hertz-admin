@@ -30,14 +30,17 @@ func newSysMenu(db *gorm.DB, opts ...gen.DOOption) sysMenu {
 	_sysMenu.ID = field.NewInt64(tableName, "id")
 	_sysMenu.MenuName = field.NewString(tableName, "menu_name")
 	_sysMenu.MenuType = field.NewInt32(tableName, "menu_type")
-	_sysMenu.StatusID = field.NewInt32(tableName, "status_id")
+	_sysMenu.Visible = field.NewInt32(tableName, "visible")
+	_sysMenu.Status = field.NewInt32(tableName, "status")
 	_sysMenu.Sort = field.NewInt32(tableName, "sort")
 	_sysMenu.ParentID = field.NewInt64(tableName, "parent_id")
 	_sysMenu.MenuURL = field.NewString(tableName, "menu_url")
 	_sysMenu.APIURL = field.NewString(tableName, "api_url")
 	_sysMenu.MenuIcon = field.NewString(tableName, "menu_icon")
 	_sysMenu.Remark = field.NewString(tableName, "remark")
+	_sysMenu.CreateBy = field.NewString(tableName, "create_by")
 	_sysMenu.CreateTime = field.NewTime(tableName, "create_time")
+	_sysMenu.UpdateBy = field.NewString(tableName, "update_by")
 	_sysMenu.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_sysMenu.fillFieldMap()
@@ -53,15 +56,18 @@ type sysMenu struct {
 	ID         field.Int64  // 主键
 	MenuName   field.String // 菜单名称
 	MenuType   field.Int32  // 菜单类型(1：目录   2：菜单   3：按钮)
-	StatusID   field.Int32  // 状态(1:正常，0:禁用)
+	Visible    field.Int32  // 显示状态（0:隐藏, 显示:1）
+	Status     field.Int32  // 菜单状态(1:正常，0:禁用)
 	Sort       field.Int32  // 排序
 	ParentID   field.Int64  // 父ID
 	MenuURL    field.String // 路由路径
 	APIURL     field.String // 接口URL
 	MenuIcon   field.String // 菜单图标
 	Remark     field.String // 备注
+	CreateBy   field.String // 创建者
 	CreateTime field.Time   // 创建时间
-	UpdateTime field.Time   // 修改时间
+	UpdateBy   field.String // 更新者
+	UpdateTime field.Time   // 更新时间
 
 	fieldMap map[string]field.Expr
 }
@@ -81,14 +87,17 @@ func (s *sysMenu) updateTableName(table string) *sysMenu {
 	s.ID = field.NewInt64(table, "id")
 	s.MenuName = field.NewString(table, "menu_name")
 	s.MenuType = field.NewInt32(table, "menu_type")
-	s.StatusID = field.NewInt32(table, "status_id")
+	s.Visible = field.NewInt32(table, "visible")
+	s.Status = field.NewInt32(table, "status")
 	s.Sort = field.NewInt32(table, "sort")
 	s.ParentID = field.NewInt64(table, "parent_id")
 	s.MenuURL = field.NewString(table, "menu_url")
 	s.APIURL = field.NewString(table, "api_url")
 	s.MenuIcon = field.NewString(table, "menu_icon")
 	s.Remark = field.NewString(table, "remark")
+	s.CreateBy = field.NewString(table, "create_by")
 	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateBy = field.NewString(table, "update_by")
 	s.UpdateTime = field.NewTime(table, "update_time")
 
 	s.fillFieldMap()
@@ -114,18 +123,21 @@ func (s *sysMenu) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysMenu) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 12)
+	s.fieldMap = make(map[string]field.Expr, 15)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["menu_name"] = s.MenuName
 	s.fieldMap["menu_type"] = s.MenuType
-	s.fieldMap["status_id"] = s.StatusID
+	s.fieldMap["visible"] = s.Visible
+	s.fieldMap["status"] = s.Status
 	s.fieldMap["sort"] = s.Sort
 	s.fieldMap["parent_id"] = s.ParentID
 	s.fieldMap["menu_url"] = s.MenuURL
 	s.fieldMap["api_url"] = s.APIURL
 	s.fieldMap["menu_icon"] = s.MenuIcon
 	s.fieldMap["remark"] = s.Remark
+	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime
+	s.fieldMap["update_by"] = s.UpdateBy
 	s.fieldMap["update_time"] = s.UpdateTime
 }
 

@@ -10,17 +10,33 @@ import (
 
 const TableNameSysOperateLog = "sys_operate_log"
 
-// SysOperateLog 系统操作日志
+// SysOperateLog 操作日志记录
 type SysOperateLog struct {
-	ID             int64      `gorm:"column:id;primaryKey;autoIncrement:true;comment:编号" json:"id"`                       // 编号
-	UserName       string     `gorm:"column:user_name;not null;comment:用户名" json:"user_name"`                             // 用户名
-	Operation      string     `gorm:"column:operation;not null;comment:用户操作" json:"operation"`                            // 用户操作
-	Method         string     `gorm:"column:method;not null;comment:请求方法" json:"method"`                                  // 请求方法
-	RequestParams  string     `gorm:"column:request_params;not null;comment:请求参数" json:"request_params"`                  // 请求参数
-	ResponseParams *string    `gorm:"column:response_params;comment:响应参数" json:"response_params"`                         // 响应参数
-	Time           int64      `gorm:"column:time;not null;comment:执行时长(毫秒)" json:"time"`                                  // 执行时长(毫秒)
-	IP             *string    `gorm:"column:ip;comment:IP地址" json:"ip"`                                                   // IP地址
-	OperationTime  *time.Time `gorm:"column:operation_time;default:CURRENT_TIMESTAMP;comment:操作时间" json:"operation_time"` // 操作时间
+	ID              int64     `gorm:"column:id;primaryKey;autoIncrement:true;comment:日志主键" json:"id"`                          // 日志主键
+	Title           string    `gorm:"column:title;not null;comment:模块标题" json:"title"`                                         // 模块标题
+	BusinessType    int32     `gorm:"column:business_type;not null;comment:业务类型（0其它 1新增 2修改 3删除）" json:"business_type"`        // 业务类型（0其它 1新增 2修改 3删除）
+	Method          string    `gorm:"column:method;not null;comment:方法名称" json:"method"`                                       // 方法名称
+	RequestMethod   string    `gorm:"column:request_method;not null;comment:请求方式" json:"request_method"`                       // 请求方式
+	OperatorType    int32     `gorm:"column:operator_type;not null;comment:操作类别（0其它 1后台用户 2手机端用户）" json:"operator_type"`       // 操作类别（0其它 1后台用户 2手机端用户）
+	OperateName     string    `gorm:"column:operate_name;not null;comment:操作人员" json:"operate_name"`                           // 操作人员
+	DeptName        string    `gorm:"column:dept_name;not null;comment:部门名称" json:"dept_name"`                                 // 部门名称
+	OperateURL      string    `gorm:"column:operate_url;not null;comment:请求URL" json:"operate_url"`                            // 请求URL
+	OperateIP       string    `gorm:"column:operate_ip;not null;comment:主机地址" json:"operate_ip"`                               // 主机地址
+	OperateLocation string    `gorm:"column:operate_location;not null;comment:操作地点" json:"operate_location"`                   // 操作地点
+	OperateParam    string    `gorm:"column:operate_param;not null;comment:请求参数" json:"operate_param"`                         // 请求参数
+	JSONResult      string    `gorm:"column:json_result;not null;comment:返回参数" json:"json_result"`                             // 返回参数
+	Platform        string    `gorm:"column:platform;not null;comment:平台信息" json:"platform"`                                   // 平台信息
+	Browser         string    `gorm:"column:browser;not null;comment:浏览器类型" json:"browser"`                                    // 浏览器类型
+	Version         string    `gorm:"column:version;not null;comment:浏览器版本" json:"version"`                                    // 浏览器版本
+	Os              string    `gorm:"column:os;not null;comment:操作系统" json:"os"`                                               // 操作系统
+	Arch            string    `gorm:"column:arch;not null;comment:体系结构信息" json:"arch"`                                         // 体系结构信息
+	Engine          string    `gorm:"column:engine;not null;comment:渲染引擎信息" json:"engine"`                                     // 渲染引擎信息
+	EngineDetails   string    `gorm:"column:engine_details;not null;comment:渲染引擎详细信息" json:"engine_details"`                   // 渲染引擎详细信息
+	Extra           string    `gorm:"column:extra;not null;comment:其他信息（可选）" json:"extra"`                                     // 其他信息（可选）
+	Status          int32     `gorm:"column:status;not null;comment:操作状态(0:异常,正常)" json:"status"`                              // 操作状态(0:异常,正常)
+	ErrorMsg        string    `gorm:"column:error_msg;not null;comment:错误消息" json:"error_msg"`                                 // 错误消息
+	OperateTime     time.Time `gorm:"column:operate_time;not null;default:CURRENT_TIMESTAMP;comment:操作时间" json:"operate_time"` // 操作时间
+	CostTime        int64     `gorm:"column:cost_time;not null;comment:消耗时间" json:"cost_time"`                                 // 消耗时间
 }
 
 // TableName SysOperateLog's table name
