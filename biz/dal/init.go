@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var Dsn = "root:oMbPi5munxCsBSsiLoPV@tcp(110.41.179.89:3306)/hertzdb?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+var Dsn = "root:123456@tcp(127.0.0.1:3306)/hertz-admin?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
 
 var DB *gorm.DB
 

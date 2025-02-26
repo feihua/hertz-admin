@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
 	"net/http"
 	"time"
@@ -81,20 +80,20 @@ func InitJwt() {
 			}
 
 			menus, err := query.SysMenu.WithContext(ctx).Find()
-			//menus, _, err := entity.QuerySysMenu(nil, 1, 1000)
+			// menus, _, err := entity.QuerySysMenu(nil, 1, 1000)
 
 			var list []interface{}
 			for _, menu := range menus {
 				list = append(list, menu.APIURL)
 			}
 
-			//保存登录日志
-			query.SysLoginLog.WithContext(ctx).Create(&model.SysLoginLog{
-				UserName:  sysUser.UserName,
-				Status:    "1",
-				IP:        string(c.Request.Host()),
-				LoginTime: time.Now(),
-			})
+			// todo 保存登录日志
+			// query.SysLoginLog.WithContext(ctx).Create(&model.SysLoginLog{
+			// 	UserName:  sysUser.UserName,
+			// 	Status:    "1",
+			// 	IP:        string(c.Request.Host()),
+			// 	LoginTime: time.Now(),
+			// })
 
 			return &User{
 				Id:          sysUser.ID,
