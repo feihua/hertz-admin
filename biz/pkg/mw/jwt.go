@@ -53,17 +53,14 @@ func InitJwt() {
 		TokenHeadName: "Bearer",
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			c.JSON(http.StatusOK, utils.H{
-				"code":    1,
-				"message": "success",
-				"data": utils.H{
-					"token":  token,
-					"expire": expire.Format(time.RFC3339),
-				},
+				"code": 0,
+				"msg":  "success",
+				"data": token,
 			})
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var loginStruct struct {
-				Account  string `form:"account" json:"account" query:"account" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
+				Account  string `form:"mobile" json:"mobile" query:"mobile" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
 			if err := c.BindAndValidate(&loginStruct); err != nil {
@@ -142,8 +139,8 @@ func InitJwt() {
 		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
 			c.JSON(http.StatusOK, utils.H{
-				"code":    code,
-				"message": message,
+				"code": code,
+				"msg":  message,
 			})
 		},
 	})
