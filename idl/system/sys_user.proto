@@ -1,0 +1,265 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 添加用户信息请求参数
+message AddUserReq {
+  string remark = 1[(api.body) = "remark"]; //备注
+  string mobile = 2[(api.body) = "mobile"]; //手机号码
+  string user_name = 3[(api.body) = "userName"]; //用户账号
+  string nick_name = 4[(api.body) = "nickName"]; //用户昵称
+  string user_type = 5[(api.body) = "userType"]; //用户类型（00系统用户）
+  string avatar = 6[(api.body) = "avatar"]; //头像路径
+  string email = 7[(api.body) = "email"]; //用户邮箱
+  int32 status = 9[(api.body) = "status"]; //状态(1:正常，0:禁用)
+  int64 dept_id = 10[(api.body) = "deptId"]; //部门ID
+  repeated int64 post_ids = 11[(api.body) = "postIds"]; //部门ID
+
+
+}
+message AddUserResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 删除用户信息请求参数
+message DeleteUserReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message DeleteUserResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新用户信息请求参数
+message UpdateUserReq {
+  int64 id = 1[(api.body) = "id"]; //主键
+  string mobile = 2[(api.body) = "mobile"]; //手机号码
+  string user_name = 3[(api.body) = "userName"]; //用户账号
+  string nick_name = 4[(api.body) = "nickName"]; //用户昵称
+  string user_type = 5[(api.body) = "userType"]; //用户类型（00系统用户）
+  string avatar = 6[(api.body) = "avatar"]; //头像路径
+  string email = 7[(api.body) = "email"]; //用户邮箱
+  int32 status = 9[(api.body) = "status"]; //状态(1:正常，0:禁用)
+  int64 dept_id = 10[(api.body) = "deptId"]; //部门ID
+  string remark = 11[(api.body) = "remark"]; //备注
+  repeated int64 post_ids = 12[(api.body) = "postIds"]; //部门ID
+}
+
+message UpdateUserResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新用户信息状态请求参数
+message UpdateUserStatusReq {
+  repeated int64 id = 1[(api.body) = "id"]; //主键
+  int32 status = 9[(api.body) = "status"]; //状态(1:正常，0:禁用)
+
+}
+
+message UpdateUserStatusResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询用户信息详情请求参数
+message QueryUserDetailReq {
+  int64 id = 1[(api.body) = "id"]; //主键
+
+}
+
+message QueryUserDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryUserDetailData data = 3;
+}
+
+message QueryUserDetailData {
+  int64 id = 1; //主键
+  string mobile = 2; //手机号码
+  string user_name = 3; //用户账号
+  string nick_name = 4; //用户昵称
+  string user_type = 5; //用户类型（00系统用户）
+  string avatar = 6; //头像路径
+  string email = 7; //用户邮箱
+  int32 status = 9; //状态(1:正常，0:禁用)
+  int64 dept_id = 10; //部门ID
+  string login_ip = 11; //最后登录IP
+  string login_date = 12; //最后登录时间
+  string login_browser = 13; //浏览器类型
+  string login_os = 14; //操作系统
+  string pwd_update_date = 15; //密码最后更新时间
+  string remark = 16; //备注
+  int32 del_flag = 17; //删除标志（0代表删除 1代表存在）
+  string create_by = 18; //创建者
+  string create_time = 19; //创建时间
+  string update_by = 20; //更新者
+  string update_time = 21; //更新时间
+}
+
+// 分页查询用户信息列表请求参数
+message QueryUserListReq {
+  string mobile = 1[(api.body) = "mobile"]; //手机号码
+  string user_name = 2[(api.body) = "userName"]; //用户账号
+  string nick_name = 3[(api.body) = "nickName"]; //用户昵称
+  string email = 4[(api.body) = "email"]; //用户邮箱
+  int32 status = 5[(api.body) = "status"]; //状态(1:正常，0:禁用)
+  int64 dept_id = 6[(api.body) = "deptId"]; //部门ID
+
+  int32 page_num = 7[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 8[(api.body) = "pageSize"]; //每页的数量
+}
+
+
+message QueryUserListResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated QueryUserListData data = 4;
+}
+
+message QueryUserListData {
+  int64 id = 1; //主键
+  string mobile = 2; //手机号码
+  string user_name = 3; //用户账号
+  string nick_name = 4; //用户昵称
+  string user_type = 5; //用户类型（00系统用户）
+  string avatar = 6; //头像路径
+  string email = 7; //用户邮箱
+  int32 status = 9; //状态(1:正常，0:禁用)
+  int64 dept_id = 10; //部门ID
+  string login_ip = 11; //最后登录IP
+  string login_date = 12; //最后登录时间
+  string login_browser = 13; //浏览器类型
+  string login_os = 14; //操作系统
+  string pwd_update_date = 15; //密码最后更新时间
+  string remark = 16; //备注
+  int32 del_flag = 17; //删除标志（0代表删除 1代表存在）
+  string create_by = 18; //创建者
+  string create_time = 19; //创建时间
+  string update_by = 20; //更新者
+  string update_time = 21; //更新时间
+}
+
+// 用户登录
+//message   LoginReq {
+//  string mobile = 1[(api.body) = "mobile"]; //手机号码
+//  string password = 2[(api.body) = "mobile"]; //密码
+//}
+//message LoginResp {
+//  string msg = 1;
+//  api.Code code = 2;
+//  string data = 3;
+//}
+// 获取个人信息
+message   ListMenuTree {
+  int64 id = 1; //主键
+  string path = 2; //菜单路径
+  string name = 3; //菜单名称
+  int64 parentId = 4; //父菜单ID，一级菜单为0
+  string icon = 5; //菜单图标
+}
+message UserInfoData {
+  string avatar = 1;
+  string name = 2;
+  bool isAdmin = 3;
+  repeated ListMenuTree sysMenu = 4;
+  repeated string btnMenu = 5; //是否超级管理员:  0：否  1：是
+}
+message UserInfoReq {
+
+}
+message UserInfoResp {
+  string msg = 1;
+  api.Code code = 2;
+  UserInfoData data = 3;
+}
+// 添加用户角色关联
+message    AddUserRoleReq {
+  repeated int64 role_ids = 1[(api.body) = "roleIds"]; //角色ID
+  int64 user_id = 2[(api.body) = "userId"]; //用户ID
+}
+message AddUserRoleResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+// 分页查询用户角色关联列表
+message   QueryUserRoleListReq {
+  int32 page_num = 1[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 2[(api.body) = "pageSize"]; //每页的数量
+  int64 user_id = 3[(api.body) = "userId"]; //用户ID
+}
+message UserRoleListData {
+  int64 id = 1; //主键
+  string role_name = 2; //名称
+  string role_key = 3; //角色权限字符串
+  int32 data_scope = 4; //数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
+  int32 status = 5; //状态(1:正常，0:禁用)
+  string remark = 6; //备注
+  int32 del_flag = 7; //删除标志（0代表删除 1代表存在）
+  string create_by = 8; //创建者
+  string create_time = 9; //创建时间
+  string update_by = 10; //更新者
+  string update_time = 11; //更新时间
+}
+message QueryUserRoleListData {
+  repeated UserRoleListData sysRoleList = 1;
+  repeated int64 userRoleIds = 2;
+}
+message QueryUserRoleListResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryUserRoleListData data = 3;
+}
+
+// 用户信息服务
+service UserHandler {
+
+  // 添加用户信息
+  rpc AddUser(AddUserReq) returns(AddUserResp) {
+    option (api.post) = "/api/demo/user/addUser";
+  }
+  // 删除用户信息
+  rpc DeleteUser(DeleteUserReq) returns(DeleteUserResp) {
+    option (api.post) = "/api/demo/user/deleteUser";
+  }
+  // 更新用户信息
+  rpc UpdateUser(UpdateUserReq) returns(UpdateUserResp) {
+    option (api.post) = "/api/demo/user/updateUser";
+  }
+  // 更新用户信息状态
+  rpc UpdateUserStatus(UpdateUserStatusReq) returns(UpdateUserStatusResp) {
+    option (api.post) = "/api/demo/user/updateUserStatus";
+  }
+  // 查询用户信息详情
+  rpc QueryUserDetail(QueryUserDetailReq) returns(QueryUserDetailResp) {
+    option (api.post) = "/api/demo/user/queryUserDetail";
+  }
+  // 分页查询用户信息列表
+  rpc QueryUserList(QueryUserListReq) returns(QueryUserListResp) {
+    option (api.post) = "/api/demo/user/queryUserList";
+  }
+
+  //获取用户信息
+  rpc QueryUserMenu(UserInfoReq) returns(UserInfoResp) {
+    option (api.get) = "/api/demo/user/queryUserMenu";
+  }
+
+  //分页查询用户角色关联列表
+  rpc QueryUserRoleList(QueryUserRoleListReq) returns(QueryUserRoleListResp) {
+    option (api.post) = "/api/demo/user/queryUserRole";
+  }
+
+  //添加用户角色关联
+  rpc AddUserRole(QueryUserListReq) returns(AddUserRoleResp) {
+    option (api.post) = "/api/demo/user/updateUserRole";
+  }
+}
+
+

@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 添加字典类型表请求参数
+message AddDictTypeReq {
+  string remark = 1[(api.body) = "remark"]; //备注
+  string dict_name = 2[(api.body) = "dictName"]; //字典名称
+  string dict_type = 3[(api.body) = "dictType"]; //字典类型
+  int32 status = 4[(api.body) = "status"]; //状态（0：停用，1:正常）
+
+
+}
+message AddDictTypeResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 删除字典类型表请求参数
+message DeleteDictTypeReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message DeleteDictTypeResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新字典类型表请求参数
+message UpdateDictTypeReq {
+  int64 id = 1[(api.body) = "id"]; //字典主键
+  string dict_name = 2[(api.body) = "dictName"]; //字典名称
+  string dict_type = 3[(api.body) = "dictType"]; //字典类型
+  int32 status = 4[(api.body) = "status"]; //状态（0：停用，1:正常）
+  string remark = 5[(api.body) = "remark"]; //备注
+}
+
+message UpdateDictTypeResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新字典类型表状态请求参数
+message UpdateDictTypeStatusReq {
+  repeated int64 id = 1[(api.body) = "id"]; //字典主键
+  int32 status = 4[(api.body) = "status"]; //状态（0：停用，1:正常）
+
+}
+
+message UpdateDictTypeStatusResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询字典类型表详情请求参数
+message QueryDictTypeDetailReq {
+  int64 id = 1[(api.body) = "id"]; //字典主键
+
+}
+
+message QueryDictTypeDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryDictTypeDetailData data = 3;
+}
+
+message QueryDictTypeDetailData {
+  int64 id = 1; //字典主键
+  string dict_name = 2; //字典名称
+  string dict_type = 3; //字典类型
+  int32 status = 4; //状态（0：停用，1:正常）
+  string remark = 5; //备注
+  string create_by = 6; //创建者
+  string create_time = 7; //创建时间
+  string update_by = 8; //更新者
+  string update_time = 9; //更新时间
+}
+
+// 分页查询字典类型表列表请求参数
+message QueryDictTypeListReq {
+  string dict_name = 2[(api.body) = "dictName"]; //字典名称
+  string dict_type = 3[(api.body) = "dictType"]; //字典类型
+  int32 status = 4[(api.body) = "status"]; //状态（0：停用，1:正常）
+
+  int32 page_num = 1[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 5[(api.body) = "pageSize"]; //每页的数量
+}
+
+
+message QueryDictTypeListResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated QueryDictTypeListData data = 4;
+}
+
+message QueryDictTypeListData {
+  int64 id = 1; //字典主键
+  string dict_name = 2; //字典名称
+  string dict_type = 3; //字典类型
+  int32 status = 4; //状态（0：停用，1:正常）
+  string remark = 5; //备注
+  string create_by = 6; //创建者
+  string create_time = 7; //创建时间
+  string update_by = 8; //更新者
+  string update_time = 9; //更新时间
+}
+
+// 字典类型表服务
+service DictTypeHandler {
+
+  // 添加字典类型表
+  rpc AddDictType(AddDictTypeReq) returns(AddDictTypeResp) {
+    option (api.post) = "/api/demo/dictType/addDictType";
+  }
+  // 删除字典类型表
+  rpc DeleteDictType(DeleteDictTypeReq) returns(DeleteDictTypeResp) {
+    option (api.post) = "/api/demo/dictType/deleteDictType";
+  }
+  // 更新字典类型表
+  rpc UpdateDictType(UpdateDictTypeReq) returns(UpdateDictTypeResp) {
+    option (api.post) = "/api/demo/dictType/updateDictType";
+  }
+  // 更新字典类型表状态
+  rpc UpdateDictTypeStatus(UpdateDictTypeStatusReq) returns(UpdateDictTypeStatusResp) {
+    option (api.post) = "/api/demo/dictType/updateDictTypeStatus";
+  }
+  // 查询字典类型表详情
+  rpc QueryDictTypeDetail(QueryDictTypeDetailReq) returns(QueryDictTypeDetailResp) {
+    option (api.post) = "/api/demo/dictType/queryDictTypeDetail";
+  }
+  // 分页查询字典类型表列表
+  rpc QueryDictTypeList(QueryDictTypeListReq) returns(QueryDictTypeListResp) {
+    option (api.post) = "/api/demo/dictType/queryDictTypeList";
+  }
+
+}
+
+

@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 删除系统访问记录请求参数
+message DeleteLoginLogReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message DeleteLoginLogResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询系统访问记录详情请求参数
+message QueryLoginLogDetailReq {
+  int64 id = 1[(api.body) = "id"]; //访问ID
+
+}
+
+message QueryLoginLogDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryLoginLogDetailData data = 3;
+}
+
+message QueryLoginLogDetailData {
+  int64 id = 1; //访问ID
+  string login_name = 2; //登录账号
+  string ipaddr = 3; //登录IP地址
+  string login_location = 4; //登录地点
+  string platform = 5; //平台信息
+  string browser = 6; //浏览器类型
+  string version = 7; //浏览器版本
+  string os = 8; //操作系统
+  string arch = 9; //体系结构信息
+  string engine = 10; //渲染引擎信息
+  string engine_details = 11; //渲染引擎详细信息
+  string extra = 12; //其他信息（可选）
+  int32 status = 13; //登录状态(0:失败,1:成功)
+  string msg = 14; //提示消息
+  string login_time = 15; //访问时间
+}
+
+// 分页查询系统访问记录列表请求参数
+message QueryLoginLogListReq {
+  string login_name = 2[(api.body) = "loginName"]; //登录账号
+  string ipaddr = 3[(api.body) = "ipaddr"]; //登录IP地址
+  string login_location = 4[(api.body) = "loginLocation"]; //登录地点
+  string platform = 5[(api.body) = "platform"]; //平台信息
+  string browser = 6[(api.body) = "browser"]; //浏览器类型
+  string version = 7[(api.body) = "version"]; //浏览器版本
+  string os = 8[(api.body) = "os"]; //操作系统
+  int32 status = 13[(api.body) = "status"]; //登录状态(0:失败,1:成功)
+  int32 page_num = 1[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 14[(api.body) = "pageSize"]; //每页的数量
+}
+
+
+message QueryLoginLogListResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated QueryLoginLogListData data = 4;
+}
+
+message QueryLoginLogListData {
+  int64 id = 1; //访问ID
+  string login_name = 2; //登录账号
+  string ipaddr = 3; //登录IP地址
+  string login_location = 4; //登录地点
+  string platform = 5; //平台信息
+  string browser = 6; //浏览器类型
+  string version = 7; //浏览器版本
+  string os = 8; //操作系统
+  string arch = 9; //体系结构信息
+  string engine = 10; //渲染引擎信息
+  string engine_details = 11; //渲染引擎详细信息
+  string extra = 12; //其他信息（可选）
+  int32 status = 13; //登录状态(0:失败,1:成功)
+  string msg = 14; //提示消息
+  string login_time = 15; //访问时间
+}
+
+// 系统访问记录服务
+service LoginLogHandler {
+
+  // 删除系统访问记录
+  rpc DeleteLoginLog(DeleteLoginLogReq) returns(DeleteLoginLogResp) {
+    option (api.post) = "/api/demo/loginLog/deleteLoginLog";
+  }
+
+  // 查询系统访问记录详情
+  rpc QueryLoginLogDetail(QueryLoginLogDetailReq) returns(QueryLoginLogDetailResp) {
+    option (api.post) = "/api/demo/loginLog/queryLoginLogDetail";
+  }
+  // 分页查询系统访问记录列表
+  rpc QueryLoginLogList(QueryLoginLogListReq) returns(QueryLoginLogListResp) {
+    option (api.post) = "/api/demo/loginLog/queryLoginLogList";
+  }
+
+}
+
+

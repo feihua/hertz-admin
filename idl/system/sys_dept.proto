@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 添加部门表请求参数
+message AddDeptReq {
+  string email = 1[(api.body) = "email"]; //邮箱
+  int32 status = 2[(api.body) = "status"]; //部门状态（0：停用，1:正常）
+  int64 parent_id = 3[(api.body) = "parentId"]; //父部门id
+  string dept_name = 4[(api.body) = "deptName"]; //部门名称
+  int32 sort = 5[(api.body) = "sort"]; //显示顺序
+  string leader = 6[(api.body) = "leader"]; //负责人
+  string phone = 7[(api.body) = "phone"]; //联系电话
+
+
+}
+message AddDeptResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 删除部门表请求参数
+message DeleteDeptReq {
+  int64 id = 1[(api.body) = "id"];
+}
+
+message DeleteDeptResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新部门表请求参数
+message UpdateDeptReq {
+  int64 id = 1[(api.body) = "id"]; //部门id
+  int64 parent_id = 2[(api.body) = "parentId"]; //父部门id
+  string dept_name = 4[(api.body) = "deptName"]; //部门名称
+  int32 sort = 5[(api.body) = "sort"]; //显示顺序
+  string leader = 6[(api.body) = "leader"]; //负责人
+  string phone = 7[(api.body) = "phone"]; //联系电话
+  string email = 8[(api.body) = "email"]; //邮箱
+  int32 status = 9[(api.body) = "status"]; //部门状态（0：停用，1:正常）
+}
+
+message UpdateDeptResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新部门表状态请求参数
+message UpdateDeptStatusReq {
+  repeated int64 id = 1[(api.body) = "id"]; //部门id
+  int32 status = 9[(api.body) = "status"]; //部门状态（0：停用，1:正常）
+
+}
+
+message UpdateDeptStatusResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询部门表详情请求参数
+message QueryDeptDetailReq {
+  int64 id = 1[(api.body) = "id"]; //部门id
+
+}
+
+message QueryDeptDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryDeptDetailData data = 3;
+}
+
+message QueryDeptDetailData {
+  int64 id = 1; //部门id
+  int64 parent_id = 2; //父部门id
+  string ancestors = 3; //祖级列表
+  string dept_name = 4; //部门名称
+  int32 sort = 5; //显示顺序
+  string leader = 6; //负责人
+  string phone = 7; //联系电话
+  string email = 8; //邮箱
+  int32 status = 9; //部门状态（0：停用，1:正常）
+  string create_by = 11; //创建者
+  string create_time = 12; //创建时间
+  string update_by = 13; //更新者
+  string update_time = 14; //更新时间
+}
+
+// 分页查询部门表列表请求参数
+message QueryDeptListReq {
+  string dept_name = 1[(api.body) = "deptName"]; //部门名称
+  int32 status = 2[(api.body) = "status"]; //部门状态（0：停用，1:正常）
+  int32 page_num = 3[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 4[(api.body) = "pageSize"]; //每页的数量
+}
+
+
+message QueryDeptListResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated QueryDeptListData data = 4;
+}
+
+message QueryDeptListData {
+  int64 id = 1; //部门id
+  int64 parent_id = 2; //父部门id
+  string ancestors = 3; //祖级列表
+  string dept_name = 4; //部门名称
+  int32 sort = 5; //显示顺序
+  string leader = 6; //负责人
+  string phone = 7; //联系电话
+  string email = 8; //邮箱
+  int32 status = 9; //部门状态（0：停用，1:正常）
+  int32 del_flag = 10; //删除标志（0代表删除 1代表存在）
+  string create_by = 11; //创建者
+  string create_time = 12; //创建时间
+  string update_by = 13; //更新者
+  string update_time = 14; //更新时间
+}
+
+// 部门表服务
+service DeptHandler {
+
+  // 添加部门表
+  rpc AddDept(AddDeptReq) returns(AddDeptResp) {
+    option (api.post) = "/api/demo/dept/addDept";
+  }
+  // 删除部门表
+  rpc DeleteDept(DeleteDeptReq) returns(DeleteDeptResp) {
+    option (api.post) = "/api/demo/dept/deleteDept";
+  }
+  // 更新部门表
+  rpc UpdateDept(UpdateDeptReq) returns(UpdateDeptResp) {
+    option (api.post) = "/api/demo/dept/updateDept";
+  }
+  // 更新部门表状态
+  rpc UpdateDeptStatus(UpdateDeptStatusReq) returns(UpdateDeptStatusResp) {
+    option (api.post) = "/api/demo/dept/updateDeptStatus";
+  }
+  // 查询部门表详情
+  rpc QueryDeptDetail(QueryDeptDetailReq) returns(QueryDeptDetailResp) {
+    option (api.post) = "/api/demo/dept/queryDeptDetail";
+  }
+  // 分页查询部门表列表
+  rpc QueryDeptList(QueryDeptListReq) returns(QueryDeptListResp) {
+    option (api.post) = "/api/demo/dept/queryDeptList";
+  }
+
+}
+
+

@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 添加字典数据表请求参数
+message AddDictDataReq {
+  string remark = 1[(api.body) = "remark"]; //备注
+  int32 dict_sort = 2[(api.body) = "dictSort"]; //字典排序
+  string dict_label = 3[(api.body) = "dictLabel"]; //字典标签
+  string dict_value = 4[(api.body) = "dictValue"]; //字典键值
+  string dict_type = 5[(api.body) = "dictType"]; //字典类型
+  string css_class = 6[(api.body) = "cssClass"]; //样式属性（其他样式扩展）
+  string list_class = 7[(api.body) = "listClass"]; //表格回显样式
+  string is_default = 8[(api.body) = "isDefault"]; //是否默认（Y是 N否）
+  int32 status = 9[(api.body) = "status"]; //状态（0：停用，1:正常）
+
+
+}
+message AddDictDataResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 删除字典数据表请求参数
+message DeleteDictDataReq {
+  repeated int64 ids = 1[(api.body) = "ids"];
+}
+
+message DeleteDictDataResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新字典数据表请求参数
+message UpdateDictDataReq {
+  int64 id = 1[(api.body) = "id"]; //字典编码
+  int32 dict_sort = 2[(api.body) = "dictSort"]; //字典排序
+  string dict_label = 3[(api.body) = "dictLabel"]; //字典标签
+  string dict_value = 4[(api.body) = "dictValue"]; //字典键值
+  string dict_type = 5[(api.body) = "dictType"]; //字典类型
+  string css_class = 6[(api.body) = "cssClass"]; //样式属性（其他样式扩展）
+  string list_class = 7[(api.body) = "listClass"]; //表格回显样式
+  string is_default = 8[(api.body) = "isDefault"]; //是否默认（Y是 N否）
+  int32 status = 9[(api.body) = "status"]; //状态（0：停用，1:正常）
+  string remark = 10[(api.body) = "remark"]; //备注
+}
+
+message UpdateDictDataResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新字典数据表状态请求参数
+message UpdateDictDataStatusReq {
+  repeated int64 id = 1[(api.body) = "id"]; //字典编码
+  int32 status = 9[(api.body) = "status"]; //状态（0：停用，1:正常）
+
+}
+
+message UpdateDictDataStatusResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询字典数据表详情请求参数
+message QueryDictDataDetailReq {
+  int64 id = 1[(api.body) = "id"]; //字典编码
+
+}
+
+message QueryDictDataDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  QueryDictDataDetailData data = 4;
+}
+
+message QueryDictDataDetailData {
+  int64 id = 1; //字典编码
+  int32 dict_sort = 2; //字典排序
+  string dict_label = 3; //字典标签
+  string dict_value = 4; //字典键值
+  string dict_type = 5; //字典类型
+  string css_class = 6; //样式属性（其他样式扩展）
+  string list_class = 7; //表格回显样式
+  string is_default = 8; //是否默认（Y是 N否）
+  int32 status = 9; //状态（0：停用，1:正常）
+  string remark = 10; //备注
+  string create_by = 11; //创建者
+  string create_time = 12; //创建时间
+  string update_by = 13; //更新者
+  string update_time = 14; //更新时间
+}
+
+// 分页查询字典数据表列表请求参数
+message QueryDictDataListReq {
+  string dict_label = 1[(api.body) = "dictLabel"]; //字典标签
+  string dict_type = 2[(api.body) = "dictType"]; //字典类型
+  int32 status = 3[(api.body) = "status"]; //状态（0：停用，1:正常）
+  int32 page_num = 4[(api.body) = "pageNo"]; //第几页
+  int32 page_size = 5[(api.body) = "pageSize"]; //每页的数量
+}
+
+
+message QueryDictDataListResp {
+  string msg = 1;
+  api.Code code = 2;
+  int64 Total = 3;
+  repeated QueryDictDataListData data = 4;
+}
+
+message QueryDictDataListData {
+  int64 id = 1; //字典编码
+  int32 dict_sort = 2; //字典排序
+  string dict_label = 3; //字典标签
+  string dict_value = 4; //字典键值
+  string dict_type = 5; //字典类型
+  string css_class = 6; //样式属性（其他样式扩展）
+  string list_class = 7; //表格回显样式
+  string is_default = 8; //是否默认（Y是 N否）
+  int32 status = 9; //状态（0：停用，1:正常）
+  string remark = 10; //备注
+  string create_by = 11; //创建者
+  string create_time = 12; //创建时间
+  string update_by = 13; //更新者
+  string update_time = 14; //更新时间
+}
+
+// 字典数据表服务
+service DictDataHandler {
+
+  // 添加字典数据表
+  rpc AddDictData(AddDictDataReq) returns(AddDictDataResp) {
+    option (api.post) = "/api/demo/dictData/addDictData";
+  }
+  // 删除字典数据表
+  rpc DeleteDictData(DeleteDictDataReq) returns(DeleteDictDataResp) {
+    option (api.post) = "/api/demo/dictData/deleteDictData";
+  }
+  // 更新字典数据表
+  rpc UpdateDictData(UpdateDictDataReq) returns(UpdateDictDataResp) {
+    option (api.post) = "/api/demo/dictData/updateDictData";
+  }
+  // 更新字典数据表状态
+  rpc UpdateDictDataStatus(UpdateDictDataStatusReq) returns(UpdateDictDataStatusResp) {
+    option (api.post) = "/api/demo/dictData/updateDictDataStatus";
+  }
+  // 查询字典数据表详情
+  rpc QueryDictDataDetail(QueryDictDataDetailReq) returns(QueryDictDataDetailResp) {
+    option (api.post) = "/api/demo/dictData/queryDictDataDetail";
+  }
+  // 分页查询字典数据表列表
+  rpc QueryDictDataList(QueryDictDataListReq) returns(QueryDictDataListResp) {
+    option (api.post) = "/api/demo/dictData/queryDictDataList";
+  }
+
+}
+
+

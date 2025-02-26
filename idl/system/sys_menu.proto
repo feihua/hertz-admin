@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "system";
+
+import "api.proto";
+
+// 添加菜单信息请求参数
+message AddMenuReq {
+  string remark = 1[(api.body) = "remark"]; //备注
+  string menu_name = 2[(api.body) = "menuName"]; //菜单名称
+  int32 menu_type = 3[(api.body) = "menuType"]; //菜单类型(1：目录   2：菜单   3：按钮)
+  int32 visible = 4[(api.body) = "visible"]; //显示状态（0:隐藏, 显示:1）
+  int32 status = 5[(api.body) = "status"]; //菜单状态(1:正常，0:禁用)
+  int32 sort = 6[(api.body) = "sort"]; //排序
+  int64 parent_id = 7[(api.body) = "parentId"]; //父ID
+  string menu_url = 8[(api.body) = "menuUrl"]; //路由路径
+  string api_url = 9[(api.body) = "apiUrl"]; //接口URL
+  string menu_icon = 10[(api.body) = "menuIcon"]; //菜单图标
+
+
+}
+message AddMenuResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 删除菜单信息请求参数
+message DeleteMenuReq {
+  int64 id = 1[(api.body) = "id"];
+}
+
+message DeleteMenuResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新菜单信息请求参数
+message UpdateMenuReq {
+  int64 id = 1[(api.body) = "id"]; //主键
+  string menu_name = 2[(api.body) = "menuName"]; //菜单名称
+  int32 menu_type = 3[(api.body) = "menuType"]; //菜单类型(1：目录   2：菜单   3：按钮)
+  int32 visible = 4[(api.body) = "visible"]; //显示状态（0:隐藏, 显示:1）
+  int32 status = 5[(api.body) = "status"]; //菜单状态(1:正常，0:禁用)
+  int32 sort = 6[(api.body) = "sort"]; //排序
+  int64 parent_id = 7[(api.body) = "parentId"]; //父ID
+  string menu_url = 8[(api.body) = "menuUrl"]; //路由路径
+  string api_url = 9[(api.body) = "apiUrl"]; //接口URL
+  string menu_icon = 10[(api.body) = "menuIcon"]; //菜单图标
+  string remark = 11[(api.body) = "remark"]; //备注
+}
+
+message UpdateMenuResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 更新菜单信息状态请求参数
+message UpdateMenuStatusReq {
+  repeated int64 id = 1[(api.body) = "id"]; //主键
+  int32 status = 5[(api.body) = "status"]; //菜单状态(1:正常，0:禁用)
+
+}
+
+message UpdateMenuStatusResp {
+  string msg = 1;
+  api.Code code = 2;
+}
+
+// 查询菜单信息详情请求参数
+message QueryMenuDetailReq {
+  int64 id = 1[(api.body) = "id"]; //主键
+
+}
+
+message QueryMenuDetailResp {
+  string msg = 1;
+  api.Code code = 2;
+  QueryMenuDetailData data = 3;
+}
+
+message QueryMenuDetailData {
+  int64 id = 1; //主键
+  string menu_name = 2; //菜单名称
+  int32 menu_type = 3; //菜单类型(1：目录   2：菜单   3：按钮)
+  int32 visible = 4; //显示状态（0:隐藏, 显示:1）
+  int32 status = 5; //菜单状态(1:正常，0:禁用)
+  int32 sort = 6; //排序
+  int64 parent_id = 7; //父ID
+  string menu_url = 8; //路由路径
+  string api_url = 9; //接口URL
+  string menu_icon = 10; //菜单图标
+  string remark = 11; //备注
+  string create_by = 12; //创建者
+  string create_time = 13; //创建时间
+  string update_by = 14; //更新者
+  string update_time = 15; //更新时间
+}
+
+// 分页查询菜单信息列表请求参数
+message QueryMenuListReq {
+  string menu_name = 1[(api.body) = "menuName"]; //菜单名称
+
+}
+
+
+message QueryMenuListResp {
+  string msg = 1;
+  api.Code code = 2;
+  repeated QueryMenuListData data = 4;
+}
+
+message QueryMenuListData {
+  int64 id = 1; //主键
+  string menu_name = 2; //菜单名称
+  int32 menu_type = 3; //菜单类型(1：目录   2：菜单   3：按钮)
+  int32 visible = 4; //显示状态（0:隐藏, 显示:1）
+  int32 status = 5; //菜单状态(1:正常，0:禁用)
+  int32 sort = 6; //排序
+  int64 parent_id = 7; //父ID
+  string menu_url = 8; //路由路径
+  string api_url = 9; //接口URL
+  string menu_icon = 10; //菜单图标
+  string remark = 11; //备注
+  string create_by = 12; //创建者
+  string create_time = 13; //创建时间
+  string update_by = 14; //更新者
+  string update_time = 15; //更新时间
+}
+
+// 菜单信息服务
+service MenuHandler {
+
+  // 添加菜单信息
+  rpc AddMenu(AddMenuReq) returns(AddMenuResp) {
+    option (api.post) = "/api/demo/menu/addMenu";
+  }
+  // 删除菜单信息
+  rpc DeleteMenu(DeleteMenuReq) returns(DeleteMenuResp) {
+    option (api.post) = "/api/demo/menu/deleteMenu";
+  }
+  // 更新菜单信息
+  rpc UpdateMenu(UpdateMenuReq) returns(UpdateMenuResp) {
+    option (api.post) = "/api/demo/menu/updateMenu";
+  }
+  // 更新菜单信息状态
+  rpc UpdateMenuStatus(UpdateMenuStatusReq) returns(UpdateMenuStatusResp) {
+    option (api.post) = "/api/demo/menu/updateMenuStatus";
+  }
+  // 查询菜单信息详情
+  rpc QueryMenuDetail(QueryMenuDetailReq) returns(QueryMenuDetailResp) {
+    option (api.post) = "/api/demo/menu/queryMenuDetail";
+  }
+  // 分页查询菜单信息列表
+  rpc QueryMenuList(QueryMenuListReq) returns(QueryMenuListResp) {
+    option (api.post) = "/api/demo/menu/queryMenuList";
+  }
+
+}
+
+
