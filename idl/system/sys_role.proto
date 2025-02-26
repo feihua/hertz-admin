@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "role";
 
 import "api.proto";
 
@@ -209,62 +209,62 @@ service RoleHandler {
 
   // 添加角色信息
   rpc AddRole(AddRoleReq) returns(AddRoleResp) {
-    option (api.post) = "/api/demo/role/addRole";
+    option (api.post) = "/api/system/role/addRole";
   }
   // 删除角色信息
   rpc DeleteRole(DeleteRoleReq) returns(DeleteRoleResp) {
-    option (api.post) = "/api/demo/role/deleteRole";
+    option (api.post) = "/api/system/role/deleteRole";
   }
   // 更新角色信息
   rpc UpdateRole(UpdateRoleReq) returns(UpdateRoleResp) {
-    option (api.post) = "/api/demo/role/updateRole";
+    option (api.post) = "/api/system/role/updateRole";
   }
   // 更新角色信息状态
   rpc UpdateRoleStatus(UpdateRoleStatusReq) returns(UpdateRoleStatusResp) {
-    option (api.post) = "/api/demo/role/updateRoleStatus";
+    option (api.post) = "/api/system/role/updateRoleStatus";
   }
   // 查询角色信息详情
   rpc QueryRoleDetail(QueryRoleDetailReq) returns(QueryRoleDetailResp) {
-    option (api.post) = "/api/demo/role/queryRoleDetail";
+    option (api.post) = "/api/system/role/queryRoleDetail";
   }
   // 分页查询角色信息列表
   rpc QueryRoleList(QueryRoleListReq) returns(QueryRoleListResp) {
-    option (api.post) = "/api/demo/role/queryRoleList";
+    option (api.post) = "/api/system/role/queryRoleList";
   }
 
   // 分页查询角色菜单关联列表
   rpc QueryRoleMenuList(QueryRoleMenuListReq) returns(QueryRoleMenuListResp) {
-    option (api.post) = "/api/demo/role/queryRoleMenu";
+    option (api.post) = "/api/system/role/queryRoleMenu";
   }
 
   //添加角色菜单关联
   rpc AddRoleMenu(AddRoleMenuReq) returns(AddRoleMenuResp) {
-    option (api.post) = "/api/demo/role/updateRoleMenu";
+    option (api.post) = "/api/system/role/updateRoleMenu";
   }
 
   //查询已分配用户角色列表
   rpc QueryAllocatedList(QueryRoleUserListReq) returns(AuthorizationResp) {
-    option (api.post) = "/api/demo/role/queryAllocatedList";
+    option (api.post) = "/api/system/role/queryAllocatedList";
   }
 
   //查询未分配用户角色列表
   rpc QueryUnallocatedList(QueryRoleUserListReq) returns(AuthorizationResp) {
-    option (api.post) = "/api/demo/role/queryUnallocatedList";
+    option (api.post) = "/api/system/role/queryUnallocatedList";
   }
 
   //取消授权用户
   rpc CancelAuthUser(CancelAuthUserReq) returns(AuthorizationResp) {
-    option (api.post) = "/api/demo/role/cancelAuthUser";
+    option (api.post) = "/api/system/role/cancelAuthUser";
   }
 
   //批量取消授权用户
   rpc BatchCancelAuthUser(CancelAuthUserAllReq) returns(AuthorizationResp) {
-    option (api.post) = "/api/demo/role/batchCancelAuthUser";
+    option (api.post) = "/api/system/role/batchCancelAuthUser";
   }
 
   //批量选择用户授权
   rpc BatchAuthUser(SelectAuthUserAllReq) returns(AuthorizationResp) {
-    option (api.post) = "/api/demo/role/batchAuthUser";
+    option (api.post) = "/api/system/role/batchAuthUser";
   }
 }
 

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "operatelog";
 
 import "api.proto";
 
@@ -121,16 +121,16 @@ service OperateLogHandler {
 
   // 删除操作日志记录
   rpc DeleteOperateLog(DeleteOperateLogReq) returns(DeleteOperateLogResp) {
-    option (api.post) = "/api/demo/operateLog/deleteOperateLog";
+    option (api.post) = "/api/system/operateLog/deleteOperateLog";
   }
 
   // 查询操作日志记录详情
   rpc QueryOperateLogDetail(QueryOperateLogDetailReq) returns(QueryOperateLogDetailResp) {
-    option (api.post) = "/api/demo/operateLog/queryOperateLogDetail";
+    option (api.post) = "/api/system/operateLog/queryOperateLogDetail";
   }
   // 分页查询操作日志记录列表
   rpc QueryOperateLogList(QueryOperateLogListReq) returns(QueryOperateLogListResp) {
-    option (api.post) = "/api/demo/operateLog/queryOperateLogList";
+    option (api.post) = "/api/system/operateLog/queryOperateLogList";
   }
 
 }

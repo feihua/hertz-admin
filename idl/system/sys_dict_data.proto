@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "dictdata";
 
 import "api.proto";
 
@@ -135,27 +135,27 @@ service DictDataHandler {
 
   // 添加字典数据表
   rpc AddDictData(AddDictDataReq) returns(AddDictDataResp) {
-    option (api.post) = "/api/demo/dictData/addDictData";
+    option (api.post) = "/api/system/dictData/addDictData";
   }
   // 删除字典数据表
   rpc DeleteDictData(DeleteDictDataReq) returns(DeleteDictDataResp) {
-    option (api.post) = "/api/demo/dictData/deleteDictData";
+    option (api.post) = "/api/system/dictData/deleteDictData";
   }
   // 更新字典数据表
   rpc UpdateDictData(UpdateDictDataReq) returns(UpdateDictDataResp) {
-    option (api.post) = "/api/demo/dictData/updateDictData";
+    option (api.post) = "/api/system/dictData/updateDictData";
   }
   // 更新字典数据表状态
   rpc UpdateDictDataStatus(UpdateDictDataStatusReq) returns(UpdateDictDataStatusResp) {
-    option (api.post) = "/api/demo/dictData/updateDictDataStatus";
+    option (api.post) = "/api/system/dictData/updateDictDataStatus";
   }
   // 查询字典数据表详情
   rpc QueryDictDataDetail(QueryDictDataDetailReq) returns(QueryDictDataDetailResp) {
-    option (api.post) = "/api/demo/dictData/queryDictDataDetail";
+    option (api.post) = "/api/system/dictData/queryDictDataDetail";
   }
   // 分页查询字典数据表列表
   rpc QueryDictDataList(QueryDictDataListReq) returns(QueryDictDataListResp) {
-    option (api.post) = "/api/demo/dictData/queryDictDataList";
+    option (api.post) = "/api/system/dictData/queryDictDataList";
   }
 
 }

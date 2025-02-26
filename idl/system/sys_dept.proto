@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "dept";
 
 import "api.proto";
 
@@ -128,27 +128,27 @@ service DeptHandler {
 
   // 添加部门表
   rpc AddDept(AddDeptReq) returns(AddDeptResp) {
-    option (api.post) = "/api/demo/dept/addDept";
+    option (api.post) = "/api/system/dept/addDept";
   }
   // 删除部门表
   rpc DeleteDept(DeleteDeptReq) returns(DeleteDeptResp) {
-    option (api.post) = "/api/demo/dept/deleteDept";
+    option (api.post) = "/api/system/dept/deleteDept";
   }
   // 更新部门表
   rpc UpdateDept(UpdateDeptReq) returns(UpdateDeptResp) {
-    option (api.post) = "/api/demo/dept/updateDept";
+    option (api.post) = "/api/system/dept/updateDept";
   }
   // 更新部门表状态
   rpc UpdateDeptStatus(UpdateDeptStatusReq) returns(UpdateDeptStatusResp) {
-    option (api.post) = "/api/demo/dept/updateDeptStatus";
+    option (api.post) = "/api/system/dept/updateDeptStatus";
   }
   // 查询部门表详情
   rpc QueryDeptDetail(QueryDeptDetailReq) returns(QueryDeptDetailResp) {
-    option (api.post) = "/api/demo/dept/queryDeptDetail";
+    option (api.post) = "/api/system/dept/queryDeptDetail";
   }
   // 分页查询部门表列表
   rpc QueryDeptList(QueryDeptListReq) returns(QueryDeptListResp) {
-    option (api.post) = "/api/demo/dept/queryDeptList";
+    option (api.post) = "/api/system/dept/queryDeptList";
   }
 
 }

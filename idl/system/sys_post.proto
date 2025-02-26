@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "post";
 
 import "api.proto";
 
@@ -119,27 +119,27 @@ service PostHandler {
 
   // 添加岗位信息表
   rpc AddPost(AddPostReq) returns(AddPostResp) {
-    option (api.post) = "/api/demo/post/addPost";
+    option (api.post) = "/api/system/post/addPost";
   }
   // 删除岗位信息表
   rpc DeletePost(DeletePostReq) returns(DeletePostResp) {
-    option (api.post) = "/api/demo/post/deletePost";
+    option (api.post) = "/api/system/post/deletePost";
   }
   // 更新岗位信息表
   rpc UpdatePost(UpdatePostReq) returns(UpdatePostResp) {
-    option (api.post) = "/api/demo/post/updatePost";
+    option (api.post) = "/api/system/post/updatePost";
   }
   // 更新岗位信息表状态
   rpc UpdatePostStatus(UpdatePostStatusReq) returns(UpdatePostStatusResp) {
-    option (api.post) = "/api/demo/post/updatePostStatus";
+    option (api.post) = "/api/system/post/updatePostStatus";
   }
   // 查询岗位信息表详情
   rpc QueryPostDetail(QueryPostDetailReq) returns(QueryPostDetailResp) {
-    option (api.post) = "/api/demo/post/queryPostDetail";
+    option (api.post) = "/api/system/post/queryPostDetail";
   }
   // 分页查询岗位信息表列表
   rpc QueryPostList(QueryPostListReq) returns(QueryPostListResp) {
-    option (api.post) = "/api/demo/post/queryPostList";
+    option (api.post) = "/api/system/post/queryPostList";
   }
 
 }

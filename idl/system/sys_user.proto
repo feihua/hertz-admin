@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "user";
 
 import "api.proto";
 
@@ -223,42 +223,42 @@ service UserHandler {
 
   // 添加用户信息
   rpc AddUser(AddUserReq) returns(AddUserResp) {
-    option (api.post) = "/api/demo/user/addUser";
+    option (api.post) = "/api/system/user/addUser";
   }
   // 删除用户信息
   rpc DeleteUser(DeleteUserReq) returns(DeleteUserResp) {
-    option (api.post) = "/api/demo/user/deleteUser";
+    option (api.post) = "/api/system/user/deleteUser";
   }
   // 更新用户信息
   rpc UpdateUser(UpdateUserReq) returns(UpdateUserResp) {
-    option (api.post) = "/api/demo/user/updateUser";
+    option (api.post) = "/api/system/user/updateUser";
   }
   // 更新用户信息状态
   rpc UpdateUserStatus(UpdateUserStatusReq) returns(UpdateUserStatusResp) {
-    option (api.post) = "/api/demo/user/updateUserStatus";
+    option (api.post) = "/api/system/user/updateUserStatus";
   }
   // 查询用户信息详情
   rpc QueryUserDetail(QueryUserDetailReq) returns(QueryUserDetailResp) {
-    option (api.post) = "/api/demo/user/queryUserDetail";
+    option (api.post) = "/api/system/user/queryUserDetail";
   }
   // 分页查询用户信息列表
   rpc QueryUserList(QueryUserListReq) returns(QueryUserListResp) {
-    option (api.post) = "/api/demo/user/queryUserList";
+    option (api.post) = "/api/system/user/queryUserList";
   }
 
   //获取用户信息
   rpc QueryUserMenu(UserInfoReq) returns(UserInfoResp) {
-    option (api.get) = "/api/demo/user/queryUserMenu";
+    option (api.get) = "/api/system/user/queryUserMenu";
   }
 
   //分页查询用户角色关联列表
   rpc QueryUserRoleList(QueryUserRoleListReq) returns(QueryUserRoleListResp) {
-    option (api.post) = "/api/demo/user/queryUserRole";
+    option (api.post) = "/api/system/user/queryUserRole";
   }
 
   //添加用户角色关联
   rpc AddUserRole(QueryUserListReq) returns(AddUserRoleResp) {
-    option (api.post) = "/api/demo/user/updateUserRole";
+    option (api.post) = "/api/system/user/updateUserRole";
   }
 }
 

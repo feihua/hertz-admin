@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "loginlog";
 
 import "api.proto";
 
@@ -91,16 +91,16 @@ service LoginLogHandler {
 
   // 删除系统访问记录
   rpc DeleteLoginLog(DeleteLoginLogReq) returns(DeleteLoginLogResp) {
-    option (api.post) = "/api/demo/loginLog/deleteLoginLog";
+    option (api.post) = "/api/system/loginLog/deleteLoginLog";
   }
 
   // 查询系统访问记录详情
   rpc QueryLoginLogDetail(QueryLoginLogDetailReq) returns(QueryLoginLogDetailResp) {
-    option (api.post) = "/api/demo/loginLog/queryLoginLogDetail";
+    option (api.post) = "/api/system/loginLog/queryLoginLogDetail";
   }
   // 分页查询系统访问记录列表
   rpc QueryLoginLogList(QueryLoginLogListReq) returns(QueryLoginLogListResp) {
-    option (api.post) = "/api/demo/loginLog/queryLoginLogList";
+    option (api.post) = "/api/system/loginLog/queryLoginLogList";
   }
 
 }

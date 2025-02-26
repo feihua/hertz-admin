@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package system;
 
-option go_package = "system";
+option go_package = "notice";
 
 import "api.proto";
 
@@ -119,27 +119,27 @@ service NoticeHandler {
 
   // 添加通知公告表
   rpc AddNotice(AddNoticeReq) returns(AddNoticeResp) {
-    option (api.post) = "/api/demo/notice/addNotice";
+    option (api.post) = "/api/system/notice/addNotice";
   }
   // 删除通知公告表
   rpc DeleteNotice(DeleteNoticeReq) returns(DeleteNoticeResp) {
-    option (api.post) = "/api/demo/notice/deleteNotice";
+    option (api.post) = "/api/system/notice/deleteNotice";
   }
   // 更新通知公告表
   rpc UpdateNotice(UpdateNoticeReq) returns(UpdateNoticeResp) {
-    option (api.post) = "/api/demo/notice/updateNotice";
+    option (api.post) = "/api/system/notice/updateNotice";
   }
   // 更新通知公告表状态
   rpc UpdateNoticeStatus(UpdateNoticeStatusReq) returns(UpdateNoticeStatusResp) {
-    option (api.post) = "/api/demo/notice/updateNoticeStatus";
+    option (api.post) = "/api/system/notice/updateNoticeStatus";
   }
   // 查询通知公告表详情
   rpc QueryNoticeDetail(QueryNoticeDetailReq) returns(QueryNoticeDetailResp) {
-    option (api.post) = "/api/demo/notice/queryNoticeDetail";
+    option (api.post) = "/api/system/notice/queryNoticeDetail";
   }
   // 分页查询通知公告表列表
   rpc QueryNoticeList(QueryNoticeListReq) returns(QueryNoticeListResp) {
-    option (api.post) = "/api/demo/notice/queryNoticeList";
+    option (api.post) = "/api/system/notice/queryNoticeList";
   }
 
 }
