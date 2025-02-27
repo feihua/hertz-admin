@@ -15,11 +15,11 @@ func (r BaseResponse) Error(msg error) *BaseResponse {
 	}
 }
 
-func (r BaseResponse) ErrorMsg(msg error) *BaseResponse {
+func (r BaseResponse) ErrorMsg(msg string) *BaseResponse {
 
 	return &BaseResponse{
 		Code: 1,
-		Msg:  msg.Error(),
+		Msg:  msg,
 	}
 }
 

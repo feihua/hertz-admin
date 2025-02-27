@@ -36,7 +36,7 @@ message UpdateDictTypeReq {
 
 // 更新字典类型表状态请求参数
 message UpdateDictTypeStatusReq {
-  repeated int64 id = 1[(api.body) = "id"]; //字典主键
+  repeated int64 ids = 1[(api.body) = "ids"]; //字典主键
   int32 status = 4[(api.body) = "status"]; //状态（0：停用，1:正常）
 
 }

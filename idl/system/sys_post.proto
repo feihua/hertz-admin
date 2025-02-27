@@ -36,7 +36,7 @@ message UpdatePostReq {
 
 // 更新岗位信息表状态请求参数
 message UpdatePostStatusReq {
-  repeated int64 id = 1[(api.body) = "id"]; //岗位id
+  repeated int64 ids = 1[(api.body) = "ids"]; //岗位id
   int32 status = 5[(api.body) = "status"]; //岗位状态（0：停用，1:正常）
 
 }

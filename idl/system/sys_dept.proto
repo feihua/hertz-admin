@@ -40,7 +40,7 @@ message UpdateDeptReq {
 
 // 更新部门表状态请求参数
 message UpdateDeptStatusReq {
-  repeated int64 id = 1[(api.body) = "id"]; //部门id
+  repeated int64 ids = 1[(api.body) = "ids"]; //部门id
   int32 status = 9[(api.body) = "status"]; //部门状态（0：停用，1:正常）
 
 }
