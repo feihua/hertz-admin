@@ -18,20 +18,12 @@ message AddDeptReq {
 
 
 }
-message AddDeptResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 删除部门表请求参数
 message DeleteDeptReq {
   int64 id = 1[(api.body) = "id"];
 }
 
-message DeleteDeptResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新部门表请求参数
 message UpdateDeptReq {
@@ -45,10 +37,6 @@ message UpdateDeptReq {
   int32 status = 9[(api.body) = "status"]; //部门状态（0：停用，1:正常）
 }
 
-message UpdateDeptResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新部门表状态请求参数
 message UpdateDeptStatusReq {
@@ -57,10 +45,6 @@ message UpdateDeptStatusReq {
 
 }
 
-message UpdateDeptStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询部门表详情请求参数
 message QueryDeptDetailReq {
@@ -68,13 +52,8 @@ message QueryDeptDetailReq {
 
 }
 
-message QueryDeptDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryDeptDetailData data = 3;
-}
 
-message QueryDeptDetailData {
+message QueryDeptDetailResp {
   int64 id = 1; //部门id
   int64 parent_id = 2; //父部门id
   string ancestors = 3; //祖级列表
@@ -100,13 +79,6 @@ message QueryDeptListReq {
 
 
 message QueryDeptListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryDeptListData data = 4;
-}
-
-message QueryDeptListData {
   int64 id = 1; //部门id
   int64 parent_id = 2; //父部门id
   string ancestors = 3; //祖级列表
@@ -123,23 +95,27 @@ message QueryDeptListData {
   string update_time = 14; //更新时间
 }
 
+message DeptEmpty {
+
+}
+
 // 部门表服务
 service DeptHandler {
 
   // 添加部门表
-  rpc AddDept(AddDeptReq) returns(AddDeptResp) {
+  rpc AddDept(AddDeptReq) returns(DeptEmpty) {
     option (api.post) = "/api/system/dept/addDept";
   }
   // 删除部门表
-  rpc DeleteDept(DeleteDeptReq) returns(DeleteDeptResp) {
+  rpc DeleteDept(DeleteDeptReq) returns(DeptEmpty) {
     option (api.post) = "/api/system/dept/deleteDept";
   }
   // 更新部门表
-  rpc UpdateDept(UpdateDeptReq) returns(UpdateDeptResp) {
+  rpc UpdateDept(UpdateDeptReq) returns(DeptEmpty) {
     option (api.post) = "/api/system/dept/updateDept";
   }
   // 更新部门表状态
-  rpc UpdateDeptStatus(UpdateDeptStatusReq) returns(UpdateDeptStatusResp) {
+  rpc UpdateDeptStatus(UpdateDeptStatusReq) returns(DeptEmpty) {
     option (api.post) = "/api/system/dept/updateDeptStatus";
   }
   // 查询部门表详情

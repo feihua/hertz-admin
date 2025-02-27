@@ -20,20 +20,12 @@ message AddDictDataReq {
 
 
 }
-message AddDictDataResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 删除字典数据表请求参数
 message DeleteDictDataReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteDictDataResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新字典数据表请求参数
 message UpdateDictDataReq {
@@ -49,10 +41,6 @@ message UpdateDictDataReq {
   string remark = 10[(api.body) = "remark"]; //备注
 }
 
-message UpdateDictDataResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新字典数据表状态请求参数
 message UpdateDictDataStatusReq {
@@ -61,10 +49,6 @@ message UpdateDictDataStatusReq {
 
 }
 
-message UpdateDictDataStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询字典数据表详情请求参数
 message QueryDictDataDetailReq {
@@ -72,14 +56,8 @@ message QueryDictDataDetailReq {
 
 }
 
-message QueryDictDataDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  QueryDictDataDetailData data = 4;
-}
 
-message QueryDictDataDetailData {
+message QueryDictDataDetailResp {
   int64 id = 1; //字典编码
   int32 dict_sort = 2; //字典排序
   string dict_label = 3; //字典标签
@@ -107,13 +85,6 @@ message QueryDictDataListReq {
 
 
 message QueryDictDataListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryDictDataListData data = 4;
-}
-
-message QueryDictDataListData {
   int64 id = 1; //字典编码
   int32 dict_sort = 2; //字典排序
   string dict_label = 3; //字典标签
@@ -129,24 +100,28 @@ message QueryDictDataListData {
   string update_by = 13; //更新者
   string update_time = 14; //更新时间
 }
+message DictEmpty {
+
+}
+
 
 // 字典数据表服务
 service DictDataHandler {
 
   // 添加字典数据表
-  rpc AddDictData(AddDictDataReq) returns(AddDictDataResp) {
+  rpc AddDictData(AddDictDataReq) returns(DictEmpty) {
     option (api.post) = "/api/system/dictData/addDictData";
   }
   // 删除字典数据表
-  rpc DeleteDictData(DeleteDictDataReq) returns(DeleteDictDataResp) {
+  rpc DeleteDictData(DeleteDictDataReq) returns(DictEmpty) {
     option (api.post) = "/api/system/dictData/deleteDictData";
   }
   // 更新字典数据表
-  rpc UpdateDictData(UpdateDictDataReq) returns(UpdateDictDataResp) {
+  rpc UpdateDictData(UpdateDictDataReq) returns(DictEmpty) {
     option (api.post) = "/api/system/dictData/updateDictData";
   }
   // 更新字典数据表状态
-  rpc UpdateDictDataStatus(UpdateDictDataStatusReq) returns(UpdateDictDataStatusResp) {
+  rpc UpdateDictDataStatus(UpdateDictDataStatusReq) returns(DictEmpty) {
     option (api.post) = "/api/system/dictData/updateDictDataStatus";
   }
   // 查询字典数据表详情

@@ -21,20 +21,13 @@ message AddUserReq {
 
 
 }
-message AddUserResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 删除用户信息请求参数
 message DeleteUserReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteUserResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新用户信息请求参数
 message UpdateUserReq {
@@ -51,10 +44,6 @@ message UpdateUserReq {
   repeated int64 post_ids = 12[(api.body) = "postIds"]; //部门ID
 }
 
-message UpdateUserResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新用户信息状态请求参数
 message UpdateUserStatusReq {
@@ -63,10 +52,7 @@ message UpdateUserStatusReq {
 
 }
 
-message UpdateUserStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 查询用户信息详情请求参数
 message QueryUserDetailReq {
@@ -74,13 +60,8 @@ message QueryUserDetailReq {
 
 }
 
-message QueryUserDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryUserDetailData data = 3;
-}
 
-message QueryUserDetailData {
+message QueryUserDetailResp {
   int64 id = 1; //主键
   string mobile = 2; //手机号码
   string user_name = 3; //用户账号
@@ -118,13 +99,6 @@ message QueryUserListReq {
 
 
 message QueryUserListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryUserListData data = 4;
-}
-
-message QueryUserListData {
   int64 id = 1; //主键
   string mobile = 2; //手机号码
   string user_name = 3; //用户账号
@@ -165,7 +139,7 @@ message   ListMenuTree {
   int64 parentId = 4; //父菜单ID，一级菜单为0
   string icon = 5; //菜单图标
 }
-message UserInfoData {
+message UserInfoResp {
   string avatar = 1;
   string name = 2;
   bool isAdmin = 3;
@@ -175,20 +149,13 @@ message UserInfoData {
 message UserInfoReq {
 
 }
-message UserInfoResp {
-  string msg = 1;
-  api.Code code = 2;
-  UserInfoData data = 3;
-}
+
 // 添加用户角色关联
 message    AddUserRoleReq {
   repeated int64 role_ids = 1[(api.body) = "roleIds"]; //角色ID
   int64 user_id = 2[(api.body) = "userId"]; //用户ID
 }
-message AddUserRoleResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 // 分页查询用户角色关联列表
 message   QueryUserRoleListReq {
   int32 page_num = 1[(api.body) = "pageNo"]; //第几页
@@ -208,33 +175,33 @@ message UserRoleListData {
   string update_by = 10; //更新者
   string update_time = 11; //更新时间
 }
-message QueryUserRoleListData {
+message QueryUserRoleListResp {
   repeated UserRoleListData sysRoleList = 1;
   repeated int64 userRoleIds = 2;
 }
-message QueryUserRoleListResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryUserRoleListData data = 3;
+
+message UserEmpty {
+
 }
+
 
 // 用户信息服务
 service UserHandler {
 
   // 添加用户信息
-  rpc AddUser(AddUserReq) returns(AddUserResp) {
+  rpc AddUser(AddUserReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/addUser";
   }
   // 删除用户信息
-  rpc DeleteUser(DeleteUserReq) returns(DeleteUserResp) {
+  rpc DeleteUser(DeleteUserReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/deleteUser";
   }
   // 更新用户信息
-  rpc UpdateUser(UpdateUserReq) returns(UpdateUserResp) {
+  rpc UpdateUser(UpdateUserReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/updateUser";
   }
   // 更新用户信息状态
-  rpc UpdateUserStatus(UpdateUserStatusReq) returns(UpdateUserStatusResp) {
+  rpc UpdateUserStatus(UpdateUserStatusReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/updateUserStatus";
   }
   // 查询用户信息详情
@@ -257,7 +224,7 @@ service UserHandler {
   }
 
   //添加用户角色关联
-  rpc AddUserRole(QueryUserListReq) returns(AddUserRoleResp) {
+  rpc AddUserRole(QueryUserListReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/updateUserRole";
   }
 }

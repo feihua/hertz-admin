@@ -12,10 +12,6 @@ message DeleteOperateLogReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteOperateLogResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 
 // 查询操作日志记录详情请求参数
@@ -24,13 +20,8 @@ message QueryOperateLogDetailReq {
 
 }
 
-message QueryOperateLogDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryOperateLogDetailData data = 3;
-}
 
-message QueryOperateLogDetailData {
+message QueryOperateLogDetailResp {
   int64 id = 1; //日志主键
   string title = 2; //模块标题
   int32 business_type = 3; //业务类型（0其它 1新增 2修改 3删除）
@@ -81,14 +72,8 @@ message QueryOperateLogListReq {
 }
 
 
-message QueryOperateLogListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryOperateLogListData data = 4;
-}
 
-message QueryOperateLogListData {
+message QueryOperateLogListResp {
   int64 id = 1; //日志主键
   string title = 2; //模块标题
   int32 business_type = 3; //业务类型（0其它 1新增 2修改 3删除）
@@ -115,12 +100,16 @@ message QueryOperateLogListData {
   string operate_time = 24; //操作时间
   int64 cost_time = 25; //消耗时间
 }
+message OperateLogEmpty {
+
+}
+
 
 // 操作日志记录服务
 service OperateLogHandler {
 
   // 删除操作日志记录
-  rpc DeleteOperateLog(DeleteOperateLogReq) returns(DeleteOperateLogResp) {
+  rpc DeleteOperateLog(DeleteOperateLogReq) returns(OperateLogEmpty) {
     option (api.post) = "/api/system/operateLog/deleteOperateLog";
   }
 

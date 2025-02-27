@@ -11,10 +11,7 @@ message DeleteLoginLogReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteLoginLogResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 查询系统访问记录详情请求参数
 message QueryLoginLogDetailReq {
@@ -22,13 +19,8 @@ message QueryLoginLogDetailReq {
 
 }
 
-message QueryLoginLogDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryLoginLogDetailData data = 3;
-}
 
-message QueryLoginLogDetailData {
+message QueryLoginLogDetailResp {
   int64 id = 1; //访问ID
   string login_name = 2; //登录账号
   string ipaddr = 3; //登录IP地址
@@ -62,13 +54,6 @@ message QueryLoginLogListReq {
 
 
 message QueryLoginLogListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryLoginLogListData data = 4;
-}
-
-message QueryLoginLogListData {
   int64 id = 1; //访问ID
   string login_name = 2; //登录账号
   string ipaddr = 3; //登录IP地址
@@ -85,12 +70,16 @@ message QueryLoginLogListData {
   string msg = 14; //提示消息
   string login_time = 15; //访问时间
 }
+message LoginLogEmpty {
+
+}
+
 
 // 系统访问记录服务
 service LoginLogHandler {
 
   // 删除系统访问记录
-  rpc DeleteLoginLog(DeleteLoginLogReq) returns(DeleteLoginLogResp) {
+  rpc DeleteLoginLog(DeleteLoginLogReq) returns(LoginLogEmpty) {
     option (api.post) = "/api/system/loginLog/deleteLoginLog";
   }
 

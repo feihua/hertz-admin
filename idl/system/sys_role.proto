@@ -15,20 +15,14 @@ message AddRoleReq {
   int32 status = 5[(api.body) = "status"]; //状态(1:正常，0:禁用)
 
 }
-message AddRoleResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 删除角色信息请求参数
 message DeleteRoleReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteRoleResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 更新角色信息请求参数
 message UpdateRoleReq {
@@ -40,10 +34,7 @@ message UpdateRoleReq {
   string remark = 6[(api.body) = "remark"]; //备注
 }
 
-message UpdateRoleResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 更新角色信息状态请求参数
 message UpdateRoleStatusReq {
@@ -52,10 +43,6 @@ message UpdateRoleStatusReq {
 
 }
 
-message UpdateRoleStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询角色信息详情请求参数
 message QueryRoleDetailReq {
@@ -63,13 +50,8 @@ message QueryRoleDetailReq {
 
 }
 
-message QueryRoleDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryRoleDetailData data = 3;
-}
 
-message QueryRoleDetailData {
+message QueryRoleDetailResp {
   int64 id = 1; //主键
   string role_name = 2; //名称
   string role_key = 3; //角色权限字符串
@@ -96,13 +78,6 @@ message QueryRoleListReq {
 
 
 message QueryRoleListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryRoleListData data = 4;
-}
-
-message QueryRoleListData {
   int64 id = 1; //主键
   string role_name = 2; //名称
   string role_key = 3; //角色权限字符串
@@ -122,13 +97,8 @@ message QueryRoleMenuListReq {
 }
 
 
-message QueryRoleMenuListResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryRoleMenuListData data = 3;
-}
 
-message QueryRoleMenuListData {
+message QueryRoleMenuListResp {
   repeated int64 menu_ids = 1; //主键
   repeated RoleMenuListData menu_list = 2; //名称
 
@@ -147,10 +117,7 @@ message AddRoleMenuReq {
   repeated int64 menu_ids = 2[(api.body) = "menuIds"]; //菜单ID集合
 
 }
-message AddRoleMenuResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 // 根据roleId分页查询用户信息列表
 message QueryRoleUserListReq {
   string mobile = 2[(api.body) = "mobile"]; //手机号码
@@ -161,14 +128,8 @@ message QueryRoleUserListReq {
 }
 
 
-message QueryRoleUserListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryRoleUserListData data = 4;
-}
 
-message QueryRoleUserListData {
+message QueryRoleUserListResp {
   int64 id = 1; //主键
   string mobile = 2; //手机号码
   string user_name = 3; //用户账号
@@ -200,27 +161,29 @@ message SelectAuthUserAllReq {
   repeated int64 user_id = 2[(api.body) = "userId"]; //用户ID
 
 }
-message AuthorizationResp {
-  string msg = 1;
-  api.Code code = 2;
+
+message RoleEmpty {
+
 }
+
+
 // 角色信息服务
 service RoleHandler {
 
   // 添加角色信息
-  rpc AddRole(AddRoleReq) returns(AddRoleResp) {
+  rpc AddRole(AddRoleReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/addRole";
   }
   // 删除角色信息
-  rpc DeleteRole(DeleteRoleReq) returns(DeleteRoleResp) {
+  rpc DeleteRole(DeleteRoleReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/deleteRole";
   }
   // 更新角色信息
-  rpc UpdateRole(UpdateRoleReq) returns(UpdateRoleResp) {
+  rpc UpdateRole(UpdateRoleReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/updateRole";
   }
   // 更新角色信息状态
-  rpc UpdateRoleStatus(UpdateRoleStatusReq) returns(UpdateRoleStatusResp) {
+  rpc UpdateRoleStatus(UpdateRoleStatusReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/updateRoleStatus";
   }
   // 查询角色信息详情
@@ -238,32 +201,32 @@ service RoleHandler {
   }
 
   //添加角色菜单关联
-  rpc AddRoleMenu(AddRoleMenuReq) returns(AddRoleMenuResp) {
+  rpc AddRoleMenu(AddRoleMenuReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/updateRoleMenu";
   }
 
   //查询已分配用户角色列表
-  rpc QueryAllocatedList(QueryRoleUserListReq) returns(AuthorizationResp) {
+  rpc QueryAllocatedList(QueryRoleUserListReq) returns(QueryRoleUserListResp) {
     option (api.post) = "/api/system/role/queryAllocatedList";
   }
 
   //查询未分配用户角色列表
-  rpc QueryUnallocatedList(QueryRoleUserListReq) returns(AuthorizationResp) {
+  rpc QueryUnallocatedList(QueryRoleUserListReq) returns(QueryRoleUserListResp) {
     option (api.post) = "/api/system/role/queryUnallocatedList";
   }
 
   //取消授权用户
-  rpc CancelAuthUser(CancelAuthUserReq) returns(AuthorizationResp) {
+  rpc CancelAuthUser(CancelAuthUserReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/cancelAuthUser";
   }
 
   //批量取消授权用户
-  rpc BatchCancelAuthUser(CancelAuthUserAllReq) returns(AuthorizationResp) {
+  rpc BatchCancelAuthUser(CancelAuthUserAllReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/batchCancelAuthUser";
   }
 
   //批量选择用户授权
-  rpc BatchAuthUser(SelectAuthUserAllReq) returns(AuthorizationResp) {
+  rpc BatchAuthUser(SelectAuthUserAllReq) returns(RoleEmpty) {
     option (api.post) = "/api/system/role/batchAuthUser";
   }
 }

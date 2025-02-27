@@ -21,20 +21,13 @@ message AddMenuReq {
 
 
 }
-message AddMenuResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 删除菜单信息请求参数
 message DeleteMenuReq {
   int64 id = 1[(api.body) = "id"];
 }
 
-message DeleteMenuResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 更新菜单信息请求参数
 message UpdateMenuReq {
@@ -51,10 +44,6 @@ message UpdateMenuReq {
   string remark = 11[(api.body) = "remark"]; //备注
 }
 
-message UpdateMenuResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新菜单信息状态请求参数
 message UpdateMenuStatusReq {
@@ -63,10 +52,6 @@ message UpdateMenuStatusReq {
 
 }
 
-message UpdateMenuStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询菜单信息详情请求参数
 message QueryMenuDetailReq {
@@ -74,13 +59,8 @@ message QueryMenuDetailReq {
 
 }
 
-message QueryMenuDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryMenuDetailData data = 3;
-}
 
-message QueryMenuDetailData {
+message QueryMenuDetailResp {
   int64 id = 1; //主键
   string menu_name = 2; //菜单名称
   int32 menu_type = 3; //菜单类型(1：目录   2：菜单   3：按钮)
@@ -104,14 +84,8 @@ message QueryMenuListReq {
 
 }
 
-
 message QueryMenuListResp {
-  string msg = 1;
-  api.Code code = 2;
-  repeated QueryMenuListData data = 4;
-}
 
-message QueryMenuListData {
   int64 id = 1; //主键
   string menu_name = 2; //菜单名称
   int32 menu_type = 3; //菜单类型(1：目录   2：菜单   3：按钮)
@@ -128,24 +102,28 @@ message QueryMenuListData {
   string update_by = 14; //更新者
   string update_time = 15; //更新时间
 }
+message MenuEmpty {
+
+}
+
 
 // 菜单信息服务
 service MenuHandler {
 
   // 添加菜单信息
-  rpc AddMenu(AddMenuReq) returns(AddMenuResp) {
+  rpc AddMenu(AddMenuReq) returns(MenuEmpty) {
     option (api.post) = "/api/system/menu/addMenu";
   }
   // 删除菜单信息
-  rpc DeleteMenu(DeleteMenuReq) returns(DeleteMenuResp) {
+  rpc DeleteMenu(DeleteMenuReq) returns(MenuEmpty) {
     option (api.post) = "/api/system/menu/deleteMenu";
   }
   // 更新菜单信息
-  rpc UpdateMenu(UpdateMenuReq) returns(UpdateMenuResp) {
+  rpc UpdateMenu(UpdateMenuReq) returns(MenuEmpty) {
     option (api.post) = "/api/system/menu/updateMenu";
   }
   // 更新菜单信息状态
-  rpc UpdateMenuStatus(UpdateMenuStatusReq) returns(UpdateMenuStatusResp) {
+  rpc UpdateMenuStatus(UpdateMenuStatusReq) returns(MenuEmpty) {
     option (api.post) = "/api/system/menu/updateMenuStatus";
   }
   // 查询菜单信息详情

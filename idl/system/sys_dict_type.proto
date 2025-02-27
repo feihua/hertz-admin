@@ -15,20 +15,14 @@ message AddDictTypeReq {
 
 
 }
-message AddDictTypeResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 删除字典类型表请求参数
 message DeleteDictTypeReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeleteDictTypeResp {
-  string msg = 1;
-  api.Code code = 2;
-}
+
 
 // 更新字典类型表请求参数
 message UpdateDictTypeReq {
@@ -39,10 +33,6 @@ message UpdateDictTypeReq {
   string remark = 5[(api.body) = "remark"]; //备注
 }
 
-message UpdateDictTypeResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新字典类型表状态请求参数
 message UpdateDictTypeStatusReq {
@@ -51,10 +41,6 @@ message UpdateDictTypeStatusReq {
 
 }
 
-message UpdateDictTypeStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询字典类型表详情请求参数
 message QueryDictTypeDetailReq {
@@ -63,12 +49,6 @@ message QueryDictTypeDetailReq {
 }
 
 message QueryDictTypeDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryDictTypeDetailData data = 3;
-}
-
-message QueryDictTypeDetailData {
   int64 id = 1; //字典主键
   string dict_name = 2; //字典名称
   string dict_type = 3; //字典类型
@@ -92,13 +72,6 @@ message QueryDictTypeListReq {
 
 
 message QueryDictTypeListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryDictTypeListData data = 4;
-}
-
-message QueryDictTypeListData {
   int64 id = 1; //字典主键
   string dict_name = 2; //字典名称
   string dict_type = 3; //字典类型
@@ -109,24 +82,28 @@ message QueryDictTypeListData {
   string update_by = 8; //更新者
   string update_time = 9; //更新时间
 }
+message DictTypeEmpty {
+
+}
+
 
 // 字典类型表服务
 service DictTypeHandler {
 
   // 添加字典类型表
-  rpc AddDictType(AddDictTypeReq) returns(AddDictTypeResp) {
+  rpc AddDictType(AddDictTypeReq) returns(DictTypeEmpty) {
     option (api.post) = "/api/system/dictType/addDictType";
   }
   // 删除字典类型表
-  rpc DeleteDictType(DeleteDictTypeReq) returns(DeleteDictTypeResp) {
+  rpc DeleteDictType(DeleteDictTypeReq) returns(DictTypeEmpty) {
     option (api.post) = "/api/system/dictType/deleteDictType";
   }
   // 更新字典类型表
-  rpc UpdateDictType(UpdateDictTypeReq) returns(UpdateDictTypeResp) {
+  rpc UpdateDictType(UpdateDictTypeReq) returns(DictTypeEmpty) {
     option (api.post) = "/api/system/dictType/updateDictType";
   }
   // 更新字典类型表状态
-  rpc UpdateDictTypeStatus(UpdateDictTypeStatusReq) returns(UpdateDictTypeStatusResp) {
+  rpc UpdateDictTypeStatus(UpdateDictTypeStatusReq) returns(DictTypeEmpty) {
     option (api.post) = "/api/system/dictType/updateDictTypeStatus";
   }
   // 查询字典类型表详情

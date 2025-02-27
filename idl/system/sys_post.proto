@@ -16,20 +16,12 @@ message AddPostReq {
 
 
 }
-message AddPostResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 删除岗位信息表请求参数
 message DeletePostReq {
   repeated int64 ids = 1[(api.body) = "ids"];
 }
 
-message DeletePostResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新岗位信息表请求参数
 message UpdatePostReq {
@@ -41,10 +33,6 @@ message UpdatePostReq {
   string remark = 6[(api.body) = "remark"]; //备注
 }
 
-message UpdatePostResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 更新岗位信息表状态请求参数
 message UpdatePostStatusReq {
@@ -53,10 +41,6 @@ message UpdatePostStatusReq {
 
 }
 
-message UpdatePostStatusResp {
-  string msg = 1;
-  api.Code code = 2;
-}
 
 // 查询岗位信息表详情请求参数
 message QueryPostDetailReq {
@@ -64,13 +48,9 @@ message QueryPostDetailReq {
 
 }
 
-message QueryPostDetailResp {
-  string msg = 1;
-  api.Code code = 2;
-  QueryPostDetailData data = 3;
-}
 
-message QueryPostDetailData {
+
+message QueryPostDetailResp {
   int64 id = 1; //岗位id
   string post_code = 2; //岗位编码
   string post_name = 3; //岗位名称
@@ -94,14 +74,8 @@ message QueryPostListReq {
 }
 
 
-message QueryPostListResp {
-  string msg = 1;
-  api.Code code = 2;
-  int64 Total = 3;
-  repeated QueryPostListData data = 4;
-}
 
-message QueryPostListData {
+message QueryPostListResp {
   int64 id = 1; //岗位id
   string post_code = 2; //岗位编码
   string post_name = 3; //岗位名称
@@ -113,24 +87,28 @@ message QueryPostListData {
   string update_by = 9; //更新者
   string update_time = 10; //更新时间
 }
+message PostEmpty {
+
+}
+
 
 // 岗位信息表服务
 service PostHandler {
 
   // 添加岗位信息表
-  rpc AddPost(AddPostReq) returns(AddPostResp) {
+  rpc AddPost(AddPostReq) returns(PostEmpty) {
     option (api.post) = "/api/system/post/addPost";
   }
   // 删除岗位信息表
-  rpc DeletePost(DeletePostReq) returns(DeletePostResp) {
+  rpc DeletePost(DeletePostReq) returns(PostEmpty) {
     option (api.post) = "/api/system/post/deletePost";
   }
   // 更新岗位信息表
-  rpc UpdatePost(UpdatePostReq) returns(UpdatePostResp) {
+  rpc UpdatePost(UpdatePostReq) returns(PostEmpty) {
     option (api.post) = "/api/system/post/updatePost";
   }
   // 更新岗位信息表状态
-  rpc UpdatePostStatus(UpdatePostStatusReq) returns(UpdatePostStatusResp) {
+  rpc UpdatePostStatus(UpdatePostStatusReq) returns(PostEmpty) {
     option (api.post) = "/api/system/post/updatePostStatus";
   }
   // 查询岗位信息表详情
