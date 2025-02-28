@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/notice"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
@@ -23,7 +22,7 @@ func AddNotice(ctx context.Context, c *app.RequestContext) {
 	var req notice.AddNoticeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -33,12 +32,12 @@ func AddNotice(ctx context.Context, c *app.RequestContext) {
 
 	count, err := q.WithContext(ctx).Where(q.NoticeTitle.Eq(title)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加通知公告表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("公告标题已存在"))
+		resp.Error(c, "公告标题已存在")
 		return
 	}
 
@@ -54,11 +53,11 @@ func AddNotice(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("添加通知公告表成功"))
+	resp.Success(c, "添加通知公告表成功")
 }
 
 // DeleteNotice 删除通知公告表
@@ -69,7 +68,8 @@ func DeleteNotice(ctx context.Context, c *app.RequestContext) {
 	var req notice.DeleteNoticeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -77,11 +77,11 @@ func DeleteNotice(ctx context.Context, c *app.RequestContext) {
 
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除通知公告表成功"))
+	resp.Success(c, "删除通知公告表成功")
 }
 
 // UpdateNotice 更新通知公告表
@@ -92,7 +92,7 @@ func UpdateNotice(ctx context.Context, c *app.RequestContext) {
 	var req notice.UpdateNoticeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -105,21 +105,21 @@ func UpdateNotice(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("通知公告不存在"))
+		resp.Error(c, "通知公告不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询通知公告表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	count, err := q.WithContext(ctx).Where(q.NoticeTitle.Eq(title), q.ID.Neq(req.Id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新通知公告表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("公告标题已存在"))
+		resp.Error(c, "公告标题已存在")
 		return
 	}
 
@@ -142,11 +142,11 @@ func UpdateNotice(ctx context.Context, c *app.RequestContext) {
 	err = dal.DB.Model(&model.SysNotice{}).WithContext(ctx).Where(q.ID.Eq(req.Id)).Save(sysNotice).Error
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新通知公告表成功"))
+	resp.Success(c, "更新通知公告表成功")
 }
 
 // UpdateNoticeStatus 通知公告表状态
@@ -157,7 +157,7 @@ func UpdateNoticeStatus(ctx context.Context, c *app.RequestContext) {
 	var req notice.UpdateNoticeStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -166,11 +166,10 @@ func UpdateNoticeStatus(ctx context.Context, c *app.RequestContext) {
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
-
-	c.JSON(consts.StatusOK, resp.Success("更新通知公告表状态成功"))
+	resp.Success(c, "更新通知公告表状态成功")
 }
 
 // QueryNoticeDetail 查询通知公告表详情
@@ -181,17 +180,17 @@ func QueryNoticeDetail(ctx context.Context, c *app.RequestContext) {
 	var req notice.QueryNoticeDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysNotice.WithContext(ctx).Where(query.SysNotice.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("通知公告表不存在"))
+		resp.Error(c, "通知公告表不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询通知公告表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -209,7 +208,7 @@ func QueryNoticeDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryNoticeList 查询通知公告表列表
@@ -221,7 +220,7 @@ func QueryNoticeList(ctx context.Context, c *app.RequestContext) {
 	var req notice.QueryNoticeListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -243,7 +242,7 @@ func QueryNoticeList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询通知公告表列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -263,6 +262,5 @@ func QueryNoticeList(ctx context.Context, c *app.RequestContext) {
 			UpdateTime:    utils.TimeToString(item.UpdateTime), // 更新时间
 		})
 	}
-
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
