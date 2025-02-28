@@ -26,7 +26,7 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	var req user.AddUserReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -37,12 +37,12 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	count, err := q.WithContext(ctx).Where(q.UserName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户已存在"))
+		resp.Error(c, "用户已存在")
 		return
 	}
 
@@ -51,12 +51,12 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.Mobile.Eq(mobile)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("手机号已存在"))
+		resp.Error(c, "手机号已存在")
 		return
 	}
 
@@ -65,13 +65,13 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.Email.Eq(email)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增用户失败"))
+		resp.Error(c, err.Error())
 
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("邮箱已存在"))
+		resp.Error(c, "邮箱已存在")
 		return
 	}
 
@@ -134,16 +134,11 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增用户异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
-		return
-	}
-
-	c.JSON(consts.StatusOK, resp.Success("添加用户信息成功"))
+	resp.Success(c, "添加用户信息成功")
 }
 
 // DeleteUser 删除用户信息
@@ -154,7 +149,7 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var req user.DeleteUserReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -164,7 +159,7 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 		// 1.判断是不是超级管理员
 		isAdmin, _ := common.IsAdmin(ctx, userId)
 		if isAdmin {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员用户"))
+			resp.Error(c, "不允许操作超级管理员用户")
 			return
 		}
 
@@ -193,11 +188,11 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("删除用户信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除用户信息成功"))
+	resp.Success(c, "删除用户信息成功")
 }
 
 // UpdateUser 更新用户信息
@@ -208,13 +203,13 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateUserReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	isAdmin, _ := common.IsAdmin(ctx, req.Id)
 	if isAdmin {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员用户"))
+		resp.Error(c, "不允许操作超级管理员用户")
 		return
 	}
 
@@ -231,10 +226,10 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	// 1.判断用户是否存在
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户不存在"))
+		resp.Error(c, "用户不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -242,12 +237,12 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(u.ID.Neq(req.Id), u.UserName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户已存在"))
+		resp.Error(c, "用户已存在")
 		return
 	}
 
@@ -255,12 +250,12 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	count, err = q.Where(u.ID.Neq(req.Id), u.Mobile.Eq(mobile)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("手机号已存在"))
+		resp.Error(c, "手机号已存在")
 		return
 	}
 
@@ -268,12 +263,12 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	count, err = q.Where(u.ID.Neq(req.Id), u.Email.Eq(email)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("邮箱已存在"))
+		resp.Error(c, "邮箱已存在")
 		return
 	}
 
@@ -335,11 +330,11 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新用户信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新用户信息成功"))
+	resp.Success(c, "更新用户信息成功")
 }
 
 // UpdateUserStatus 用户信息状态
@@ -350,7 +345,7 @@ func UpdateUserStatus(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateUserStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -361,19 +356,19 @@ func UpdateUserStatus(ctx context.Context, c *app.RequestContext) {
 		// 1.判断是不是超级管理员
 		b, _ := common.IsAdmin(ctx, id)
 		if b {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员用户"))
+			resp.Error(c, "不允许操作超级管理员用户")
 			return
 		}
 
 		// 2.判断用户是否存在
 		count, err := q.WithContext(ctx).Where(q.ID.Eq(id)).Count()
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count == 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("用户不存在"))
+			resp.Error(c, "用户不存在")
 			return
 		}
 	}
@@ -382,11 +377,11 @@ func UpdateUserStatus(ctx context.Context, c *app.RequestContext) {
 	_, err = q.WithContext(ctx).Where(q.ID.In(ids...)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新用户信息状态成功"))
+	resp.Success(c, "更新用户信息状态成功")
 }
 
 // QueryUserDetail 查询用户信息详情
@@ -397,17 +392,17 @@ func QueryUserDetail(ctx context.Context, c *app.RequestContext) {
 	var req user.QueryUserDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysUser.WithContext(ctx).Where(query.SysUser.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户信息不存在"))
+		resp.Error(c, "用户信息不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户信息异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -435,7 +430,7 @@ func QueryUserDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryUserList 查询用户信息列表
@@ -447,7 +442,7 @@ func QueryUserList(ctx context.Context, c *app.RequestContext) {
 	var req user.QueryUserListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -481,7 +476,7 @@ func QueryUserList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户信息列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -512,7 +507,7 @@ func QueryUserList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
 
 // QueryUserMenu .
@@ -536,13 +531,13 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 
 	// 2.判断用户是否存在
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户不存在"))
+		resp.Error(c, "用户不存在")
 
 		return
 	}
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户信息异常"))
+		resp.Error(c, err.Error())
 
 		return
 	}
@@ -550,7 +545,7 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 	// 3.查询用户菜单和权限
 	menuList, apiUrls, isAdmin := queryApis(ctx, userId)
 
-	c.JSON(consts.StatusOK, user.UserInfoResp{
+	resp.Success(c, user.UserInfoResp{
 		Avatar:  info.Avatar,
 		Name:    info.UserName,
 		SysMenu: menuList,
@@ -619,22 +614,12 @@ func QueryUserRoleList(ctx context.Context, c *app.RequestContext) {
 
 	count, err := query.SysUser.WithContext(ctx).Where(query.SysUser.ID.Eq(req.UserId)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户不存在"))
-		return
-	}
-
-	// 1.判断用户是否存在
-	switch {
-	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("用户不存在"))
-		return
-	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户信息异常"))
+		resp.Error(c, "用户不存在")
 		return
 	}
 
@@ -642,7 +627,7 @@ func QueryUserRoleList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := query.SysRole.WithContext(ctx).FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户角色关联列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -681,7 +666,7 @@ func QueryUserRoleList(ctx context.Context, c *app.RequestContext) {
 		UserRoleIds: roleIds,
 	}
 
-	c.JSON(consts.StatusOK, data)
+	resp.Success(c, data)
 }
 
 // AddUserRole .
@@ -700,7 +685,7 @@ func AddUserRole(ctx context.Context, c *app.RequestContext) {
 	// 1.判断是否为超级管理员
 	isAdmin, _ := common.IsAdmin(ctx, req.UserId)
 	if isAdmin {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员用户"))
+		resp.Error(c, "不允许操作超级管理员用户")
 		return
 	}
 
@@ -731,9 +716,9 @@ func AddUserRole(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新用户与角色的关联失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, "分配角色成功")
 }
