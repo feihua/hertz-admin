@@ -104,7 +104,7 @@ func DeleteDept(ctx context.Context, c *app.RequestContext) {
 
 	id := req.Id
 	if id == 1 {
-		resp.Error(c, "顶级部门,不允许删除")
+		resp.Error(c, "一级部门,不允许删除")
 		return
 	}
 

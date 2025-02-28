@@ -39,7 +39,7 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count == 0 {
-		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典类型：%s,不存在", dictType))
+		resp.Error(c, fmt.Sprintf("字典类型：%s,不存在", dictType))
 		return
 	}
 
@@ -52,7 +52,7 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典标签：%s,已存在", req.DictLabel))
+		resp.Error(c, fmt.Sprintf("字典标签：%s,已存在", req.DictLabel))
 		return
 	}
 
@@ -65,7 +65,7 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典键值：%s,已存在", req.DictValue))
+		resp.Error(c, fmt.Sprintf("字典键值：%s,已存在", req.DictValue))
 		return
 	}
 
@@ -164,7 +164,7 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count == 0 {
-		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典类型：%s,不存在", dictType))
+		resp.Error(c, fmt.Sprintf("字典类型：%s,不存在", dictType))
 		return
 	}
 
@@ -177,7 +177,7 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典标签：%s,已存在", req.DictLabel))
+		resp.Error(c, fmt.Sprintf("字典标签：%s,已存在", req.DictLabel))
 		return
 	}
 
@@ -190,7 +190,7 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典键值：%s,已存在", req.DictValue))
+		resp.Error(c, fmt.Sprintf("字典键值：%s,已存在", req.DictValue))
 		return
 	}
 

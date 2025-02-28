@@ -148,7 +148,7 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("更新岗位信息失败,岗位名称：%s,已存在", name))
+		resp.Error(c, fmt.Sprintf("岗位名称：%s,已存在", name))
 		return
 	}
 
@@ -162,7 +162,7 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if count > 0 {
-		resp.Error(c, fmt.Sprintf("更新岗位信息失败，岗位编码：%s,已存在", code))
+		resp.Error(c, fmt.Sprintf("岗位编码：%s,已存在", code))
 		return
 	}
 
