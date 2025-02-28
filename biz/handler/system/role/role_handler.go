@@ -24,7 +24,7 @@ func AddRole(ctx context.Context, c *app.RequestContext) {
 	var req role.AddRoleReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -35,12 +35,12 @@ func AddRole(ctx context.Context, c *app.RequestContext) {
 	count, err := q.WithContext(ctx).Where(q.RoleName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色名称已存在"))
+		resp.Error(c, "角色名称已存在")
 		return
 	}
 
@@ -49,12 +49,12 @@ func AddRole(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.RoleKey.Eq(roleKey)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("权限字符已存在"))
+		resp.Error(c, "权限字符已存在")
 		return
 	}
 
@@ -73,11 +73,11 @@ func AddRole(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("添加角色信息成功"))
+	resp.Success(c, "添加角色信息成功")
 }
 
 // DeleteRole 删除角色信息
@@ -86,9 +86,10 @@ func DeleteRole(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
 	var req role.DeleteRoleReq
-	err := c.BindAndValidate(&req)
-	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+	err1 := c.BindAndValidate(&req)
+	if err1 != nil {
+		resp.Error(c, err1.Error())
+
 		return
 	}
 
@@ -98,7 +99,7 @@ func DeleteRole(ctx context.Context, c *app.RequestContext) {
 
 		// 1.判断是不是超级管理员
 		if roleId == 1 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+			resp.Error(c, "不允许操作超级管理员角色")
 			return
 		}
 
@@ -106,12 +107,12 @@ func DeleteRole(ctx context.Context, c *app.RequestContext) {
 		count, err := q.WithContext(ctx).Where(q.ID.Eq(roleId)).Count()
 
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count == 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+			resp.Error(c, "角色不存在")
 			return
 		}
 
@@ -119,17 +120,17 @@ func DeleteRole(ctx context.Context, c *app.RequestContext) {
 		q1 := query.SysUserRole
 		count, err = q1.WithContext(ctx).Where(q1.RoleID.Eq(roleId)).Count()
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户角色关联失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 		if count > 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("已分配,不能删除"))
+			resp.Error(c, "已分配,不能删除")
 			return
 		}
 
 	}
 
-	err = query.Q.Transaction(func(tx *query.Query) error {
+	err := query.Q.Transaction(func(tx *query.Query) error {
 
 		// 3.删除角色
 		r := tx.SysRole
@@ -147,11 +148,11 @@ func DeleteRole(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("删除角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除角色信息成功"))
+	resp.Success(c, "删除角色信息成功")
 }
 
 // UpdateRole 更新角色信息
@@ -162,7 +163,7 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	var req role.UpdateRoleReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -170,7 +171,7 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	q := r.WithContext(ctx)
 
 	if req.Id == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+		resp.Error(c, "不允许操作超级管理员角色")
 		return
 	}
 
@@ -180,10 +181,10 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	// 1.判断角色是否存在
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -192,12 +193,12 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(r.ID.Neq(req.Id), r.RoleName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色名称已存在"))
+		resp.Error(c, "角色名称已存在")
 		return
 	}
 
@@ -206,13 +207,12 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	count, err = q.Where(r.ID.Neq(req.Id), r.RoleKey.Eq(roleKey)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新角色失败"))
-
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色权限已存在"))
+		resp.Error(c, "角色权限已存在")
 		return
 	}
 
@@ -237,11 +237,11 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	err = dal.DB.Model(&model.SysRole{}).WithContext(ctx).Where(r.ID.Eq(req.Id)).Save(sysRole).Error
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新角色信息成功"))
+	resp.Success(c, "更新角色信息成功")
 }
 
 // UpdateRoleStatus 角色信息状态
@@ -252,7 +252,8 @@ func UpdateRoleStatus(ctx context.Context, c *app.RequestContext) {
 	var req role.UpdateRoleStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -261,18 +262,18 @@ func UpdateRoleStatus(ctx context.Context, c *app.RequestContext) {
 	for _, roleId := range req.Ids {
 
 		if roleId == 1 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+			resp.Error(c, "不允许操作超级管理员角色")
 			return
 		}
 		count, err := q.WithContext(ctx).Where(q.ID.Eq(roleId)).Count()
 
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count == 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+			resp.Error(c, "角色不存在")
 			return
 		}
 	}
@@ -280,11 +281,11 @@ func UpdateRoleStatus(ctx context.Context, c *app.RequestContext) {
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新角色信息状态成功"))
+	resp.Success(c, "更新角色信息状态成功")
 }
 
 // QueryRoleDetail 查询角色信息详情
@@ -295,17 +296,17 @@ func QueryRoleDetail(ctx context.Context, c *app.RequestContext) {
 	var req role.QueryRoleDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色信息不存在"))
+		resp.Error(c, "角色信息不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色信息异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -324,7 +325,7 @@ func QueryRoleDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryRoleList 查询角色信息列表
@@ -336,7 +337,7 @@ func QueryRoleList(ctx context.Context, c *app.RequestContext) {
 	var req role.QueryRoleListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -362,7 +363,7 @@ func QueryRoleList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色信息列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -384,7 +385,7 @@ func QueryRoleList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
 
 // QueryRoleMenuList .
@@ -403,7 +404,7 @@ func QueryRoleMenuList(ctx context.Context, c *app.RequestContext) {
 	// 1.查询所有菜单
 	menus, err := query.SysMenu.WithContext(ctx).Find()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询菜单列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -435,7 +436,7 @@ func QueryRoleMenuList(ctx context.Context, c *app.RequestContext) {
 		MenuIds:  menuIds,
 	}
 
-	c.JSON(consts.StatusOK, data)
+	resp.Success(c, data)
 }
 
 // AddRoleMenu .
@@ -453,7 +454,7 @@ func AddRoleMenu(ctx context.Context, c *app.RequestContext) {
 
 	// role表id为1表示系统预留超级管理员角色,不用关联
 	if req.RoleId == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+		resp.Error(c, "不允许操作超级管理员角色")
 		return
 	}
 
@@ -482,11 +483,11 @@ func AddRoleMenu(ctx context.Context, c *app.RequestContext) {
 	})
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新角色与菜单的关联失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, "分配菜单成功")
 }
 
 // QueryAllocatedList .
@@ -511,12 +512,12 @@ func QueryAllocatedList(ctx context.Context, c *app.RequestContext) {
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	}
 
@@ -534,7 +535,7 @@ func QueryAllocatedList(ctx context.Context, c *app.RequestContext) {
 	count, err = q.ScanByPage(&result, int(offset), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户列表信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -559,7 +560,7 @@ func QueryAllocatedList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, list)
 }
 
 // QueryUnallocatedList .
@@ -584,12 +585,12 @@ func QueryUnallocatedList(ctx context.Context, c *app.RequestContext) {
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	}
 
@@ -607,8 +608,7 @@ func QueryUnallocatedList(ctx context.Context, c *app.RequestContext) {
 	count, err = q.ScanByPage(&result, int(offset), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询用户列表信息失败"))
-
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -633,7 +633,7 @@ func QueryUnallocatedList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, list)
 }
 
 // CancelAuthUser .
@@ -650,7 +650,7 @@ func CancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if req.RoleId == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+		resp.Error(c, "不允许操作超级管理员角色")
 		return
 	}
 
@@ -658,12 +658,12 @@ func CancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	}
 
@@ -673,11 +673,11 @@ func CancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	// 取消授权
 	_, err = q.Where(userRole.RoleID.Eq(req.RoleId), userRole.UserID.Eq(req.UserId)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("取消授权失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, "取消授权成功")
 }
 
 // BatchCancelAuthUser .
@@ -694,7 +694,7 @@ func BatchCancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if req.RoleId == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+		resp.Error(c, "不允许操作超级管理员角色")
 		return
 	}
 
@@ -702,12 +702,12 @@ func BatchCancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	}
 
@@ -717,11 +717,11 @@ func BatchCancelAuthUser(ctx context.Context, c *app.RequestContext) {
 	// 取消授权
 	_, err = q.Where(userRole.RoleID.Eq(req.RoleId), userRole.UserID.In(req.UserIds...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("取消授权失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, "取消授权成功")
 }
 
 // BatchAuthUser .
@@ -738,7 +738,7 @@ func BatchAuthUser(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if req.RoleId == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不允许操作超级管理员角色"))
+		resp.Error(c, "不允许操作超级管理员角色")
 		return
 	}
 
@@ -746,12 +746,12 @@ func BatchAuthUser(ctx context.Context, c *app.RequestContext) {
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询角色失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("角色不存在"))
+		resp.Error(c, "角色不存在")
 		return
 	}
 
@@ -771,10 +771,10 @@ func BatchAuthUser(ctx context.Context, c *app.RequestContext) {
 	err = q.CreateInBatches(userRoles, len(userRoles))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("授权失败"))
+		resp.Error(c, err.Error())
 
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	resp.Success(c, "授权成功")
 }
