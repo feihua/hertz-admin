@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/menu"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
@@ -23,7 +22,7 @@ func AddMenu(ctx context.Context, c *app.RequestContext) {
 	var req menu.AddMenuReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -37,12 +36,12 @@ func AddMenu(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(m.MenuName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增菜单失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单名称已存在"))
+		resp.Error(c, "菜单名称已存在")
 		return
 	}
 
@@ -51,12 +50,12 @@ func AddMenu(ctx context.Context, c *app.RequestContext) {
 		count, err = q.Where(m.MenuURL.Eq(path)).Count()
 
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("新增菜单失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count > 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("菜单路由已存在"))
+			resp.Error(c, "菜单路由已存在")
 			return
 		}
 	}
@@ -80,11 +79,11 @@ func AddMenu(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("添加菜单信息成功"))
+	resp.Success(c, "添加菜单信息成功")
 }
 
 // DeleteMenu 删除菜单信息
@@ -95,7 +94,8 @@ func DeleteMenu(ctx context.Context, c *app.RequestContext) {
 	var req menu.DeleteMenuReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -104,46 +104,46 @@ func DeleteMenu(ctx context.Context, c *app.RequestContext) {
 	count, err := q.WithContext(ctx).Where(q.ID.Eq(req.Id)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询菜单失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单不存在"))
+		resp.Error(c, "菜单不存在")
 		return
 	}
 
 	// 1.查询菜单是否有子菜单
 	count, err = q.WithContext(ctx).Where(q.ParentID.Eq(req.Id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查删除菜单失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("存在子菜单,不允许删除"))
+		resp.Error(c, "存在子菜单,不允许删除")
 		return
 	}
 
 	// 2.查询菜单是否菜单已分配
 	count, err = query.SysRoleMenu.WithContext(ctx).Where(query.SysRoleMenu.MenuID.Eq(req.Id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查删除菜单失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单已分配,不允许删除"))
+		resp.Error(c, "菜单已分配,不允许删除")
 		return
 	}
 
 	_, err = q.WithContext(ctx).Where(q.ID.Eq(req.Id)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除菜单信息成功"))
+	resp.Success(c, "删除菜单信息成功")
 }
 
 // UpdateMenu 更新菜单信息
@@ -154,7 +154,8 @@ func UpdateMenu(ctx context.Context, c *app.RequestContext) {
 	var req menu.UpdateMenuReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -169,22 +170,22 @@ func UpdateMenu(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单不存在"))
+		resp.Error(c, "菜单不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询菜单信息异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	// 2.查询菜单名称是否已存在,如果菜单已存在,则直接返回
 	count, err := q.Where(sMenu.ID.Neq(req.Id), sMenu.MenuName.Eq(name)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单名称已存在"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单名称已存在"))
+		resp.Error(c, "菜单名称已存在")
 		return
 	}
 
@@ -193,12 +194,12 @@ func UpdateMenu(ctx context.Context, c *app.RequestContext) {
 		count, err = q.Where(sMenu.ID.Neq(req.Id), sMenu.MenuURL.Eq(path)).Count()
 
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("更新菜单失失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count > 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("更新菜单失失败"))
+			resp.Error(c, "菜单路由已存在")
 			return
 		}
 	}
@@ -229,11 +230,11 @@ func UpdateMenu(ctx context.Context, c *app.RequestContext) {
 	err = dal.DB.Model(&model.SysMenu{}).WithContext(ctx).Where(query.SysMenu.ID.Eq(req.Id)).Save(sysMenu).Error
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新菜单信息成功"))
+	resp.Success(c, "更新菜单信息成功")
 }
 
 // UpdateMenuStatus 菜单信息状态
@@ -244,7 +245,8 @@ func UpdateMenuStatus(ctx context.Context, c *app.RequestContext) {
 	var req menu.UpdateMenuStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -253,21 +255,21 @@ func UpdateMenuStatus(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单不存在"))
+		resp.Error(c, "菜单不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单不存在"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	_, err = q.WithContext(ctx).Where(q.ID.Eq(req.Id)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新菜单信息状态成功"))
+	resp.Success(c, "更新菜单信息状态成功")
 }
 
 // QueryMenuDetail 查询菜单信息详情
@@ -278,17 +280,17 @@ func QueryMenuDetail(ctx context.Context, c *app.RequestContext) {
 	var req menu.QueryMenuDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysMenu.WithContext(ctx).Where(query.SysMenu.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("菜单信息不存在"))
+		resp.Error(c, "菜单信息不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询菜单信息异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -310,8 +312,7 @@ func QueryMenuDetail(ctx context.Context, c *app.RequestContext) {
 		UpdateTime: utils.TimeToString(item.UpdateTime), // 更新时间
 
 	}
-
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryMenuList 查询菜单信息列表
@@ -323,7 +324,7 @@ func QueryMenuList(ctx context.Context, c *app.RequestContext) {
 	var req menu.QueryMenuListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -337,7 +338,7 @@ func QueryMenuList(ctx context.Context, c *app.RequestContext) {
 	menus, err := q.Find()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -364,5 +365,5 @@ func QueryMenuList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(list))
+	resp.Success(c, list)
 }
