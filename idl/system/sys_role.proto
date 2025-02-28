@@ -153,12 +153,12 @@ message CancelAuthUserReq {
 }
 message CancelAuthUserAllReq {
   int64 role_id = 1[(api.body) = "roleId"]; //角色ID
-  repeated int64 user_id = 2[(api.body) = "userId"]; //用户ID
+  repeated int64 user_ids = 2[(api.body) = "userIds"]; //用户ID
 
 }
 message SelectAuthUserAllReq {
   int64 role_id = 1[(api.body) = "roleId"]; //角色ID
-  repeated int64 user_id = 2[(api.body) = "userId"]; //用户ID
+  repeated int64 user_ids = 2[(api.body) = "userIds"]; //用户ID
 
 }
 

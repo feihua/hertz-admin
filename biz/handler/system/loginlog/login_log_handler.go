@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	loginLog "github.com/feihua/hertz-admin/biz/model/system/loginLog"
+	loginlog "github.com/feihua/hertz-admin/biz/model/system/loginlog"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/query"
 	"gorm.io/gorm"

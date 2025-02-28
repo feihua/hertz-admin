@@ -6,6 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	dictType "github.com/feihua/hertz-admin/biz/model/system/dictType"
+	dicttype "github.com/feihua/hertz-admin/biz/model/system/dicttype"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
