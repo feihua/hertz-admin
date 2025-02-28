@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	dictData "github.com/feihua/hertz-admin/biz/model/system/dictData"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
@@ -24,7 +23,7 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	var req dictData.AddDictDataReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -35,12 +34,12 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	// 1.根据字典类型查询字典是否已存在
 	count, err := query.SysDictType.WithContext(ctx).Where(query.SysDictType.DictType.Eq(dictType)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("新增字典数据失败,字典类型：%s,不存在", dictType)))
+		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典类型：%s,不存在", dictType))
 		return
 	}
 
@@ -48,12 +47,12 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.DictLabel.Eq(req.DictLabel), q.DictType.Eq(dictType)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("新增字典数据失败,字典标签：%s,已存在", req.DictLabel)))
+		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典标签：%s,已存在", req.DictLabel))
 		return
 	}
 
@@ -61,12 +60,12 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.DictValue.Eq(req.DictValue), q.DictType.Eq(dictType)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("新增字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("新增字典数据失败,字典键值：%s,已存在", req.DictValue)))
+		resp.Error(c, fmt.Sprintf("新增字典数据失败,字典键值：%s,已存在", req.DictValue))
 		return
 	}
 
@@ -74,7 +73,7 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	if req.IsDefault == "Y" {
 		_, err = q.WithContext(ctx).Where(q.DictType.Eq(dictType)).Where(q.IsDefault.Eq("Y")).Update(q.IsDefault, "N")
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("新增字典数据失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 	}
@@ -98,11 +97,11 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("添加字典数据表成功"))
+	resp.Success(c, "添加字典数据表成功")
 }
 
 // DeleteDictData 删除字典数据表
@@ -113,7 +112,7 @@ func DeleteDictData(ctx context.Context, c *app.RequestContext) {
 	var req dictData.DeleteDictDataReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -121,11 +120,11 @@ func DeleteDictData(ctx context.Context, c *app.RequestContext) {
 
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除字典数据表成功"))
+	resp.Success(c, "删除字典数据表成功")
 }
 
 // UpdateDictData 更新字典数据表
@@ -136,7 +135,7 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	var req dictData.UpdateDictDataReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -150,22 +149,22 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	// 1.判断字典数据是否存在
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("字典数据不存在"))
+		resp.Error(c, "字典数据不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询字典数据异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	// 2.判断字典类型是否存在
 	count, err := query.SysDictType.WithContext(ctx).Where(query.SysDictType.DictType.Eq(dictType)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("更新字典数据失败,字典类型：%s,不存在", dictType)))
+		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典类型：%s,不存在", dictType))
 		return
 	}
 
@@ -173,12 +172,12 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.ID.Neq(req.Id), q.DictLabel.Eq(req.DictLabel), q.DictType.Eq(dictType)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("更新字典数据失败,字典标签：%s,已存在", req.DictLabel)))
+		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典标签：%s,已存在", req.DictLabel))
 		return
 	}
 
@@ -186,12 +185,12 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	count, err = q.WithContext(ctx).Where(q.ID.Neq(req.Id), q.DictValue.Eq(req.DictValue), q.DictType.Eq(dictType)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新字典数据失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("更新字典数据失败,字典键值：%s,已存在", req.DictValue)))
+		resp.Error(c, fmt.Sprintf("更新字典数据失败,字典键值：%s,已存在", req.DictValue))
 		return
 	}
 
@@ -199,7 +198,7 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	if req.IsDefault == "Y" {
 		_, err = q.WithContext(ctx).Where(q.ID.Neq(req.Id)).Where(q.DictType.Eq(dictType)).Where(q.IsDefault.Eq("Y")).Update(q.IsDefault, "N")
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("更新字典数据失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 	}
@@ -224,11 +223,11 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 	// 6.字典数据存在时,则直接更新字典数据
 	err = dal.DB.Model(&model.SysDictData{}).WithContext(ctx).Where(q.ID.Eq(req.Id)).Save(data).Error
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新字典数据表成功"))
+	resp.Success(c, "更新字典数据表成功")
 }
 
 // UpdateDictDataStatus 字典数据表状态
@@ -239,7 +238,7 @@ func UpdateDictDataStatus(ctx context.Context, c *app.RequestContext) {
 	var req dictData.UpdateDictDataStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -248,11 +247,11 @@ func UpdateDictDataStatus(ctx context.Context, c *app.RequestContext) {
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新字典数据表状态成功"))
+	resp.Success(c, "更新字典数据表状态成功")
 }
 
 // QueryDictDataDetail 查询字典数据表详情
@@ -263,7 +262,7 @@ func QueryDictDataDetail(ctx context.Context, c *app.RequestContext) {
 	var req dictData.QueryDictDataDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -272,10 +271,10 @@ func QueryDictDataDetail(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("字典数据不存在"))
+		resp.Error(c, "字典数据不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询字典数据表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -296,7 +295,7 @@ func QueryDictDataDetail(ctx context.Context, c *app.RequestContext) {
 		UpdateTime: utils.TimeToString(item.UpdateTime), // 更新时间
 
 	}
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryDictDataList 查询字典数据表列表
@@ -308,7 +307,7 @@ func QueryDictDataList(ctx context.Context, c *app.RequestContext) {
 	var req dictData.QueryDictDataListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -332,7 +331,7 @@ func QueryDictDataList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询字典数据表列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -357,5 +356,5 @@ func QueryDictDataList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
