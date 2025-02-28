@@ -5,8 +5,7 @@ import (
 	"errors"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
-	dictType "github.com/feihua/hertz-admin/biz/model/system/dictType"
-	dicttype "github.com/feihua/hertz-admin/biz/model/system/dicttype"
+	dicttype "github.com/feihua/hertz-admin/biz/model/system/dictType"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -21,7 +20,7 @@ import (
 func AddDictType(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req dictType.AddDictTypeReq
+	var req dicttype.AddDictTypeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -80,7 +79,7 @@ func AddDictType(ctx context.Context, c *app.RequestContext) {
 func DeleteDictType(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req dictType.DeleteDictTypeReq
+	var req dicttype.DeleteDictTypeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -125,7 +124,7 @@ func DeleteDictType(ctx context.Context, c *app.RequestContext) {
 func UpdateDictType(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req dictType.UpdateDictTypeReq
+	var req dicttype.UpdateDictTypeReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -203,7 +202,7 @@ func UpdateDictType(ctx context.Context, c *app.RequestContext) {
 func UpdateDictTypeStatus(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req dictType.UpdateDictTypeStatusReq
+	var req dicttype.UpdateDictTypeStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -227,7 +226,7 @@ func UpdateDictTypeStatus(ctx context.Context, c *app.RequestContext) {
 func QueryDictTypeDetail(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req dictType.QueryDictTypeDetailReq
+	var req dicttype.QueryDictTypeDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -244,7 +243,7 @@ func QueryDictTypeDetail(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	data := &dictType.QueryDictTypeDetailResp{
+	data := &dicttype.QueryDictTypeDetailResp{
 		Id:         item.ID,                             // 字典主键
 		DictName:   item.DictName,                       // 字典名称
 		DictType:   item.DictType,                       // 字典类型
@@ -266,7 +265,7 @@ func QueryDictTypeList(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
 	var err error
-	var req dictType.QueryDictTypeListReq
+	var req dicttype.QueryDictTypeListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -295,10 +294,10 @@ func QueryDictTypeList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	var list []*dictType.QueryDictTypeListResp
+	var list []*dicttype.QueryDictTypeListResp
 
 	for _, item := range result {
-		list = append(list, &dictType.QueryDictTypeListResp{
+		list = append(list, &dicttype.QueryDictTypeListResp{
 			Id:         item.ID,                             // 字典主键
 			DictName:   item.DictName,                       // 字典名称
 			DictType:   item.DictType,                       // 字典类型

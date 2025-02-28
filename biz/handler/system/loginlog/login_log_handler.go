@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	loginLog "github.com/feihua/hertz-admin/biz/model/system/loginLog"
-	loginlog "github.com/feihua/hertz-admin/biz/model/system/loginlog"
+	loginlog "github.com/feihua/hertz-admin/biz/model/system/loginLog"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/query"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ import (
 func DeleteLoginLog(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req loginLog.DeleteLoginLogReq
+	var req loginlog.DeleteLoginLogReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -41,7 +40,7 @@ func DeleteLoginLog(ctx context.Context, c *app.RequestContext) {
 func QueryLoginLogDetail(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req loginLog.QueryLoginLogDetailReq
+	var req loginlog.QueryLoginLogDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -58,7 +57,7 @@ func QueryLoginLogDetail(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	data := &loginLog.QueryLoginLogDetailResp{
+	data := &loginlog.QueryLoginLogDetailResp{
 		Id:            item.ID,                         // 访问ID
 		LoginName:     item.LoginName,                  // 登录账号
 		Ipaddr:        item.Ipaddr,                     // 登录IP地址
@@ -86,7 +85,7 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
 	var err error
-	var req loginLog.QueryLoginLogListReq
+	var req loginlog.QueryLoginLogListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -134,10 +133,10 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	var list []*loginLog.QueryLoginLogListResp
+	var list []*loginlog.QueryLoginLogListResp
 
 	for _, item := range result {
-		list = append(list, &loginLog.QueryLoginLogListResp{
+		list = append(list, &loginlog.QueryLoginLogListResp{
 			Id:            item.ID,                                      // 访问ID
 			LoginName:     item.LoginName,                               // 登录账号
 			Ipaddr:        item.Ipaddr,                                  // 登录IP地址

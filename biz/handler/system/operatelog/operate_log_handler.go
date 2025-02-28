@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	operateLog "github.com/feihua/hertz-admin/biz/model/system/operateLog"
-	operatelog "github.com/feihua/hertz-admin/biz/model/system/operatelog"
+	operatelog "github.com/feihua/hertz-admin/biz/model/system/operateLog"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/query"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ import (
 func DeleteOperateLog(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req operateLog.DeleteOperateLogReq
+	var req operatelog.DeleteOperateLogReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -41,7 +40,7 @@ func DeleteOperateLog(ctx context.Context, c *app.RequestContext) {
 func QueryOperateLogDetail(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
-	var req operateLog.QueryOperateLogDetailReq
+	var req operatelog.QueryOperateLogDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -58,7 +57,7 @@ func QueryOperateLogDetail(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	data := &operateLog.QueryOperateLogDetailResp{
+	data := &operatelog.QueryOperateLogDetailResp{
 		Id:              item.ID,                           // 日志主键
 		Title:           item.Title,                        // 模块标题
 		BusinessType:    item.BusinessType,                 // 业务类型（0其它 1新增 2修改 3删除）
@@ -96,7 +95,7 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
 	var err error
-	var req operateLog.QueryOperateLogListReq
+	var req operatelog.QueryOperateLogListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(consts.StatusOK, resp.Error(err))
@@ -167,10 +166,10 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	var list []*operateLog.QueryOperateLogListResp
+	var list []*operatelog.QueryOperateLogListResp
 
 	for _, item := range result {
-		list = append(list, &operateLog.QueryOperateLogListResp{
+		list = append(list, &operatelog.QueryOperateLogListResp{
 			Id:              item.ID,                           // 日志主键
 			Title:           item.Title,                        // 模块标题
 			BusinessType:    item.BusinessType,                 // 业务类型（0其它 1新增 2修改 3删除）

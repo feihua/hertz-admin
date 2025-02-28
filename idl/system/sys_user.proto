@@ -15,6 +15,7 @@ message AddUserReq {
   string user_type = 5[(api.body) = "userType"]; //用户类型（00系统用户）
   string avatar = 6[(api.body) = "avatar"]; //头像路径
   string email = 7[(api.body) = "email"]; //用户邮箱
+  string password = 8[(api.body) = "password"]; //密码
   int32 status = 9[(api.body) = "status"]; //状态(1:正常，0:禁用)
   int64 dept_id = 10[(api.body) = "deptId"]; //部门ID
   repeated int64 post_ids = 11[(api.body) = "postIds"]; //部门ID
@@ -224,7 +225,7 @@ service UserHandler {
   }
 
   //添加用户角色关联
-  rpc AddUserRole(QueryUserListReq) returns(UserEmpty) {
+  rpc AddUserRole(AddUserRoleReq) returns(UserEmpty) {
     option (api.post) = "/api/system/user/updateUserRole";
   }
 }
