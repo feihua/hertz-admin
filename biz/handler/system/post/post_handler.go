@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/post"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
@@ -24,7 +23,7 @@ func AddPost(ctx context.Context, c *app.RequestContext) {
 	var req post.AddPostReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -35,12 +34,12 @@ func AddPost(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(p.PostName.Eq(name)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加岗位信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("添加岗位信息失败,岗位名称：%s,已存在", name)))
+		resp.Error(c, fmt.Sprintf("岗位名称：%s,已存在", name))
 		return
 	}
 
@@ -48,12 +47,12 @@ func AddPost(ctx context.Context, c *app.RequestContext) {
 	count, err = q.Where(p.PostCode.Eq(code)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加岗位信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("添加岗位信息失败，岗位编码：%s,已存在", code)))
+		resp.Error(c, fmt.Sprintf("岗位编码：%s,已存在", code))
 		return
 	}
 
@@ -70,11 +69,10 @@ func AddPost(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
-
-	c.JSON(consts.StatusOK, resp.Success("添加岗位信息表成功"))
+	resp.Success(c, "添加岗位信息表成功")
 }
 
 // DeletePost 删除岗位信息表
@@ -85,7 +83,8 @@ func DeletePost(ctx context.Context, c *app.RequestContext) {
 	var req post.DeletePostReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -93,22 +92,22 @@ func DeletePost(ctx context.Context, c *app.RequestContext) {
 
 	count, err := query.SysUserPost.WithContext(ctx).Where(query.SysUserPost.PostID.In(req.Ids...)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询岗位使用数量异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("删除岗位信息失败,已分配,不能删除"))
+		resp.Error(c, ",已分配,不能删除")
 		return
 	}
 
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除岗位信息表成功"))
+	resp.Success(c, "删除岗位信息表成功")
 }
 
 // UpdatePost 更新岗位信息表
@@ -119,7 +118,8 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	var req post.UpdatePostReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
@@ -131,10 +131,10 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("岗位不存在"))
+		resp.Error(c, "岗位不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询岗位信息表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -143,12 +143,12 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(p.PostName.Eq(name), p.ID.Neq(req.Id)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新岗位信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("更新岗位信息失败,岗位名称：%s,已存在", name)))
+		resp.Error(c, fmt.Sprintf("更新岗位信息失败,岗位名称：%s,已存在", name))
 		return
 	}
 
@@ -157,12 +157,12 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	count, err = q.Where(p.PostCode.Eq(code), p.ID.Neq(req.Id)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新岗位信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg(fmt.Sprintf("更新岗位信息失败，岗位编码：%s,已存在", code)))
+		resp.Error(c, fmt.Sprintf("更新岗位信息失败，岗位编码：%s,已存在", code))
 		return
 	}
 
@@ -186,11 +186,11 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 	err = dal.DB.Model(&model.SysPost{}).WithContext(ctx).Where(p.ID.Eq(req.Id)).Save(sysPost).Error
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新岗位信息表成功"))
+	resp.Success(c, "更新岗位信息表成功")
 }
 
 // UpdatePostStatus 岗位信息表状态
@@ -201,7 +201,7 @@ func UpdatePostStatus(ctx context.Context, c *app.RequestContext) {
 	var req post.UpdatePostStatusReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -210,11 +210,11 @@ func UpdatePostStatus(ctx context.Context, c *app.RequestContext) {
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, req.Status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新岗位信息表状态成功"))
+	resp.Success(c, "更新岗位信息表状态成功")
 }
 
 // QueryPostDetail 查询岗位信息表详情
@@ -225,17 +225,17 @@ func QueryPostDetail(ctx context.Context, c *app.RequestContext) {
 	var req post.QueryPostDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysPost.WithContext(ctx).Where(query.SysPost.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("岗位信息表不存在"))
+		resp.Error(c, "岗位信息表不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询岗位信息表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -253,7 +253,7 @@ func QueryPostDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryPostList 查询岗位信息表列表
@@ -265,7 +265,7 @@ func QueryPostList(ctx context.Context, c *app.RequestContext) {
 	var req post.QueryPostListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -287,7 +287,7 @@ func QueryPostList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -309,5 +309,5 @@ func QueryPostList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
