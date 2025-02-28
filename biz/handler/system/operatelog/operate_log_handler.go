@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	operatelog "github.com/feihua/hertz-admin/biz/model/system/operateLog"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -20,7 +19,7 @@ func DeleteOperateLog(ctx context.Context, c *app.RequestContext) {
 	var req operatelog.DeleteOperateLogReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -28,11 +27,11 @@ func DeleteOperateLog(ctx context.Context, c *app.RequestContext) {
 
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除操作日志记录成功"))
+	resp.Success(c, "删除操作日志记录成功")
 }
 
 // QueryOperateLogDetail 查询操作日志记录详情
@@ -43,17 +42,17 @@ func QueryOperateLogDetail(ctx context.Context, c *app.RequestContext) {
 	var req operatelog.QueryOperateLogDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysOperateLog.WithContext(ctx).Where(query.SysOperateLog.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("操作日志记录不存在"))
+		resp.Error(c, "操作日志记录不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询操作日志记录异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -86,7 +85,7 @@ func QueryOperateLogDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryOperateLogList 查询操作日志记录列表
@@ -98,7 +97,7 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 	var req operatelog.QueryOperateLogListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -162,7 +161,7 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -199,5 +198,5 @@ func QueryOperateLogList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
