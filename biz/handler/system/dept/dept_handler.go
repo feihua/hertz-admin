@@ -3,18 +3,23 @@ package system
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	dept "github.com/feihua/hertz-admin/biz/model/system/dept"
+	"github.com/feihua/hertz-admin/biz/dal"
+	"github.com/feihua/hertz-admin/biz/model/system/dept"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
 // AddDept 添加部门表
-// @router /addDept [POST]
+// @router /api/system/dept/addDept [POST]
 func AddDept(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -25,20 +30,54 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	// 添加部门表
-	q := query.SysDept
+	sysDept := query.SysDept
+	q := sysDept.WithContext(ctx)
 
+	// 1.根据部门名称查询部门是否已存在
+	name := req.DeptName
+	count, err := q.Where(sysDept.DeptName.Eq(name), sysDept.ParentID.Eq(req.ParentId)).Count()
+
+	if err != nil {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门失败"))
+		return
+	}
+
+	// 2.如果部门已存在,则直接返回
+	if count > 0 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("部门名称已存在"))
+		return
+	}
+
+	// 3.如果父节点不为正常状态,则不允许新增子节点
+	parentDept, err := q.Where(sysDept.ID.Eq(req.ParentId)).First()
+
+	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,上级部门不存在"))
+		return
+	case err != nil:
+		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,查询上级部门异常"))
+		return
+	}
+
+	if parentDept.Status != 1 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,停用，不允许新增"))
+		return
+	}
+
+	ancestors := fmt.Sprintf("%s,%d", parentDept.Ancestors, parentDept.ID)
+	// 4.部门不存在时,则直接添加部门
+	createBy := ctx.Value("userName").(string)
 	item := &model.SysDept{
-		ParentId:  req.ParentId,  // 父部门id
-		Ancestors: req.Ancestors, // 祖级列表
-		DeptName:  req.DeptName,  // 部门名称
-		Sort:      req.Sort,      // 显示顺序
-		Leader:    req.Leader,    // 负责人
-		Phone:     req.Phone,     // 联系电话
-		Email:     req.Email,     // 邮箱
-		Status:    req.Status,    // 部门状态（0：停用，1:正常）
-		DelFlag:   req.DelFlag,   // 删除标志（0代表删除 1代表存在）
-		CreateBy:  "",            // 创建者
+		ParentID:  req.ParentId, // 父部门id
+		Ancestors: ancestors,    // 祖级列表
+		DeptName:  req.DeptName, // 部门名称
+		Sort:      req.Sort,     // 显示顺序
+		Leader:    req.Leader,   // 负责人
+		Phone:     req.Phone,    // 联系电话
+		Email:     req.Email,    // 邮箱
+		Status:    req.Status,   // 部门状态（0：停用，1:正常）
+		CreateBy:  createBy,     // 创建者
 	}
 
 	err = q.WithContext(ctx).Create(item)
@@ -52,7 +91,7 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteDept 删除部门表
-// @router /deleteDept [POST]
+// @router /api/system/dept/deleteDept [POST]
 func DeleteDept(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -62,12 +101,51 @@ func DeleteDept(ctx context.Context, c *app.RequestContext) {
 		c.JSON(consts.StatusOK, resp.Error(err))
 		return
 	}
-
 	q := query.SysDept
 
-	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
+	id := req.Id
+	if id == 1 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("顶级部门,不允许删除"))
+		return
+	}
+
+	// 1.查询部门是否存在
+	record, err := q.WithContext(ctx).Where(q.ID.Eq(id)).First()
+
+	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		c.JSON(consts.StatusOK, resp.ErrorMsg("不存在"))
+		return
+	case err != nil:
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询异常"))
+		return
+	}
+
+	// 2.判断部门状态是否为启用
+	if record.Status == 1 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("部门状态为启用,不允许删除"))
+		return
+	}
+
+	// 3.查询是否有下级部门
+	count, err := q.WithContext(ctx).Where(q.ParentID.Eq(id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("删除部门信息失败"))
+		return
+	}
+	if count > 0 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("存在下级部门,不允许删除"))
+		return
+	}
+
+	// 4.查询部门是否存在用户
+	count, err = query.SysUser.WithContext(ctx).Where(query.SysUser.DeptID.Eq(id)).Count()
+	if err != nil {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门是否存在用户失败"))
+		return
+	}
+	if count > 0 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("部门存在用户,不允许删除"))
 		return
 	}
 
@@ -75,7 +153,7 @@ func DeleteDept(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateDept 更新部门表
-// @router /updateDept [POST]
+// @router /api/system/dept/updateDept [POST]
 func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -86,47 +164,137 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	q := query.SysDept.WithContext(ctx)
+	d := query.SysDept
+	q := d.WithContext(ctx)
 
-	// 1.根据部门表id查询部门表是否已存在
-	_, err = q.Where(query.SysDept.ID.Eq(req.Id)).First()
+	if req.ParentId == req.Id {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("上级部门不能为当前部门"))
+		return
+	}
+
+	// 1.根据部门id查询部门是否已存在
+	oldDept, err := q.Where(d.ID.Eq(req.Id)).First()
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门表不存在"))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门失败,部门不存在"))
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门表异常"))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门异常"))
 		return
 	}
 
-	item := &model.SysDept{
-		Id:        req.Id,        // 部门id
-		ParentId:  req.ParentId,  // 父部门id
-		Ancestors: req.Ancestors, // 祖级列表
-		DeptName:  req.DeptName,  // 部门名称
-		Sort:      req.Sort,      // 显示顺序
-		Leader:    req.Leader,    // 负责人
-		Phone:     req.Phone,     // 联系电话
-		Email:     req.Email,     // 邮箱
-		Status:    req.Status,    // 部门状态（0：停用，1:正常）
-		DelFlag:   req.DelFlag,   // 删除标志（0代表删除 1代表存在）
-		UpdateBy:  "",            // 更新者
+	// 2.根据部门parentId查询部门是否已存在
+	parentDept, err := q.Where(d.ID.Eq(req.ParentId)).First()
+
+	// 1.判断上级部门是否存在
+	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		c.JSON(consts.StatusOK, resp.ErrorMsg("上级部门不存在"))
+
+		return
+	case err != nil:
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询上级部门异常"))
+		return
 	}
 
-	// 2.部门表存在时,则直接更新部门表
-	_, err = q.Updates(item)
+	// 3.根据部门名称查询部门是否已存在
+	deptName := req.DeptName
+	count, err := q.Where(d.ID.Neq(req.Id), d.DeptName.Eq(deptName), d.ParentID.Eq(parentDept.ID)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门信息失败"))
 		return
+	}
+
+	if count > 0 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("部门信息已存在"))
+		return
+	}
+
+	// 4.查询是否有下级部门
+	sql := "select count(*) from sys_dept where status = 1 and del_flag = 1 and find_in_set(?, 'ancestors')"
+	err = dal.DB.Raw(sql, req.Id).Count(&count).Error
+	if err != nil {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+		return
+	}
+
+	if count > 0 && req.Status == 0 {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("该部门包含未停用的子部门"))
+		return
+	}
+
+	sql = "select * from sys_dept where find_in_set(?, 'ancestors')"
+	list := make([]model.SysDept, 10)
+	err = dal.DB.Model(&model.SysDept{}).Raw(sql, req.Id).Scan(list).Error
+	if err != nil {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+		return
+	}
+
+	// 5.修改下级部门祖级
+	ancestors := fmt.Sprintf("%s,%d", parentDept.Ancestors, parentDept.ID)
+	if count > 0 {
+		for _, dept1 := range list {
+			parentIdStr := strings.Replace(dept1.Ancestors, oldDept.Ancestors, ancestors, -1)
+			_, err = q.Where(d.ID.Eq(dept1.ID)).Update(d.Ancestors, parentIdStr)
+			if err != nil {
+				c.JSON(consts.StatusOK, resp.ErrorMsg("修改下级部门祖级失败失败"))
+				return
+			}
+		}
+	}
+
+	updateBy := ctx.Value("userName").(string)
+	now := time.Now()
+	sysDept := &model.SysDept{
+		ID:         req.Id,             // 部门id
+		ParentID:   req.ParentId,       // 父部门id
+		Ancestors:  ancestors,          // 祖级列表
+		DeptName:   req.DeptName,       // 部门名称
+		Sort:       req.Sort,           // 显示顺序
+		Leader:     req.Leader,         // 负责人
+		Phone:      req.Phone,          // 联系电话
+		Email:      req.Email,          // 邮箱
+		Status:     req.Status,         // 部门状态（0：停用，1:正常）
+		CreateBy:   oldDept.CreateBy,   // 创建者
+		CreateTime: oldDept.CreateTime, // 创建时间
+		UpdateBy:   updateBy,           // 更新者
+		UpdateTime: &now,               // 更新时间
+	}
+
+	// 6.部门存在时,则直接更新部门
+	err = dal.DB.Model(&model.SysDept{}).WithContext(ctx).Where(d.ID.Eq(req.Id)).Save(sysDept).Error
+
+	if err != nil {
+		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门信息失败"))
+		return
+	}
+
+	// 7.如果该部门是启用状态，则启用该部门的所有上级部门
+	split := strings.Split(ancestors, ",")
+	var parentIds []int64
+
+	for _, str := range split {
+		num, _ := strconv.ParseInt(str, 10, 64)
+		parentIds = append(parentIds, num)
+	}
+
+	if req.Status == 1 {
+		_, err = q.Where(d.ID.In(parentIds...)).Update(d.Status, req.Status)
+		if err != nil {
+			c.JSON(consts.StatusOK, resp.ErrorMsg("修改上级部门状态失败"))
+			return
+		}
+
 	}
 
 	c.JSON(consts.StatusOK, resp.Success("更新部门表成功"))
 }
 
 // UpdateDeptStatus 部门表状态
-// @router /updateDeptStatus [POST]
+// @router /api/system/dept/updateDeptStatus [POST]
 func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -137,12 +305,58 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	status := req.Status // 1.判断状态是否正确
+
 	q := query.SysDept
 
-	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, req.Status)
+	for _, id := range req.Ids {
+		d, err := q.WithContext(ctx).Where(q.ID.Eq(id)).First()
+
+		// 1.判断部门是否存在
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			c.JSON(consts.StatusOK, resp.ErrorMsg("部门不存在"))
+			return
+		case err != nil:
+			c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门异常"))
+			return
+		}
+
+		// 2.查询是否有下级部门
+		var count int64
+		sql := "select count(*) from sys_dept where status = 1 and del_flag = 1 and find_in_set(?, 'parentIds')"
+		err = dal.DB.Raw(sql, id).Count(&count).Error
+		if err != nil {
+			c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+			return
+		}
+
+		if count > 0 && req.Status == 0 {
+			c.JSON(consts.StatusOK, resp.ErrorMsg("该部门包含未停用的子部门"))
+			return
+		}
+
+		if status == 1 {
+			split := strings.Split(d.Ancestors, ",")
+			var parentIds []int64
+
+			for _, str := range split {
+				num, _ := strconv.ParseInt(str, 10, 64)
+				parentIds = append(parentIds, num)
+			}
+			_, err = query.SysDept.WithContext(ctx).Where(q.ID.In(parentIds...)).Update(q.Status, status)
+			if err != nil {
+				c.JSON(consts.StatusOK, resp.ErrorMsg("修改上级部门状态失败"))
+				return
+			}
+		}
+
+	}
+
+	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门信息表状态失败"))
 		return
 	}
 
@@ -150,7 +364,7 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 }
 
 // QueryDeptDetail 查询部门表详情
-// @router /queryDeptDetail [POST]
+// @router /api/system/dept/queryDeptDetail [POST]
 func QueryDeptDetail(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -172,20 +386,19 @@ func QueryDeptDetail(ctx context.Context, c *app.RequestContext) {
 	}
 
 	data := &dept.QueryDeptDetailResp{
-		Id:         item.Id,                                       // 部门id
-		ParentId:   item.ParentId,                                 // 父部门id
-		Ancestors:  item.Ancestors,                                // 祖级列表
-		DeptName:   item.DeptName,                                 // 部门名称
-		Sort:       item.Sort,                                     // 显示顺序
-		Leader:     item.Leader,                                   // 负责人
-		Phone:      item.Phone,                                    // 联系电话
-		Email:      item.Email,                                    // 邮箱
-		Status:     item.Status,                                   // 部门状态（0：停用，1:正常）
-		DelFlag:    item.DelFlag,                                  // 删除标志（0代表删除 1代表存在）
-		CreateBy:   item.CreateBy,                                 // 创建者
-		CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"), // 创建时间
-		UpdateBy:   item.UpdateBy,                                 // 更新者
-		UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"), // 更新时间
+		Id:         item.ID,                             // 部门id
+		ParentId:   item.ParentID,                       // 父部门id
+		Ancestors:  item.Ancestors,                      // 祖级列表
+		DeptName:   item.DeptName,                       // 部门名称
+		Sort:       item.Sort,                           // 显示顺序
+		Leader:     item.Leader,                         // 负责人
+		Phone:      item.Phone,                          // 联系电话
+		Email:      item.Email,                          // 邮箱
+		Status:     item.Status,                         // 部门状态（0：停用，1:正常）
+		CreateBy:   item.CreateBy,                       // 创建者
+		CreateTime: utils.TimeToStr(item.CreateTime),    // 创建时间
+		UpdateBy:   item.UpdateBy,                       // 更新者
+		UpdateTime: utils.TimeToString(item.UpdateTime), // 更新时间
 
 	}
 
@@ -193,7 +406,7 @@ func QueryDeptDetail(ctx context.Context, c *app.RequestContext) {
 }
 
 // QueryDeptList 查询部门表列表
-// @router /queryDeptList [POST]
+// @router /api/system/dept/queryDeptList [POST]
 func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
@@ -205,29 +418,22 @@ func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	Dept := query.SysDept
-	q := Dept.WithContext(ctx)
-	// 父部门id
-	// q = q.Where(SysDept.ParentId.Like("%" + req.ParentId + "%"))
-	// 祖级列表
-	// q = q.Where(SysDept.Ancestors.Like("%" + req.Ancestors + "%"))
+	d := query.SysDept
+	q := d.WithContext(ctx)
+
 	// 部门名称
-	// q = q.Where(SysDept.DeptName.Like("%" + req.DeptName + "%"))
-	// 负责人
-	// q = q.Where(SysDept.Leader.Like("%" + req.Leader + "%"))
-	// 联系电话
-	// q = q.Where(SysDept.Phone.Like("%" + req.Phone + "%"))
-	// 邮箱
-	// q = q.Where(SysDept.Email.Like("%" + req.Email + "%"))
+	if len(req.DeptName) > 0 {
+		q = q.Where(d.DeptName.Like("%" + req.DeptName + "%"))
+	}
 	// 部门状态（0：停用，1:正常）
-	// q = q.Where(SysDept.Status.Like("%" + req.Status + "%"))
-	// 删除标志（0代表删除 1代表存在）
-	// q = q.Where(SysDept.DelFlag.Like("%" + req.DelFlag + "%"))
+	if req.Status != 2 {
+		q = q.Where(d.Status.Eq(req.Status))
+	}
 
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门表列表失败"))
 		return
 	}
 
@@ -235,21 +441,19 @@ func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 
 	for _, item := range result {
 		list = append(list, &dept.QueryDeptListResp{
-			Id:         item.Id,                                       // 部门id
-			ParentId:   item.ParentId,                                 // 父部门id
-			Ancestors:  item.Ancestors,                                // 祖级列表
-			DeptName:   item.DeptName,                                 // 部门名称
-			Sort:       item.Sort,                                     // 显示顺序
-			Leader:     item.Leader,                                   // 负责人
-			Phone:      item.Phone,                                    // 联系电话
-			Email:      item.Email,                                    // 邮箱
-			Status:     item.Status,                                   // 部门状态（0：停用，1:正常）
-			DelFlag:    item.DelFlag,                                  // 删除标志（0代表删除 1代表存在）
-			CreateBy:   item.CreateBy,                                 // 创建者
-			CreateTime: item.CreateTime.Format("2006-01-02 15:04:05"), // 创建时间
-			UpdateBy:   item.UpdateBy,                                 // 更新者
-			UpdateTime: item.UpdateTime.Format("2006-01-02 15:04:05"), // 更新时间
-
+			Id:         item.ID,                             // 部门id
+			ParentId:   item.ParentID,                       // 父部门id
+			Ancestors:  item.Ancestors,                      // 祖级列表
+			DeptName:   item.DeptName,                       // 部门名称
+			Sort:       item.Sort,                           // 显示顺序
+			Leader:     item.Leader,                         // 负责人
+			Phone:      item.Phone,                          // 联系电话
+			Email:      item.Email,                          // 邮箱
+			Status:     item.Status,                         // 部门状态（0：停用，1:正常）
+			CreateBy:   item.CreateBy,                       // 创建者
+			CreateTime: utils.TimeToStr(item.CreateTime),    // 创建时间
+			UpdateBy:   item.UpdateBy,                       // 更新者
+			UpdateTime: utils.TimeToString(item.UpdateTime), // 更新时间
 		})
 	}
 
