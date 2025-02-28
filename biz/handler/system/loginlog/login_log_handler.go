@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	loginlog "github.com/feihua/hertz-admin/biz/model/system/loginLog"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -20,7 +19,7 @@ func DeleteLoginLog(ctx context.Context, c *app.RequestContext) {
 	var req loginlog.DeleteLoginLogReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -28,11 +27,11 @@ func DeleteLoginLog(ctx context.Context, c *app.RequestContext) {
 
 	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Delete()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除系统访问记录成功"))
+	resp.Success(c, "删除系统访问记录成功")
 }
 
 // QueryLoginLogDetail 查询系统访问记录详情
@@ -43,17 +42,18 @@ func QueryLoginLogDetail(ctx context.Context, c *app.RequestContext) {
 	var req loginlog.QueryLoginLogDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
+
 		return
 	}
 
 	item, err := query.SysLoginLog.WithContext(ctx).Where(query.SysLoginLog.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("系统访问记录不存在"))
+		resp.Error(c, "系统访问记录不存在\"")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询系统访问记录异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -76,7 +76,7 @@ func QueryLoginLogDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryLoginLogList 查询系统访问记录列表
@@ -88,7 +88,7 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 	var req loginlog.QueryLoginLogListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -129,7 +129,7 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -155,6 +155,5 @@ func QueryLoginLogList(ctx context.Context, c *app.RequestContext) {
 
 		})
 	}
-
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
