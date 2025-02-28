@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/dept"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
@@ -26,7 +25,7 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 	var req dept.AddDeptReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -38,13 +37,13 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(sysDept.DeptName.Eq(name), sysDept.ParentID.Eq(req.ParentId)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	// 2.如果部门已存在,则直接返回
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门名称已存在"))
+		resp.Error(c, "部门名称已存在")
 		return
 	}
 
@@ -53,15 +52,15 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,上级部门不存在"))
+		resp.Error(c, "添加部门失败,上级部门不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,查询上级部门异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if parentDept.Status != 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("添加部门失败,停用，不允许新增"))
+		resp.Error(c, "部门停用，不允许新增")
 		return
 	}
 
@@ -83,11 +82,11 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 	err = q.WithContext(ctx).Create(item)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("添加部门表成功"))
+	resp.Success(c, "添加部门表成功")
 }
 
 // DeleteDept 删除部门表
@@ -98,14 +97,14 @@ func DeleteDept(ctx context.Context, c *app.RequestContext) {
 	var req dept.DeleteDeptReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 	q := query.SysDept
 
 	id := req.Id
 	if id == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("顶级部门,不允许删除"))
+		resp.Error(c, "顶级部门,不允许删除")
 		return
 	}
 
@@ -114,42 +113,42 @@ func DeleteDept(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("不存在"))
+		resp.Error(c, "部门不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	// 2.判断部门状态是否为启用
 	if record.Status == 1 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门状态为启用,不允许删除"))
+		resp.Error(c, "部门状态为启用,不允许删除")
 		return
 	}
 
 	// 3.查询是否有下级部门
 	count, err := q.WithContext(ctx).Where(q.ParentID.Eq(id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("删除部门信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("存在下级部门,不允许删除"))
+		resp.Error(c, "存在下级部门,不允许删除")
 		return
 	}
 
 	// 4.查询部门是否存在用户
 	count, err = query.SysUser.WithContext(ctx).Where(query.SysUser.DeptID.Eq(id)).Count()
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门是否存在用户失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门存在用户,不允许删除"))
+		resp.Error(c, "部门存在用户,不允许删除")
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("删除部门表成功"))
+	resp.Success(c, "删除部门表成功")
 }
 
 // UpdateDept 更新部门表
@@ -160,7 +159,7 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	var req dept.UpdateDeptReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -168,7 +167,7 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	q := d.WithContext(ctx)
 
 	if req.ParentId == req.Id {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("上级部门不能为当前部门"))
+		resp.Error(c, "上级部门不能为当前部门")
 		return
 	}
 
@@ -177,10 +176,10 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门失败,部门不存在"))
+		resp.Error(c, "部门不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -190,11 +189,10 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	// 1.判断上级部门是否存在
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("上级部门不存在"))
-
+		resp.Error(c, "上级部门不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询上级部门异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -203,12 +201,12 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	count, err := q.Where(d.ID.Neq(req.Id), d.DeptName.Eq(deptName), d.ParentID.Eq(parentDept.ID)).Count()
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门信息已存在"))
+		resp.Error(c, "部门信息已存在")
 		return
 	}
 
@@ -216,12 +214,12 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	sql := "select count(*) from sys_dept where status = 1 and del_flag = 1 and find_in_set(?, 'ancestors')"
 	err = dal.DB.Raw(sql, req.Id).Count(&count).Error
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	if count > 0 && req.Status == 0 {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("该部门包含未停用的子部门"))
+		resp.Error(c, "该部门包含未停用的子部门")
 		return
 	}
 
@@ -229,7 +227,7 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	list := make([]model.SysDept, 10)
 	err = dal.DB.Model(&model.SysDept{}).Raw(sql, req.Id).Scan(list).Error
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -240,7 +238,7 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 			parentIdStr := strings.Replace(dept1.Ancestors, oldDept.Ancestors, ancestors, -1)
 			_, err = q.Where(d.ID.Eq(dept1.ID)).Update(d.Ancestors, parentIdStr)
 			if err != nil {
-				c.JSON(consts.StatusOK, resp.ErrorMsg("修改下级部门祖级失败失败"))
+				resp.Error(c, err.Error())
 				return
 			}
 		}
@@ -268,7 +266,7 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	err = dal.DB.Model(&model.SysDept{}).WithContext(ctx).Where(d.ID.Eq(req.Id)).Save(sysDept).Error
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门信息失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -284,13 +282,13 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 	if req.Status == 1 {
 		_, err = q.Where(d.ID.In(parentIds...)).Update(d.Status, req.Status)
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("修改上级部门状态失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新部门表成功"))
+	resp.Success(c, "更新部门表成功")
 }
 
 // UpdateDeptStatus 部门表状态
@@ -299,9 +297,9 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 	resp := utils.BaseResponse{}
 
 	var req dept.UpdateDeptStatusReq
-	err := c.BindAndValidate(&req)
-	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+	err1 := c.BindAndValidate(&req)
+	if err1 != nil {
+		resp.Error(c, err1.Error())
 		return
 	}
 
@@ -315,10 +313,10 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 		// 1.判断部门是否存在
 		switch {
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			c.JSON(consts.StatusOK, resp.ErrorMsg("部门不存在"))
+			resp.Error(c, "部门不存在")
 			return
 		case err != nil:
-			c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门异常"))
+			resp.Error(c, err.Error())
 			return
 		}
 
@@ -327,12 +325,12 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 		sql := "select count(*) from sys_dept where status = 1 and del_flag = 1 and find_in_set(?, 'parentIds')"
 		err = dal.DB.Raw(sql, id).Count(&count).Error
 		if err != nil {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("根据部门id查询是否有下级部门失败"))
+			resp.Error(c, err.Error())
 			return
 		}
 
 		if count > 0 && req.Status == 0 {
-			c.JSON(consts.StatusOK, resp.ErrorMsg("该部门包含未停用的子部门"))
+			resp.Error(c, "该部门包含未停用的子部门")
 			return
 		}
 
@@ -346,21 +344,21 @@ func UpdateDeptStatus(ctx context.Context, c *app.RequestContext) {
 			}
 			_, err = query.SysDept.WithContext(ctx).Where(q.ID.In(parentIds...)).Update(q.Status, status)
 			if err != nil {
-				c.JSON(consts.StatusOK, resp.ErrorMsg("修改上级部门状态失败"))
+				resp.Error(c, err.Error())
 				return
 			}
 		}
 
 	}
 
-	_, err = q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, status)
+	_, err := q.WithContext(ctx).Where(q.ID.In(req.Ids...)).Update(q.Status, status)
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("更新部门信息表状态失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
-	c.JSON(consts.StatusOK, resp.Success("更新部门表状态成功"))
+	resp.Success(c, "更新部门状态成功")
 }
 
 // QueryDeptDetail 查询部门表详情
@@ -371,17 +369,17 @@ func QueryDeptDetail(ctx context.Context, c *app.RequestContext) {
 	var req dept.QueryDeptDetailReq
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
 	item, err := query.SysDept.WithContext(ctx).Where(query.SysDept.ID.Eq(req.Id)).First()
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		c.JSON(consts.StatusOK, resp.ErrorMsg("部门表不存在"))
+		resp.Error(c, "部门不存在")
 		return
 	case err != nil:
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门表异常"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -402,7 +400,7 @@ func QueryDeptDetail(ctx context.Context, c *app.RequestContext) {
 
 	}
 
-	c.JSON(consts.StatusOK, resp.Success(data))
+	resp.Success(c, data)
 }
 
 // QueryDeptList 查询部门表列表
@@ -414,7 +412,7 @@ func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 	var req dept.QueryDeptListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.Error(err))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -433,7 +431,7 @@ func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
-		c.JSON(consts.StatusOK, resp.ErrorMsg("查询部门表列表失败"))
+		resp.Error(c, err.Error())
 		return
 	}
 
@@ -457,5 +455,5 @@ func QueryDeptList(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 
-	c.JSON(consts.StatusOK, resp.SuccessPage(list, count))
+	resp.SuccessPage(c, list, count)
 }
