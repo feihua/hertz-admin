@@ -505,8 +505,8 @@ func QueryAllocatedList(ctx context.Context, c *app.RequestContext) {
 
 	var result []model.SysUser
 
-	userRole := query.SysUserRole
-	sysUser := query.SysUser
+	ur := query.SysUserRole
+	u := query.SysUser
 
 	// 1.查询角色角色是否已存在
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
@@ -521,15 +521,16 @@ func QueryAllocatedList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	q := userRole.WithContext(ctx).LeftJoin(sysUser, sysUser.ID.EqCol(userRole.UserID)).Select(sysUser.ALL)
+	q := u.WithContext(ctx).LeftJoin(ur, ur.UserID.EqCol(u.ID)).Select(u.ALL)
+	q = q.Where(u.DelFlag.Eq(1))
 	if len(req.Mobile) > 0 {
-		q = q.Where(sysUser.Mobile.Like("%" + req.Mobile + "%"))
+		q = q.Where(u.Mobile.Like("%" + req.Mobile + "%"))
 	}
 	if len(req.UserName) > 0 {
-		q = q.Where(sysUser.UserName.Like("%" + req.UserName + "%"))
+		q = q.Where(u.UserName.Like("%" + req.UserName + "%"))
 	}
 
-	q = q.Where(userRole.RoleID.Eq(req.RoleId))
+	q = q.Where(ur.RoleID.Eq(req.RoleId))
 
 	offset := (req.PageNum - 1) * req.PageSize
 	count, err = q.ScanByPage(&result, int(offset), int(req.PageSize))
@@ -578,8 +579,8 @@ func QueryUnallocatedList(ctx context.Context, c *app.RequestContext) {
 
 	var result []model.SysUser
 
-	userRole := query.SysUserRole
-	sysUser := query.SysUser
+	ur := query.SysUserRole
+	u := query.SysUser
 
 	// 1.查询角色角色是否已存在
 	count, err := query.SysRole.WithContext(ctx).Where(query.SysRole.ID.Eq(req.RoleId)).Count()
@@ -594,15 +595,16 @@ func QueryUnallocatedList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	q := userRole.WithContext(ctx).LeftJoin(sysUser, sysUser.ID.EqCol(userRole.UserID)).Select(sysUser.ALL)
+	q := u.WithContext(ctx).LeftJoin(ur, ur.UserID.EqCol(u.ID)).Select(u.ALL)
+	q = q.Where(u.DelFlag.Eq(1))
 	if len(req.Mobile) > 0 {
-		q = q.Where(sysUser.Mobile.Like("%" + req.Mobile + "%"))
+		q = q.Where(u.Mobile.Like("%" + req.Mobile + "%"))
 	}
 	if len(req.UserName) > 0 {
-		q = q.Where(sysUser.UserName.Like("%" + req.UserName + "%"))
+		q = q.Where(u.UserName.Like("%" + req.UserName + "%"))
 	}
 
-	q = q.Where(userRole.RoleID.Neq(req.RoleId))
+	q = q.Where(ur.WithContext(ctx).Where(ur.RoleID.IsNull()).Or(ur.RoleID.Neq(req.RoleId)))
 
 	offset := (req.PageNum - 1) * req.PageSize
 	count, err = q.ScanByPage(&result, int(offset), int(req.PageSize))

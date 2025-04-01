@@ -470,9 +470,11 @@ func QueryUserList(ctx context.Context, c *app.RequestContext) {
 	}
 	// 部门ID
 	if req.DeptId != 0 {
-		q = q.Where(u.DeptID.Eq(req.DeptId))
+		var deptIds []int64
+		dal.DB.Model(model.SysDept{}).WithContext(ctx).Select("id").Where("find_in_set(?, ancestors)", req.DeptId).Scan(&deptIds)
+		deptIds = append(deptIds, req.DeptId)
+		q = q.Where(u.DeptID.In(deptIds...))
 	}
-
 	result, count, err := q.FindByPage(int((req.PageNum-1)*req.PageSize), int(req.PageSize))
 
 	if err != nil {
