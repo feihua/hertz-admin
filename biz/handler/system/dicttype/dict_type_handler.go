@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/feihua/hertz-admin/biz/dal"
 	dicttype "github.com/feihua/hertz-admin/biz/model/system/dictType"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -54,13 +55,13 @@ func AddDictType(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysDictType{
-		DictName: req.DictName, // 字典名称
-		DictType: req.DictType, // 字典类型
-		Status:   req.Status,   // 状态（0：停用，1:正常）
-		Remark:   req.Remark,   // 备注
-		CreateBy: createBy,     // 创建者
+		DictName: req.DictName,         // 字典名称
+		DictType: req.DictType,         // 字典类型
+		Status:   req.Status,           // 状态（0：停用，1:正常）
+		Remark:   req.Remark,           // 备注
+		CreateBy: user.(*mw.User).Name, // 创建者
 	}
 
 	err = q.WithContext(ctx).Create(item)
@@ -172,18 +173,18 @@ func UpdateDictType(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 4.字典存在时,则直接更新字典
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	now := time.Now()
 	dict := &model.SysDictType{
-		ID:         req.Id,         // 编号
-		DictName:   req.DictName,   // 字典名称
-		DictType:   req.DictType,   // 字典类型
-		Status:     req.Status,     // 字典状态
-		Remark:     req.Remark,     // 备注信息
-		CreateBy:   res.CreateBy,   // 创建者
-		CreateTime: res.CreateTime, // 创建时间
-		UpdateBy:   updateBy,       // 更新者
-		UpdateTime: &now,           // 更新时间
+		ID:         req.Id,               // 编号
+		DictName:   req.DictName,         // 字典名称
+		DictType:   req.DictType,         // 字典类型
+		Status:     req.Status,           // 字典状态
+		Remark:     req.Remark,           // 备注信息
+		CreateBy:   res.CreateBy,         // 创建者
+		CreateTime: res.CreateTime,       // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &now,                 // 更新时间
 	}
 	err = dal.DB.Model(&model.SysDictType{}).WithContext(ctx).Where(d.ID.Eq(req.Id)).Save(dict).Error
 

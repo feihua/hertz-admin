@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/feihua/hertz-admin/biz/dal"
 	dictData "github.com/feihua/hertz-admin/biz/model/system/dictData"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -79,18 +80,18 @@ func AddDictData(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 5.字典数据不存在时,则直接添加字典数据
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysDictData{
-		DictSort:  req.DictSort,  // 字典排序
-		DictLabel: req.DictLabel, // 字典标签
-		DictValue: req.DictValue, // 字典键值
-		DictType:  req.DictType,  // 字典类型
-		CSSClass:  req.CssClass,  // 样式属性（其他样式扩展）
-		ListClass: req.ListClass, // 表格回显样式
-		IsDefault: req.IsDefault, // 是否默认（Y是 N否）
-		Status:    req.Status,    // 状态（0：停用，1:正常）
-		Remark:    req.Remark,    // 备注
-		CreateBy:  createBy,      // 创建者
+		DictSort:  req.DictSort,         // 字典排序
+		DictLabel: req.DictLabel,        // 字典标签
+		DictValue: req.DictValue,        // 字典键值
+		DictType:  req.DictType,         // 字典类型
+		CSSClass:  req.CssClass,         // 样式属性（其他样式扩展）
+		ListClass: req.ListClass,        // 表格回显样式
+		IsDefault: req.IsDefault,        // 是否默认（Y是 N否）
+		Status:    req.Status,           // 状态（0：停用，1:正常）
+		Remark:    req.Remark,           // 备注
+		CreateBy:  user.(*mw.User).Name, // 创建者
 
 	}
 
@@ -203,21 +204,21 @@ func UpdateDictData(ctx context.Context, c *app.RequestContext) {
 		}
 	}
 
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	now := time.Now()
 	data := &model.SysDictData{
-		ID:         req.Id,              // 编号
-		DictType:   dictType,            // 字典类型
-		DictLabel:  req.DictLabel,       // 字典标签
-		DictValue:  req.DictValue,       // 字典键值
-		Status:     req.Status,          // 字典状态
-		DictSort:   req.DictSort,        // 排序
-		Remark:     req.Remark,          // 备注信息
-		IsDefault:  req.IsDefault,       // 是否默认  0：否  1：是
-		CreateBy:   dictItem.CreateBy,   // 创建者
-		CreateTime: dictItem.CreateTime, // 创建时间
-		UpdateBy:   updateBy,            // 更新者
-		UpdateTime: &now,                // 更新时间
+		ID:         req.Id,               // 编号
+		DictType:   dictType,             // 字典类型
+		DictLabel:  req.DictLabel,        // 字典标签
+		DictValue:  req.DictValue,        // 字典键值
+		Status:     req.Status,           // 字典状态
+		DictSort:   req.DictSort,         // 排序
+		Remark:     req.Remark,           // 备注信息
+		IsDefault:  req.IsDefault,        // 是否默认  0：否  1：是
+		CreateBy:   dictItem.CreateBy,    // 创建者
+		CreateTime: dictItem.CreateTime,  // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &now,                 // 更新时间
 	}
 
 	// 6.字典数据存在时,则直接更新字典数据

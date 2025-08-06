@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/notice"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -41,14 +42,14 @@ func AddNotice(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysNotice{
-		NoticeTitle:   title,             // 公告标题
-		NoticeType:    req.NoticeType,    // 公告类型（1:通知,2:公告）
-		NoticeContent: req.NoticeContent, // 公告内容
-		Status:        req.Status,        // 公告状态（0:关闭,1:正常 ）
-		Remark:        req.Remark,        // 备注
-		CreateBy:      createBy,          // 创建者
+		NoticeTitle:   title,                // 公告标题
+		NoticeType:    req.NoticeType,       // 公告类型（1:通知,2:公告）
+		NoticeContent: req.NoticeContent,    // 公告内容
+		Status:        req.Status,           // 公告状态（0:关闭,1:正常 ）
+		Remark:        req.Remark,           // 备注
+		CreateBy:      user.(*mw.User).Name, // 创建者
 	}
 	err = q.WithContext(ctx).Create(item)
 
@@ -123,19 +124,19 @@ func UpdateNotice(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	updateTime := time.Now()
 	sysNotice := &model.SysNotice{
-		ID:            req.Id,            // 公告ID
-		NoticeTitle:   title,             // 公告标题
-		NoticeType:    req.NoticeType,    // 公告类型（1:通知,2:公告）
-		NoticeContent: req.NoticeContent, // 公告内容
-		Status:        req.Status,        // 公告状态（0:关闭,1:正常 ）
-		Remark:        req.Remark,        // 备注
-		CreateBy:      item.CreateBy,     // 创建者
-		CreateTime:    item.CreateTime,   // 创建时间
-		UpdateBy:      updateBy,          // 更新者
-		UpdateTime:    &updateTime,       // 更新时间
+		ID:            req.Id,               // 公告ID
+		NoticeTitle:   title,                // 公告标题
+		NoticeType:    req.NoticeType,       // 公告类型（1:通知,2:公告）
+		NoticeContent: req.NoticeContent,    // 公告内容
+		Status:        req.Status,           // 公告状态（0:关闭,1:正常 ）
+		Remark:        req.Remark,           // 备注
+		CreateBy:      item.CreateBy,        // 创建者
+		CreateTime:    item.CreateTime,      // 创建时间
+		UpdateBy:      user.(*mw.User).Name, // 更新者
+		UpdateTime:    &updateTime,          // 更新时间
 	}
 
 	// 2.通知公告表存在时,则直接更新通知公告表

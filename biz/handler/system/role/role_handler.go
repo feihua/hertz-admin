@@ -6,6 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/role"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -59,14 +60,14 @@ func AddRole(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 3.角色不存在时,则直接添加角色
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysRole{
-		RoleName:  req.RoleName,  // 名称
-		RoleKey:   req.RoleKey,   // 角色权限字符串
-		DataScope: req.DataScope, // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
-		Status:    req.Status,    // 状态(1:正常，0:禁用)
-		Remark:    req.Remark,    // 备注
-		CreateBy:  createBy,      // 创建者
+		RoleName:  req.RoleName,         // 名称
+		RoleKey:   req.RoleKey,          // 角色权限字符串
+		DataScope: req.DataScope,        // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
+		Status:    req.Status,           // 状态(1:正常，0:禁用)
+		Remark:    req.Remark,           // 备注
+		CreateBy:  user.(*mw.User).Name, // 创建者
 
 	}
 
@@ -217,19 +218,19 @@ func UpdateRole(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 4.角色存在时,则直接更新角色
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	updateTime := time.Now()
 	sysRole := &model.SysRole{
-		ID:         req.Id,          // 主键
-		RoleName:   req.RoleName,    // 名称
-		RoleKey:    req.RoleKey,     // 角色权限字符串
-		DataScope:  req.DataScope,   // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
-		Status:     req.Status,      // 状态(1:正常，0:禁用)
-		Remark:     req.Remark,      // 备注
-		CreateBy:   item.CreateBy,   // 创建者
-		CreateTime: item.CreateTime, // 创建时间
-		UpdateBy:   updateBy,        // 更新者
-		UpdateTime: &updateTime,     // 更新时间
+		ID:         req.Id,               // 主键
+		RoleName:   req.RoleName,         // 名称
+		RoleKey:    req.RoleKey,          // 角色权限字符串
+		DataScope:  req.DataScope,        // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
+		Status:     req.Status,           // 状态(1:正常，0:禁用)
+		Remark:     req.Remark,           // 备注
+		CreateBy:   item.CreateBy,        // 创建者
+		CreateTime: item.CreateTime,      // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &updateTime,          // 更新时间
 
 	}
 

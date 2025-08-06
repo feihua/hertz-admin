@@ -2,12 +2,12 @@ package system
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/handler/common"
 	"github.com/feihua/hertz-admin/biz/model/system/user"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -80,19 +80,19 @@ func AddUser(ctx context.Context, c *app.RequestContext) {
 	if len(avatar) == 0 {
 		avatar = "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
 	}
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysUser{
-		Mobile:   req.Mobile,   // 手机号码
-		UserName: req.UserName, // 用户账号
-		NickName: req.NickName, // 用户昵称
-		UserType: req.UserType, // 用户类型（00系统用户）
-		Avatar:   req.Avatar,   // 头像路径
-		Email:    req.Email,    // 用户邮箱
-		Password: req.Password, // 密码
-		Status:   req.Status,   // 状态(1:正常，0:禁用)
-		DeptID:   req.DeptId,   // 部门ID
-		Remark:   req.Remark,   // 备注
-		CreateBy: createBy,     // 更新者
+		Mobile:   req.Mobile,           // 手机号码
+		UserName: req.UserName,         // 用户账号
+		NickName: req.NickName,         // 用户昵称
+		UserType: req.UserType,         // 用户类型（00系统用户）
+		Avatar:   req.Avatar,           // 头像路径
+		Email:    req.Email,            // 用户邮箱
+		Password: req.Password,         // 密码
+		Status:   req.Status,           // 状态(1:正常，0:禁用)
+		DeptID:   req.DeptId,           // 部门ID
+		Remark:   req.Remark,           // 备注
+		CreateBy: user.(*mw.User).Name, // 更新者
 	}
 
 	err = query.Q.Transaction(func(tx *query.Query) error {
@@ -273,30 +273,30 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 5.用户存在时,则直接更新用户
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	updateTime := time.Now()
 	sysUser := &model.SysUser{
-		ID:            req.Id,             // 主键
-		Mobile:        req.Mobile,         // 手机号码
-		UserName:      req.UserName,       // 用户账号
-		NickName:      req.NickName,       // 用户昵称
-		UserType:      req.UserType,       // 用户类型（00系统用户）
-		Avatar:        req.Avatar,         // 头像路径
-		Email:         req.Email,          // 用户邮箱
-		Password:      item.Password,      // 密码
-		Status:        req.Status,         // 状态(1:正常，0:禁用)
-		DeptID:        req.DeptId,         // 部门ID
-		LoginIP:       item.LoginIP,       // 最后登录IP
-		LoginDate:     item.LoginDate,     // 最后登录时间
-		LoginBrowser:  item.LoginBrowser,  // 浏览器类型
-		LoginOs:       item.LoginOs,       // 操作系统
-		PwdUpdateDate: item.PwdUpdateDate, // 密码最后更新时间
-		Remark:        req.Remark,         // 备注
-		DelFlag:       item.DelFlag,       // 删除标志（0代表删除 1代表存在）
-		CreateBy:      item.CreateBy,      // 创建者
-		CreateTime:    item.CreateTime,    // 创建时间
-		UpdateBy:      updateBy,           // 更新者
-		UpdateTime:    &updateTime,        // 更新时间
+		ID:            req.Id,               // 主键
+		Mobile:        req.Mobile,           // 手机号码
+		UserName:      req.UserName,         // 用户账号
+		NickName:      req.NickName,         // 用户昵称
+		UserType:      req.UserType,         // 用户类型（00系统用户）
+		Avatar:        req.Avatar,           // 头像路径
+		Email:         req.Email,            // 用户邮箱
+		Password:      item.Password,        // 密码
+		Status:        req.Status,           // 状态(1:正常，0:禁用)
+		DeptID:        req.DeptId,           // 部门ID
+		LoginIP:       item.LoginIP,         // 最后登录IP
+		LoginDate:     item.LoginDate,       // 最后登录时间
+		LoginBrowser:  item.LoginBrowser,    // 浏览器类型
+		LoginOs:       item.LoginOs,         // 操作系统
+		PwdUpdateDate: item.PwdUpdateDate,   // 密码最后更新时间
+		Remark:        req.Remark,           // 备注
+		DelFlag:       item.DelFlag,         // 删除标志（0代表删除 1代表存在）
+		CreateBy:      item.CreateBy,        // 创建者
+		CreateTime:    item.CreateTime,      // 创建时间
+		UpdateBy:      user.(*mw.User).Name, // 更新者
+		UpdateTime:    &updateTime,          // 更新时间
 	}
 
 	err = query.Q.Transaction(func(tx *query.Query) error {
@@ -525,7 +525,8 @@ func QueryUserMenu(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	userId, _ := ctx.Value("userId").(json.Number).Int64()
+	user1, _ := c.Get(mw.IdentityKey)
+	userId := user1.(*mw.User).Id
 
 	// 1.根据id查询用户信息
 	q := query.SysUser

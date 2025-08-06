@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/menu"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -60,19 +61,19 @@ func AddMenu(ctx context.Context, c *app.RequestContext) {
 		}
 	}
 
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysMenu{
-		MenuName: req.MenuName, // 菜单名称
-		MenuType: req.MenuType, // 菜单类型(1：目录   2：菜单   3：按钮)
-		Visible:  req.Visible,  // 显示状态（0:隐藏, 显示:1）
-		Status:   req.Status,   // 菜单状态(1:正常，0:禁用)
-		Sort:     req.Sort,     // 排序
-		ParentID: req.ParentId, // 父ID
-		MenuURL:  req.MenuUrl,  // 路由路径
-		APIURL:   req.ApiUrl,   // 接口URL
-		MenuIcon: req.MenuIcon, // 菜单图标
-		Remark:   req.Remark,   // 备注
-		CreateBy: createBy,     // 创建者
+		MenuName: req.MenuName,         // 菜单名称
+		MenuType: req.MenuType,         // 菜单类型(1：目录   2：菜单   3：按钮)
+		Visible:  req.Visible,          // 显示状态（0:隐藏, 显示:1）
+		Status:   req.Status,           // 菜单状态(1:正常，0:禁用)
+		Sort:     req.Sort,             // 排序
+		ParentID: req.ParentId,         // 父ID
+		MenuURL:  req.MenuUrl,          // 路由路径
+		APIURL:   req.ApiUrl,           // 接口URL
+		MenuIcon: req.MenuIcon,         // 菜单图标
+		Remark:   req.Remark,           // 备注
+		CreateBy: user.(*mw.User).Name, // 创建者
 
 	}
 
@@ -204,24 +205,24 @@ func UpdateMenu(ctx context.Context, c *app.RequestContext) {
 		}
 	}
 
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	updateTime := time.Now()
 	sysMenu := &model.SysMenu{
-		ID:         req.Id,          // 主键
-		MenuName:   req.MenuName,    // 菜单名称
-		MenuType:   req.MenuType,    // 菜单类型(1：目录   2：菜单   3：按钮)
-		Visible:    req.Visible,     // 显示状态（0:隐藏, 显示:1）
-		Status:     req.Status,      // 菜单状态(1:正常，0:禁用)
-		Sort:       req.Sort,        // 排序
-		ParentID:   req.ParentId,    // 父ID
-		MenuURL:    req.MenuUrl,     // 路由路径
-		APIURL:     req.ApiUrl,      // 接口URL
-		MenuIcon:   req.MenuIcon,    // 菜单图标
-		Remark:     req.Remark,      // 备注
-		CreateBy:   item.CreateBy,   // 创建者
-		CreateTime: item.CreateTime, // 创建时间
-		UpdateBy:   updateBy,        // 更新者
-		UpdateTime: &updateTime,     // 更新时间
+		ID:         req.Id,               // 主键
+		MenuName:   req.MenuName,         // 菜单名称
+		MenuType:   req.MenuType,         // 菜单类型(1：目录   2：菜单   3：按钮)
+		Visible:    req.Visible,          // 显示状态（0:隐藏, 显示:1）
+		Status:     req.Status,           // 菜单状态(1:正常，0:禁用)
+		Sort:       req.Sort,             // 排序
+		ParentID:   req.ParentId,         // 父ID
+		MenuURL:    req.MenuUrl,          // 路由路径
+		APIURL:     req.ApiUrl,           // 接口URL
+		MenuIcon:   req.MenuIcon,         // 菜单图标
+		Remark:     req.Remark,           // 备注
+		CreateBy:   item.CreateBy,        // 创建者
+		CreateTime: item.CreateTime,      // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &updateTime,          // 更新时间
 
 	}
 

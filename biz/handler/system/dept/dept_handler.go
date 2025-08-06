@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/dept"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -66,17 +67,17 @@ func AddDept(ctx context.Context, c *app.RequestContext) {
 
 	ancestors := fmt.Sprintf("%s,%d", parentDept.Ancestors, parentDept.ID)
 	// 4.部门不存在时,则直接添加部门
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysDept{
-		ParentID:  req.ParentId, // 父部门id
-		Ancestors: ancestors,    // 祖级列表
-		DeptName:  req.DeptName, // 部门名称
-		Sort:      req.Sort,     // 显示顺序
-		Leader:    req.Leader,   // 负责人
-		Phone:     req.Phone,    // 联系电话
-		Email:     req.Email,    // 邮箱
-		Status:    req.Status,   // 部门状态（0：停用，1:正常）
-		CreateBy:  createBy,     // 创建者
+		ParentID:  req.ParentId,         // 父部门id
+		Ancestors: ancestors,            // 祖级列表
+		DeptName:  req.DeptName,         // 部门名称
+		Sort:      req.Sort,             // 显示顺序
+		Leader:    req.Leader,           // 负责人
+		Phone:     req.Phone,            // 联系电话
+		Email:     req.Email,            // 邮箱
+		Status:    req.Status,           // 部门状态（0：停用，1:正常）
+		CreateBy:  user.(*mw.User).Name, // 创建者
 	}
 
 	err = q.WithContext(ctx).Create(item)
@@ -244,22 +245,22 @@ func UpdateDept(ctx context.Context, c *app.RequestContext) {
 		}
 	}
 
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	now := time.Now()
 	sysDept := &model.SysDept{
-		ID:         req.Id,             // 部门id
-		ParentID:   req.ParentId,       // 父部门id
-		Ancestors:  ancestors,          // 祖级列表
-		DeptName:   req.DeptName,       // 部门名称
-		Sort:       req.Sort,           // 显示顺序
-		Leader:     req.Leader,         // 负责人
-		Phone:      req.Phone,          // 联系电话
-		Email:      req.Email,          // 邮箱
-		Status:     req.Status,         // 部门状态（0：停用，1:正常）
-		CreateBy:   oldDept.CreateBy,   // 创建者
-		CreateTime: oldDept.CreateTime, // 创建时间
-		UpdateBy:   updateBy,           // 更新者
-		UpdateTime: &now,               // 更新时间
+		ID:         req.Id,               // 部门id
+		ParentID:   req.ParentId,         // 父部门id
+		Ancestors:  ancestors,            // 祖级列表
+		DeptName:   req.DeptName,         // 部门名称
+		Sort:       req.Sort,             // 显示顺序
+		Leader:     req.Leader,           // 负责人
+		Phone:      req.Phone,            // 联系电话
+		Email:      req.Email,            // 邮箱
+		Status:     req.Status,           // 部门状态（0：停用，1:正常）
+		CreateBy:   oldDept.CreateBy,     // 创建者
+		CreateTime: oldDept.CreateTime,   // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &now,                 // 更新时间
 	}
 
 	// 6.部门存在时,则直接更新部门

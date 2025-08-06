@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/feihua/hertz-admin/biz/dal"
 	"github.com/feihua/hertz-admin/biz/model/system/post"
+	"github.com/feihua/hertz-admin/biz/pkg/mw"
 	"github.com/feihua/hertz-admin/biz/pkg/utils"
 	"github.com/feihua/hertz-admin/gen/model"
 	"github.com/feihua/hertz-admin/gen/query"
@@ -56,14 +57,14 @@ func AddPost(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	createBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	item := &model.SysPost{
-		PostCode: code,       // 岗位编码
-		PostName: name,       // 岗位名称
-		Sort:     req.Sort,   // 显示顺序
-		Status:   req.Status, // 岗位状态（0：停用，1:正常）
-		Remark:   req.Remark, // 备注
-		CreateBy: createBy,   // 创建者
+		PostCode: code,                 // 岗位编码
+		PostName: name,                 // 岗位名称
+		Sort:     req.Sort,             // 显示顺序
+		Status:   req.Status,           // 岗位状态（0：停用，1:正常）
+		Remark:   req.Remark,           // 备注
+		CreateBy: user.(*mw.User).Name, // 创建者
 
 	}
 	err = q.WithContext(ctx).Create(item)
@@ -166,19 +167,19 @@ func UpdatePost(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	updateBy := ctx.Value("userName").(string)
+	user, _ := c.Get(mw.IdentityKey)
 	updateTime := time.Now()
 	sysPost := &model.SysPost{
-		ID:         req.Id,          // 岗位id
-		PostCode:   req.PostCode,    // 岗位编码
-		PostName:   req.PostName,    // 岗位名称
-		Sort:       req.Sort,        // 显示顺序
-		Status:     req.Status,      // 岗位状态（0：停用，1:正常）
-		Remark:     req.Remark,      // 备注
-		CreateBy:   item.CreateBy,   // 创建者
-		CreateTime: item.CreateTime, // 创建时间
-		UpdateBy:   updateBy,        // 更新者
-		UpdateTime: &updateTime,     // 更新时间
+		ID:         req.Id,               // 岗位id
+		PostCode:   req.PostCode,         // 岗位编码
+		PostName:   req.PostName,         // 岗位名称
+		Sort:       req.Sort,             // 显示顺序
+		Status:     req.Status,           // 岗位状态（0：停用，1:正常）
+		Remark:     req.Remark,           // 备注
+		CreateBy:   item.CreateBy,        // 创建者
+		CreateTime: item.CreateTime,      // 创建时间
+		UpdateBy:   user.(*mw.User).Name, // 更新者
+		UpdateTime: &updateTime,          // 更新时间
 
 	}
 
